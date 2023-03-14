@@ -1,0 +1,630 @@
+/* mdl - popup */
+.dark-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 5;
+    -webkit-transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+    transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+  }
+  
+  
+.fab {
+    /* z-index: 5;
+    cursor: pointer;
+    border-radius: 50%;
+    position: fixed; */
+    /* right: 400px; */
+    /* top: 100px; */
+    /* color: #fff;*/
+    background: #fff;
+    z-index: 1;
+   /* height: 56px;
+    width: 56px; */
+    /* box-shadow: 0 5px 5px rgba(126, 111, 111, 0.39);
+    -webkit-transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+    transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005); */
+  }
+  
+  .fab.active {
+    cursor: default;
+    background: #FFF;
+    border-radius: 5px;
+    width: 400px;
+    height: 170px;
+    box-shadow: 0 25px 35px 0 rgba(0, 0, 0, 0.35);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* right: calc(50% - 200px); */
+    position: fixed;
+    margin: auto;
+  }
+  
+  .fab-icon {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-12px, -12px);
+    -ms-transform: translate(-12px, -12px);
+    transform: translate(-12px, -12px);
+    line-height: 24px;
+    width: 24px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .active .fab-icon {
+    display: none;
+  }
+  
+  .active .protect {
+    background: none;
+  }
+  
+  .cntt-wrapper {
+    display: none;
+  }
+  
+  .active .cntt-wrapper {
+    display: block;
+  }
+  
+  #fab-hdr {
+    position: absolute;
+    width: 100%;
+    background: #f4f6f9;
+    border-radius: 5px;
+
+  }
+  
+  #fab-hdr p {
+    padding-left: 10px;
+    margin-top: 10px;
+    color: #212529 !important;
+    font-size: 20px;
+    font-family: sans-serif !important;
+  }
+
+
+  .active .protect {
+    background: none;
+  }
+  
+  .cntt-wrapper {
+    display: none;
+  }
+  
+  .active .cntt-wrapper {
+    display: block;
+  }
+  
+  #fab-hdr {
+    position: absolute;
+    width: 100%;
+    background: #f4f6f9;
+    border-radius: 5px;
+  }
+  
+  #fab-hdr p {
+    padding-left: 10px;
+    margin-top: 10px;
+    color: #212529 !important;
+    font-size: 20px;
+    font-family: sans-serif !important
+    }
+
+
+  .fab_ {
+    /* z-index: 5;
+    cursor: pointer;
+    border-radius: 50%;
+    position: fixed; */
+    /* right: 400px; */
+    /* top: 100px; */
+    /* color: #fff;*/
+    background: #fff;
+    z-index: 1;
+   /* height: 56px;
+    width: 56px; */
+    /* box-shadow: 0 5px 5px rgba(126, 111, 111, 0.39);
+    -webkit-transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+    transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005); */
+  }
+  
+  .fab_.active {
+    cursor: default;
+    background: #FFF;
+    border-radius: 5px;
+    width: 400px;
+    height: 170px;
+    box-shadow: 0 25px 35px 0 rgba(0, 0, 0, 0.35);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* right: calc(50% - 200px); */
+    position: fixed;
+    margin: auto;
+  }
+  
+  .fab_-icon {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-12px, -12px);
+    -ms-transform: translate(-12px, -12px);
+    transform: translate(-12px, -12px);
+    line-height: 24px;
+    width: 24px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .active .fab_-icon {
+    display: none;
+  }
+  
+  .active .protect {
+    background: none;
+  }
+  
+  .cntt-wrapper {
+    display: none;
+  }
+  
+  .active .cntt-wrapper {
+    display: block;
+  }
+  
+  #fab_-hdr {
+    position: absolute;
+    width: 100%;
+    background: #f4f6f9;
+    border-radius: 5px;
+  }
+  
+  #fab_-hdr p {
+    padding-left: 10px;
+    margin-top: 10px;
+    color: #212529 !important;
+    font-size: 20px;
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";;
+  }
+
+  .fab2 {
+    /* z-index: 5;
+    cursor: pointer;
+    border-radius: 50%;
+    position: fixed; */
+    /* right: 400px; */
+    /* top: 100px; */
+    /* color: #fff;*/
+    background: #fff;
+    z-index: 1;
+   /* height: 56px;
+    width: 56px; */
+    /* box-shadow: 0 5px 5px rgba(126, 111, 111, 0.39);
+    -webkit-transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+    transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005); */
+  }
+  
+  .fab2.active {
+    cursor: default;
+    background: #FFF;
+    border-radius: 5px;
+    width: 400px;
+    height: 170px;
+    box-shadow: 0 25px 35px 0 rgba(0, 0, 0, 0.35);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* right: calc(50% - 200px); */
+    position: fixed;
+    margin: auto;
+  }
+  
+  .fab2-icon {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-12px, -12px);
+    -ms-transform: translate(-12px, -12px);
+    transform: translate(-12px, -12px);
+    line-height: 24px;
+    width: 24px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .active .fab2-icon {
+    display: none;
+  }
+  
+  .active .protect {
+    background: none;
+  }
+  
+  .cntt-wrapper {
+    display: none;
+  }
+  
+  .active .cntt-wrapper {
+    display: block;
+  }
+  
+  #fab2-hdr {
+    position: absolute;
+    width: 100%;
+    background: #f4f6f9;
+    border-radius: 5px;
+  }
+  
+  #fab2-hdr p {
+    padding-left: 10px;
+    margin-top: 10px;
+    color: #212529 !important;
+    font-size: 20px;
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";;
+  }
+
+  .fab3 {
+    /* z-index: 5;
+    cursor: pointer;
+    border-radius: 50%;
+    position: fixed; */
+    /* right: 400px; */
+    /* top: 100px; */
+    /* color: #fff;*/
+    background: #fff;
+    z-index: 1;
+   /* height: 56px;
+    width: 56px; */
+    /* box-shadow: 0 5px 5px rgba(126, 111, 111, 0.39);
+    -webkit-transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+    transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005); */
+  }
+  
+  .fab3.active {
+    cursor: default;
+    background: #FFF;
+    border-radius: 5px;
+    width: 400px;
+    height: 170px;
+    box-shadow: 0 25px 35px 0 rgba(0, 0, 0, 0.35);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* right: calc(50% - 200px); */
+    position: fixed;
+    margin: auto;
+  }
+  
+  .fab3-icon {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-12px, -12px);
+    -ms-transform: translate(-12px, -12px);
+    transform: translate(-12px, -12px);
+    line-height: 24px;
+    width: 24px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .active .fab3-icon {
+    display: none;
+  }
+  
+  .active .protect {
+    background: none;
+  }
+  
+  .cntt-wrapper {
+    display: none;
+  }
+  
+  .active .cntt-wrapper {
+    display: block;
+  }
+  
+  #fab3-hdr {
+    position: absolute;
+    width: 100%;
+    background: #f4f6f9;
+    border-radius: 5px;
+  }
+  
+  #fab3-hdr p {
+    padding-left: 10px;
+    margin-top: 10px;
+    color: #212529 !important;
+    font-size: 20px;
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";;
+  }
+
+  .fab4 {
+    /* z-index: 5;
+    cursor: pointer;
+    border-radius: 50%;
+    position: fixed; */
+    /* right: 400px; */
+    /* top: 100px; */
+    /* color: #fff;*/
+    background: #fff;
+    z-index: 1;
+   /* height: 56px;
+    width: 56px; */
+    /* box-shadow: 0 5px 5px rgba(126, 111, 111, 0.39);
+    -webkit-transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+    transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005); */
+  }
+  
+  .fab4.active {
+    cursor: default;
+    background: #FFF;
+    border-radius: 5px;
+    width: 400px;
+    height: 170px;
+    box-shadow: 0 25px 35px 0 rgba(0, 0, 0, 0.35);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* right: calc(50% - 200px); */
+    position: fixed;
+    margin: auto;
+  }
+  
+  .fab4-icon {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-12px, -12px);
+    -ms-transform: translate(-12px, -12px);
+    transform: translate(-12px, -12px);
+    line-height: 24px;
+    width: 24px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .active .fab4-icon {
+    display: none;
+  }
+  
+  .active .protect {
+    background: none;
+  }
+  
+  .cntt-wrapper {
+    display: none;
+  }
+  
+  .active .cntt-wrapper {
+    display: block;
+  }
+  
+  #fab4-hdr {
+    position: absolute;
+    width: 100%;
+    background: #f4f6f9;
+    border-radius: 5px;
+  }
+  
+  #fab4-hdr p {
+    padding-left: 10px;
+    margin-top: 10px;
+    color: #212529 !important;
+    font-size: 20px;
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";;
+  }
+
+
+  .fab5 {
+    /* z-index: 5;
+    cursor: pointer;
+    border-radius: 50%;
+    position: fixed; */
+    /* right: 400px; */
+    /* top: 100px; */
+    /* color: #fff;*/
+    background: #fff;
+    z-index: 1;
+   /* height: 56px;
+    width: 56px; */
+    /* box-shadow: 0 5px 5px rgba(126, 111, 111, 0.39);
+    -webkit-transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+    transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005); */
+  }
+  
+  .fab5.active {
+    cursor: default;
+    background: #FFF;
+    border-radius: 5px;
+    width: 400px;
+    height: 170px;
+    box-shadow: 0 25px 35px 0 rgba(0, 0, 0, 0.35);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* right: calc(50% - 200px); */
+    position: fixed;
+    margin: auto;
+  }
+  
+  .fab5-icon {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-12px, -12px);
+    -ms-transform: translate(-12px, -12px);
+    transform: translate(-12px, -12px);
+    line-height: 24px;
+    width: 24px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .active .fab5-icon {
+    display: none;
+  }
+  
+  .active .protect {
+    background: none;
+  }
+  
+  .cntt-wrapper {
+    display: none;
+  }
+  
+  .active .cntt-wrapper {
+    display: block;
+  }
+  
+  #fab5-hdr {
+    position: absolute;
+    width: 100%;
+    background: #f4f6f9;
+    border-radius: 5px;
+  }
+  
+  #fab5-hdr p {
+    padding-left: 10px;
+    margin-top: 10px;
+    color: #212529 !important;
+    font-size: 20px;
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";;
+  }
+  .fab7 {
+    /* z-index: 5;
+    cursor: pointer;
+    border-radius: 50%;
+    position: fixed; */
+    /* right: 400px; */
+    /* top: 100px; */
+    /* color: #fff;*/
+    background: #fff;
+    z-index: 1;
+   /* height: 56px;
+    width: 56px; */
+    /* box-shadow: 0 5px 5px rgba(126, 111, 111, 0.39);
+    -webkit-transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005);
+    transition: all 600ms cubic-bezier(0.200, 0.965, 0.000, 1.005); */
+  }
+  
+  .fab7.active {
+    cursor: default;
+    background: #FFF;
+    border-radius: 5px;
+    width: 400px;
+    height: 170px;
+    box-shadow: 0 25px 35px 0 rgba(0, 0, 0, 0.35);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* right: calc(50% - 200px); */
+    position: fixed;
+    margin: auto;
+  }
+  
+  .fab7-icon {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-12px, -12px);
+    -ms-transform: translate(-12px, -12px);
+    transform: translate(-12px, -12px);
+    line-height: 24px;
+    width: 24px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .active .fab7-icon {
+    display: none;
+  }
+  
+  .active .protect {
+    background: none;
+  }
+  
+  .cntt-wrapper {
+    display: none;
+  }
+  
+  .active .cntt-wrapper {
+    display: block;
+  }
+  
+  #fab7-hdr {
+    position: absolute;
+    width: 100%;
+    background: #f4f6f9;
+    border-radius: 5px;
+  }
+  
+  #fab7-hdr p {
+    padding-left: 10px;
+    margin-top: 10px;
+    color: #212529 !important;
+    font-size: 20px;
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";;
+  }
+  .cntt {
+    padding: 100px 35px 0 35px;
+    color: #757575;
+    font-family: sans-serif !important;
+
+  }
+  
+  .btn-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-bottom: 8px;
+    padding: 6px 16px;
+  }
+  
+  /* just presenation */
+  .center{margin: 0 auto}
+  .m-t-100{margin-top:100px}
+  .box {
+    height: 300px;
+    padding: 100px;
+  }
