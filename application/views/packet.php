@@ -54,8 +54,8 @@
                     <label for="company_name" class="col-sm-2 col-form-label">Company Name</label>
                     <div class="col-sm-10">
                         <input class="form-control" type="text" autocomplete="off"
-                            list="company_name" id="inputedCompanyName">
-                            <datalist id="company_name"></datalist>
+                            list="company_name" id="inputedCompanyName" placeholder="Company name">
+                            <datalist id="company_name" style="background:red;"></datalist>
                         
                     </div>
                 </div>
@@ -73,9 +73,9 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="number_of_carat" class="col-sm-2 col-form-label">Total Carat</label>
+                    <label for="total_number_of_carat" class="col-sm-2 col-form-label">Total Carat</label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" id="number_of_carat" placeholder="Add Carat">
+                        <input type="number" class="form-control" id="total_number_of_carat" placeholder="Add Carat">
                     </div>
                 </div>
 

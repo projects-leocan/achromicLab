@@ -61,7 +61,7 @@ class DbHandler
     public function fatchAllCompanyName()
     {
 
-        $sql_query = "SELECT company_name FROM `company`";
+        $sql_query = "SELECT * FROM `company`";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -88,15 +88,116 @@ class DbHandler
         return $result;
     }
 
-
-    public function category($name)
+    public function fatchPacketDetails()
     {
 
+        $sql_query = "SELECT * FROM `packet`";
+        $stmt = $this->conn->prepare($sql_query);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $packet = array();
+
+        while ($obj = $result->fetch_assoc()) {
+            $packet[] = $obj;
+        }
+
+        $stmt->close();
+
+        if (count($packet) > 0) {
+            $result = array(
+                'success' => true,
+                'packet' => $packet,
+            );
+        } else {
+            $result = array(
+                'success' => false,
+            );
+        }
+        return $result;
+    }
+
+    public function addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat,$inputedCompanyName)
+    {
+        $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_caret`,`packet_dimond_qty`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`price_per_carat`,`company_name`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat,'$inputedCompanyName')";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+        $stmt->close();
+
+        if ($sql_query) {
+            $result = array(
+                'success' => true,
+                'message' => 'packet added successfully',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'packet not added',
+            );
+        }
+        return $result;
+    }
+
+
+    public function deleteCompany($id){
+        $sql_query = "delete from `company` where `company_id` ='$id' ";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+        $stmt->close();
+        if ($sql_query) {
+            $result = array(
+                'success' => true,
+                'message' => 'Company deleted successfully',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'compnay not deleted',
+            );
+        }
+        return $result;
+    }
+
+    public function updateCompany($id,$company_name){
+        $sql_query = "update `company` set 	`company_name`='$company_name'  where `company_id` ='$id' ";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+        $stmt->close();
+        if ($sql_query) {
+            $result = array(
+                'success' => true,
+                'message' => 'Company updated successfully',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'compnay not update',
+            );
+        }
+        return $result;
+    }
+
+    public function addCompany($name)
+    {
         $sql_query = "insert into `company` (`company_name`) VALUES ('$name')";
         $stmt = $this->conn->prepare($sql_query);
         // $stmt->bind_param('s', $name);
         $stmt->execute();
         $stmt->close();
+
+        if ($sql_query) {
+            $result = array(
+                'success' => true,
+                'message' => 'Company added successfully',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'compnay not added',
+            );
+        }
+        return $result;
 
         // $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done,@f_id AS f_id");
         // $stmt1->execute();

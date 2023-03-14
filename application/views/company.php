@@ -41,13 +41,13 @@
             <!-- <form class="form-horizontal"> -->
             <div class="card-body">
                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Company Name</label>
+                    <label class="col-sm-2 col-form-label">Company Name </label>
                     <div class="col-md-5">
                         <input class="form-control " type="text" autocomplete="off">
                     </div>
 
                 </div>
-                <button type="submit" id="company_details_submit" class="btn btn-success">Submit</button>
+                <button type="submit" id="company_details_submit" class="btn btn-success">Submit </button>
 
 
             </div>

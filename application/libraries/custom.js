@@ -1,9 +1,50 @@
-const base_url = 'https://leocan.co/subFolder/achromicLab/';
+// live 
+// const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
+// local 
+const base_url = 'http://localhost/achromicLab/';
 
+// ready function 
 $(() => {
 
+    if (window.location.href == base_url + 'company') {
+        fetchAllComapany();
+    }
+
+    if (window.location.href == base_url + 'packet') {
+        fetchPacketData();
+    }
+
+
 })
+
+
+// popup function...
+function showAlert(alertText) {
+    $.alert({
+        title: '',
+        theme: 'modern',
+        // typeAnimated: true,
+        closeIcon: false,
+        // backgroundDismiss: false,
+        // backgroundDismissAnimation: '',
+        // animation: 'news',
+        // closeAnimation: 'news',
+        content: alertText,
+        buttons: {
+            ok: {
+                text: "Ok",
+                btnClass: 'btn-alert',
+                action: function () {
+                    // getCategoryList();
+                    // window.location.reload();
+                    // hidedotLoader();
+                }
+            },
+        }
+    });
+}
+
 
 $('.basicAutoComplete').autoComplete();
 
@@ -79,9 +120,19 @@ function singIn(email, password) {
                     complete: function () {
                     },
                     success: function (data) {
-                        window.location = 'company';
+                        Swal.fire({
+                            title: 'Login Success',
+                            text: 'Redirecting...',
+                            icon: 'success',
+                            timer: 2000,
+                        }).then(() => {
+                            window.location = 'company';
+                        });
                     }
                 })
+            }
+            else {
+                Swal.fire('Invalid Email or Password');
             }
         }
     });
@@ -91,7 +142,19 @@ function singIn(email, password) {
 // +++++++++++++++++++++++++ Sign out +++++++++++++++++++++++++++++++++
 
 $("#btn_Log_Out").on('click', () => {
-    signOut();
+    Swal.fire({
+        title: 'Are you sure you want to logout?',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        confirmButtonColor: '#007bff',
+        denyButtonText: `Cancel`,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            signOut();
+        } else if (result.isDenied) {
+
+        }
+    })
 })
 
 function signOut() {
@@ -112,38 +175,32 @@ function signOut() {
 }
 
 
-// Categories
-const fetchAllCategories = () => {
+// +++++++++++++++++++++++++ Company +++++++++++++++++++++++++++++++++
+const fetchAllComapany = () => {
 
-    // $('.category').val('')
     $.ajax({
-        url: base_url + 'Dashboard/fetchAllCategories',
-        // data: {
-        // },
+        url: base_url + 'Dashboard/fatchAllCompanyName',
         method: 'get',
         processData: false,
         contentType: false,
         beforeSend: function (data) { },
         complete: function (data) {
-            // $('#category_name').val('')
         },
         error: function (data) {
-            alert('Something went wrong while fatching categories')
+            alert('Something went wrong while fatching company ')
         },
         success: function (data) {
-            // console.log("succcc")
+            data = JSON.parse(data)
             let table = $('#category_list').DataTable()
             table.clear().draw()
-            data = JSON.parse(data)
-            // console.log()
             if (data.success) {
-                data.list.forEach(function (list, index) {
+                data.CompanyNames.forEach(function (company_names, index) {
                     let count = index + 1
-                    let category = list.name
+                    let names = company_names.company_name
                     $('#category_list').DataTable().row.add([
-                        count, category,
-                        '<a class="btn btn-success" id="category_edit" cat_id="' + list.id + '" category_name="' + category + '" >EDIT</a>' + ' ' +
-                        '<a class="btn btn-danger" id="category_delete" category_id="' + list.id + '">DELETE</a>'
+                        count, names,
+                        `<a class="btn btn-success" id="company_edit" com_id="${company_names.company_id}" com_name="${names}" >EDIT</a>
+                        <a class="btn btn-danger" id="company_delete" com_id="${company_names.company_id}"  >DELETE</a>`
 
                     ]).draw()
                 })
@@ -153,81 +210,199 @@ const fetchAllCategories = () => {
 }
 
 
+$(document).on("click", "#company_edit", function (event) {
+    let id = $(this).attr('com_id');
+    let company_name = $(this).attr('com_name');
+    window.history.replaceState(null, null, '?id=' + id + '');
+    $("#company_name").val(company_name);
+});
 
+$(document).on("click", "#company_delete", function (event) {
+    let id = $(this).attr('com_id');
+    localStorage.setItem('company_id', id);
 
-const fatchAllProducts = () => {
-    // console.log('Fatching Products')
+    Swal.fire({
+        title: 'Do You want to delete this company ?',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        confirmButtonColor: '#F28123',
+        denyButtonText: `Cancel`,
+    }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            localStorage.getItem('category_id');
+            companyDelete(id);
+        } else if (result.isDenied) {
+
+        }
+    })
+});
+
+function companyDelete(id) {
+    let data = new FormData()
+    data.append('company_id', id)
+
     $.ajax({
-        url: base_url + 'Dashboard/fetchAllProducts',
-        // data: {
-        // },
-        method: 'get',
+        url: base_url + 'Dashboard/deleteCompany',
+        data: data,
+        method: 'post',
         processData: false,
         contentType: false,
-        beforeSend: function (data) { },
-        complete: function (data) { },
-        error: function (data) {
-            alert('Something went wrong while fatching products')
-            console.log(data)
+        beforeSend: function () {
+        },
+        complete: function () {
         },
         success: function (data) {
-            let table = $('#product_list').DataTable()
-            table.clear().draw()
-            data = JSON.parse(data)
-            if (data.success) {
-                data.list.forEach(function (list, index) {
-                    // console.log(list)
-                    let count = index + 1
-                    let category = list.category
-                    let name = list.name
-                    let price = list.price
-                    let weight = list.weight
-                    let description = list.description
+            data = JSON.parse(data);
+            if (data.success == true) {
+                Swal.fire({
+                    title: '',
+                    text: 'Company Delete Succssfully.',
+                    confirmButtonText: 'Ok',
+                    confirmButtonColor: '#F28123'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetchAllComapany();
+                    }
 
-                    let imgHtml = '<img>'
-                    imgHtml = '<a class="popimg" href="' + list.image + '"><img id="image" src="' + list.image + '" style="height:100px; width:100px;" class="flower_img"/></a>'
-
-                    // console.log(image_url);
-
-                    // console.log(imgHtml)
-                    $('#product_list').DataTable().row.add([
-                        count, imgHtml, category, name, price, weight, description,
-                        '<a class="btn btn-success"id="product_edit" product_id="' + list.id + '" category="' + category + '" pro_cat_id="' + list.pro_cat_id + '" name="' + name + '" price="' + price + '" weight="' + weight + '" description="' + description + '" image="' + list.image + '">EDIT</a>' + ' ' +
-                        '<a class="btn btn-danger" id="product_delete" product_id="' + list.id + '">DELETE</a>'
-
-                    ]).draw()
                 })
-            } else {
-                // success false.
+            }
+            else {
+                Swal.fire('Company not Delete');
             }
         }
-    })
+    });
 }
 
 
+$("#company_submit").on("click", function () {
 
-$('#packet_details_submit').click((e) => {
-    let selectedDate = $("#selected_date").val();
-    let inputedCompanyName = $("#inputedCompanyName").val();
-    let NumOfPacket = $("#number_of_packet").val();
-    let NumOfCarat = $("#number_of_carat").val();
-    
+    var url = decodeURIComponent(document.URL);
+    var init_array = url.substring(url.lastIndexOf('?') + 1);
+    let array = init_array.split('=');
+    let id = array[1];
+
+    let company_name = $("#company_name").val();
+
+    if (id != '' && id != undefined) {
+        updateCompany(id, company_name);
+    }
+    else {
+        // Validation
+        if (company_name == null || company_name == '') {
+            alert("Company Name is required field.");
+        }
+        else {
+            addCompany()
+        }
+    }
+});
+
+function updateCompany(id, company_name) {
+
+    let data = new FormData();
+    data.append('company_id', id);
+    data.append('company_name', company_name);
 
 
-})
+    $.ajax({
+        url: base_url + 'Dashboard/updateCompany',
+        data: data,
+        type: "POST",
+        cache: false,
+        processData: false,
+        contentType: false,
+        dataType: false,
+        beforeSend: function (data) {
+        },
+        complete: function (data) {
+        },
+        error: function (e) {
+            alert("Failed to Data Add.");
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.success) {
+                Swal.fire({
+                    title: '',
+                    text: `${data.message}`,
+                    confirmButtonText: 'Ok',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var url = window.location.href;
+                        url = url.slice(0, url.indexOf('?'));
+                        history.pushState(null, '', url);
+                        fetchAllComapany();
+                    }
+                })
+                $("#company_name").val("");
 
+            }
+            else {
+                Swal.fire(`${data.message}`);
+            }
+        },
+    });
+}
+
+const addCompany = () => {
+    let company_name = $('#company_name').val()
+
+    if (company_name == '' || company_name == null) {
+        alert('Please Enter Company name')
+        return false
+    } else {
+        addCompanyData(company_name)
+    }
+}
+
+const addCompanyData = (company_name) => {
+
+    let data = new FormData()
+    data.append('company_name', company_name)
+    $.ajax({
+        url: base_url + 'Dashboard/addCompany',
+        data: data,
+        type: 'POST',
+        cache: false,
+        processData: false,
+        contentType: false,
+        dataType: false,
+        beforeSend: function (data) { },
+        complete: function (data) { },
+        error: function (e) {
+            alert('Failed to Data Add.')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.success) {
+                Swal.fire({
+                    title: '',
+                    text: `${data.message}`,
+                    confirmButtonText: 'Ok',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetchAllComapany();
+                    }
+                })
+                $("#company_name").val("");
+
+            }
+            else {
+                Swal.fire(`${data.message}`);
+            }
+        },
+    })
+}
 
 $("#inputedCompanyName").click(function () {
-
     $.ajax({
         url: base_url + 'Dashboard/fatchAllCompanyName',
         type: 'get',
         // cache: false,
         processData: false,
         contentType: false,
-
         beforeSend: function (data) {
-
         },
         complete: function (data) {
 
@@ -238,45 +413,137 @@ $("#inputedCompanyName").click(function () {
 
         success: function (data) {
             data = JSON.parse(data);
+            $("#company_name").empty()
             if (data.success) {
                 data.CompanyNames.forEach((currentCompanyName) => {
                     $("#company_name").append(`<option class="w-100">${currentCompanyName.company_name}</option>`);
+                    $("#inputedCompanyName").attr("select_company_id", currentCompanyName.company_id)
+                    return false;  
                 })
             }
-
-
         }
-
     })
-
 })
 
+$(document).on("click", "#inputedCompanyName", function (event) {
+    let id = $(this).attr('select_company_id');
+    localStorage.setItem('selected_company_name', id)
 
-$('#category_submit').click((e) => {
-        addCategories()
+});
 
-})
+// +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
+const fetchPacketData = () => {
 
+    $.ajax({
+        url: base_url + 'Dashboard/fetchAllPackets',
+        method: 'get',
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data)
+            let table = $('#packet_list').DataTable()
+            table.clear().draw()
+            if (data.success) {
+                data.packet.forEach(function (currentPacket, index) {
+                    let count = index + 1;
+                    let date = currentPacket.date;
+                    let company_name = currentPacket.company_name;
+                    let packet_no = currentPacket.packet_no;
+                    let qty = currentPacket.packet_dimond_qty;
+                    let carat = currentPacket.packet_dimond_caret;
+                    let pending_process = currentPacket.pending_process_diamond_carat;
+                    let broken = currentPacket.broken_diamond_carat;
+                    let price = currentPacket.price_per_carat;
 
-
-
-const addCategories = () => {
-    let categoryName = $('#category_name').val()
-
-    if (categoryName == '' || categoryName == null) {
-        alert('Please Enter Company name')
-        return false
-    } else {
-        addCategoriesData(categoryName)
-    }
+                    $('#packet_list').DataTable().row.add([
+                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price,
+                    ]).draw()
+                })
+            }
+        }
+    })
 }
 
-const addCategoriesData = (categoryName) => {
+
+$('#packet_details_submit').click((e) => {
+
+    let selectedDate = $("#selected_date").val();
+    let company_id = localStorage.getItem("selected_company_name");
+    let inputedCompanyName = $("#inputedCompanyName").val();
+    let packetNum = $("#number_of_packet").val();
+    let quantity = $("#number_of_qty").val();
+    let total_carat = $("#total_number_of_carat").val();
+    let pending_process_qty_diamond = $("#pending_process_qty").val();
+    let pending_process_qty_carat = $("#pending_process_carat").val();
+    let broken_qty_diamond = $("#broken_qty").val();
+    let broken_qty_carat = $("#broken_carat").val();
+    let price_per_carat = $("#price_per_carat").val();
+
+    if (selectedDate == "" || selectedDate == null) {
+        alert('Please select date')
+        return false
+    }
+    else if (inputedCompanyName == '' || inputedCompanyName == null) {
+        alert('Please Enter company name')
+        return false
+    }
+    else if (packetNum == '' || packetNum == null) {
+        alert('Please Enter packet Number')
+        return false
+    }
+    else if (quantity == '' || quantity == null) {
+        alert('Please Enter quantity ')
+        return false
+    }
+    else if (total_carat == '' || total_carat == null) {
+        alert('Please Enter total carat')
+        return false
+    }
+    else if (pending_process_qty_diamond == null || pending_process_qty_diamond == '') {
+        alert('Please Enter pending diamond quantity ')
+    }
+    else if (pending_process_qty_carat == null || pending_process_qty_carat == '') {
+        alert('Please Enter pending carat quantity ')
+    }
+    else if (broken_qty_diamond == null || broken_qty_diamond == '') {
+        alert('Please Enter broken diamond quantity ')
+    }
+    else if (broken_qty_carat == null || broken_qty_carat == '') {
+        alert('Please Enter broken carat quantity ')
+    }
+    else if (price_per_carat == null || price_per_carat == '') {
+        alert('Please Enter price per carat ')
+    }
+
+    else {
+        addCaratDetails(selectedDate, company_id, inputedCompanyName, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat);
+    }
+
+})
+
+const addCaratDetails = (selectedDate, company_id, inputedCompanyName, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat) => {
 
     let data = new FormData()
-    data.append('categoryName', categoryName)
+    data.append('selectedDate', selectedDate)
+    data.append('company_id', company_id)
+    data.append('inputedCompanyName', inputedCompanyName)
+    data.append('packetNum', packetNum)
+    data.append('quantity', quantity)
+    data.append('total_carat', total_carat)
+    data.append('pending_process_qty_diamond', pending_process_qty_diamond)
+    data.append('pending_process_qty_carat', pending_process_qty_carat)
+    data.append('broken_qty_diamond', broken_qty_diamond)
+    data.append('broken_qty_carat', broken_qty_carat)
+    data.append('price_per_carat', price_per_carat)
+
     $.ajax({
-        url: base_url + 'Dashboard/addCategories',
+        url: base_url + 'Dashboard/addPacketData',
         data: data,
         type: 'POST',
         cache: false,
@@ -287,100 +554,38 @@ const addCategoriesData = (categoryName) => {
         complete: function (data) { },
         error: function (e) {
             alert('Failed to Data Add.')
-            console.log(data)
         },
         success: function (data) {
-            alert('Data added Successfully.')
-        }
-    })
-}
+            data = JSON.parse(data);
+            if (data.success) {
+                Swal.fire({
+                    title: '',
+                    text: `${data.message}`,
+                    confirmButtonText: 'Ok',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetchPacketData();
+                    }
+                })
 
+                $("#selected_date").val('');
+                $("#inputedCompanyName").val('');
+                $("#number_of_packet").val('');
+                $("#number_of_qty").val(''); 
+                $("#total_number_of_carat").val('');
+                $("#pending_process_qty").val('');
+                $("#pending_process_carat").val('');
+                $("#broken_qty").val('');
+                $("#broken_carat").val('');
+                $("#price_per_carat").val('');
 
-
-
-
-
-// add Producst
-const addProduct = () => {
-    let cat_name_dropDown = $('#category_list_dropdown').val()
-    let productName = $('#product_name').val()
-    let productPrice = $('#product_price').val()
-    let productWeight = $('#product_weight').val()
-    let productDesc = $('#product_description').val()
-
-    let image = $('#customFile').prop('files')[0]
-    let img = $('#customFile').val()
-
-
-    // console.log(`category name :${cat_name_dropDown},prodcut name : ${productName}, price :${productPrice},weight : ${productWeight},description : ${productDesc}, img : ${image}`);
-    // console.log("image", image);
-    // console.log(`image: ${image} img : ${img}`);
-
-    if (cat_name_dropDown == -1) {
-        alert('Please select your category')
-        return false
-    }
-    else if (productName == '') {
-        alert('Please Enter your product name')
-        return false
-    }
-    else if (productPrice == '') {
-        alert('Please Enter your product Price')
-        return false
-    }
-    else if (productWeight == '') {
-        alert('Please Enter your product Weight')
-        return false
-    }
-    else if (productDesc == '') {
-        alert('Please Enter your product description')
-        return false
-    }
-    else if (image == null || image == '') {
-        alert('Image is required field.')
-    } else {
-        addProductData(cat_name_dropDown, productName, productPrice, productWeight, productDesc, image);
-    }
-}
-
-const addProductData = (cat_name_dropDown, productName, productPrice, productWeight, productDesc, image) => {
-    let data = new FormData()
-    data.append('cat_name_dropDown', cat_name_dropDown)
-    data.append('productName', productName)
-    data.append('productPrice', productPrice)
-    data.append('productWeight', productWeight)
-    data.append('productDesc', productDesc)
-    data.append('image', image)
-
-    // console.log(`info : ${cat_name_dropDown},${productName},${productPrice},${productWeight},${productDesc},${image}`);
-
-    $.ajax({
-        url: base_url + 'Dashboard/addProduct',
-        data: data,
-        type: 'POST',
-        cache: false,
-        processData: false,
-        contentType: false,
-        dataType: false,
-        beforeSend: function (data) { },
-        complete: function (data) { },
-        error: function (e) {
-            alert('Failed to Data Add.')
-            console.log(data)
+            }
+            else {
+                Swal.fire(`${data.message}`);
+            }
         },
-        success: function (data) {
-            console.log(data);
-            alert('Data added Successfully')
-            // $("#category_list_dropdown").val() = -1;
-            $("#product_name").val() = "";
-            $("#product_price").val() = "";
-            $("#product_weight").val() = "";
-            $("#product_description").val() = "";
-
-            fatchAllProducts();
-        }
-
     })
+
 }
 
 
