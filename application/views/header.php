@@ -6,10 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Achromic Lab</title>
 
-
-    <!-- favicon -->
-    <link rel="icon" type="image/png" href="#">
-
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -33,8 +29,9 @@
 
 
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
 
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="#">
 
     <style>
     .ScrollStyle {
@@ -51,6 +48,7 @@
     .swal2-styled.swal2-confirm {
         background-color: #0062cc !important;
     }
+
     .swal-modal {
         width: 300px;
     }
@@ -77,7 +75,8 @@
         padding: 7px 19px;
         cursor: pointer;
     }
-        .swal2-title {
+
+    .swal2-title {
         position: relative;
         max-width: 100%;
         margin: 0;
@@ -88,8 +87,7 @@
         text-align: center;
         text-transform: none;
         word-wrap: break-word;
-}
-
+    }
     </style>
 
 </head>

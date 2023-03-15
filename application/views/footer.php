@@ -48,6 +48,13 @@
 <!-- <script src="plugins/ckeditor.js"></script> -->
 <!-- <script src="plugins/sample.js"></script> -->
 
+    <!--Updated: Added new version of jQueryUI CDN.-->
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+
+
 <script>
   $(function () {
     bsCustomFileInput.init();

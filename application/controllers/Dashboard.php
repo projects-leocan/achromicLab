@@ -64,6 +64,13 @@ class Dashboard extends CI_Controller
         echo json_encode($response);
     }
 
+    public function fatchSelectedCompanyData()
+    {
+        $catName = $_REQUEST["company_name"];
+        $response = $this->dbhandler->fatchSelectedCompany($catName);
+        echo json_encode($response);
+    }
+
     public function deleteCompany()
     {
         $company_id = $_REQUEST["company_id"];

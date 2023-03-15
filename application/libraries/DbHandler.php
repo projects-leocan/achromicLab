@@ -60,8 +60,36 @@ class DbHandler
 
     public function fatchAllCompanyName()
     {
+        $sql_query = "SELECT * FROM company ORDER BY company_id DESC";
+        $stmt = $this->conn->prepare($sql_query);
 
-        $sql_query = "SELECT * FROM `company`";
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $nameArr = array();
+
+        while ($obj = $result->fetch_assoc()) {
+            $nameArr[] = $obj;
+        }
+
+        $stmt->close();
+
+        if (count($nameArr) > 0) {
+            $result = array(
+                'success' => true,
+                'CompanyNames' => $nameArr,
+            );
+        } else {
+            $result = array(
+                'success' => false,
+            );
+        }
+        return $result;
+    }
+
+    public function fatchSelectedCompany($company_name)
+    {
+        $sql_query = "SELECT * FROM `packet` WHERE `company_name` = '$company_name'";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();

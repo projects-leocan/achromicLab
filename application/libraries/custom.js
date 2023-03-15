@@ -6,6 +6,7 @@ const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
+    // var jq = $.noConflict();
 
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
@@ -13,11 +14,13 @@ $(() => {
 
     if (window.location.href == base_url + 'packet') {
         fetchPacketData();
+        BindControls();
     }
 
-
+    if (window.location.href == base_url + 'packet_form') {
+        BindControls();
+    }
 })
-
 
 // popup function...
 function showAlert(alertText) {
@@ -45,8 +48,6 @@ function showAlert(alertText) {
     });
 }
 
-
-$('.basicAutoComplete').autoComplete();
 
 // creting function for packet menu
 $('#packet_menu').click((e) => {
@@ -395,41 +396,57 @@ const addCompanyData = (company_name) => {
     })
 }
 
-$("#inputedCompanyName").click(function () {
+function BindControls() {
+
     $.ajax({
         url: base_url + 'Dashboard/fatchAllCompanyName',
         type: 'get',
-        // cache: false,
-        processData: false,
-        contentType: false,
+        contentType: 'application/json',
         beforeSend: function (data) {
         },
         complete: function (data) {
 
         },
         error: function (data) {
-            alert("Something went wrong while updating")
+            alert("Something went wrong ")
         },
 
         success: function (data) {
             data = JSON.parse(data);
-            $("#company_name").empty()
+            // console.log("data :",data.CompanyNames);
+            let company_name = []
+
+            data.CompanyNames.map((currentCompanyName) => {
+                company_name.push(currentCompanyName.company_name)
+            })
+
             if (data.success) {
-                data.CompanyNames.forEach((currentCompanyName) => {
-                    $("#company_name").append(`<option class="w-100">${currentCompanyName.company_name}</option>`);
-                    $("#inputedCompanyName").attr("select_company_id", currentCompanyName.company_id)
-                    return false;  
-                })
+                $('#inputedCompanyName').autocomplete({
+                    source: company_name,
+                    minLength: 0,
+                    scroll: true
+                }).focus(function () {
+                    $(this).autocomplete("search", "");
+                });
+
+                $("#inputedCompanyName").attr("selected_company_id", 1)
             }
         }
     })
-})
+}
 
-$(document).on("click", "#inputedCompanyName", function (event) {
-    let id = $(this).attr('select_company_id');
-    localStorage.setItem('selected_company_name', id)
+// $("#inputedCompanyName option: selected").on("input",function () {
+//     alert()
+// });
+
+$('#inputedCompanyName').on('change', function (e) {
+    var optionSelected = $("option:selected", this);
+    var valueSelected = this.value;
+
+    console.log(valueSelected);
 
 });
+
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
 const fetchPacketData = () => {
@@ -474,7 +491,7 @@ const fetchPacketData = () => {
 $('#packet_details_submit').click((e) => {
 
     let selectedDate = $("#selected_date").val();
-    let company_id = localStorage.getItem("selected_company_name");
+    let company_id = localStorage.getItem("selected_company_id");
     let inputedCompanyName = $("#inputedCompanyName").val();
     let packetNum = $("#number_of_packet").val();
     let quantity = $("#number_of_qty").val();
@@ -571,7 +588,7 @@ const addCaratDetails = (selectedDate, company_id, inputedCompanyName, packetNum
                 $("#selected_date").val('');
                 $("#inputedCompanyName").val('');
                 $("#number_of_packet").val('');
-                $("#number_of_qty").val(''); 
+                $("#number_of_qty").val('');
                 $("#total_number_of_carat").val('');
                 $("#pending_process_qty").val('');
                 $("#pending_process_carat").val('');
@@ -587,6 +604,52 @@ const addCaratDetails = (selectedDate, company_id, inputedCompanyName, packetNum
     })
 
 }
+
+
+const fatchSelectedCompnay = () => {
+
+    let company_name = $("#inputedCompanyName").val()
+    console.log("company_name =====", company_name);
+    let data = new FormData()
+    data.append("company_name", company_name)
+
+    $.ajax({
+        url: base_url + 'Dashboard/fatchSelectedCompanyData',
+        method: 'get',
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            console.log("data :",data);
+            // data = JSON.parse(data)
+            // let table = $('#packet_list').DataTable()
+            // table.clear().draw()
+            // if (data.success) {
+            //     data.packet.forEach(function (currentPacket, index) {
+            //         let count = index + 1;
+            //         let date = currentPacket.date;
+            //         let company_name = currentPacket.company_name;
+            //         let packet_no = currentPacket.packet_no;
+            //         let qty = currentPacket.packet_dimond_qty;
+            //         let carat = currentPacket.packet_dimond_caret;
+            //         let pending_process = currentPacket.pending_process_diamond_carat;
+            //         let broken = currentPacket.broken_diamond_carat;
+            //         let price = currentPacket.price_per_carat;
+
+            //         $('#packet_list').DataTable().row.add([
+            //             count, date, company_name, packet_no, qty, carat, pending_process, broken, price,
+            //         ]).draw()
+            //     })
+            // }
+        }
+    })
+}
+
 
 
 
