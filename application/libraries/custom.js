@@ -700,7 +700,6 @@ const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_ca
             }
         },
     })
-
 }
 
 
@@ -709,9 +708,7 @@ $("#packet_details_reset").on("click", () => {
 })
 
 const resetForm = ()=>{
-    $("#selected_date").val('');
     $("#inputedCompanyName").val('');
-    $("#number_of_packet").val('');
     $("#number_of_qty").val('');
     $("#total_number_of_carat").val('');
     $("#pending_process_qty").val('');
