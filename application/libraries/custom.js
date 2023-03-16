@@ -472,7 +472,7 @@ function BindControls() {
                     select: function(event, ui) {
                         var selectedCompany = company_name.find(company => company.name === ui.item.value);
                         var selectedCompanyId = selectedCompany ? selectedCompany.id : -1;
-                        localStorage.setItem("selecteCompanyID",selectedCompanyId)
+                        localStorage.setItem("FilterSelecteCompanyID",selectedCompanyId)
                     }
                 }).focus(function () {
                     $(this).autocomplete("search", "");
@@ -498,9 +498,9 @@ function BindControls() {
 
 
 $("#filterCompany").on("click",function(){
-    let selected_value = $('#inputedCompanyName').val();
-    localStorage.setItem("selectedCompanyName", selected_value)
-    if(selected_value == "All Company"){
+    
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    if(selected_value == "-1"){
         fetchPacketData();
     }
     else{
@@ -585,7 +585,6 @@ $('#packet_details_submit').click((e) => {
 
     let selectedDate = $("#selected_date").val();
     let company_id = localStorage.getItem("selecteCompanyID");
-    let inputedCompanyName = $("#inputedCompanyName").val();
     let packetNum = $("#number_of_packet").val();
     let quantity = $("#number_of_qty").val();
     let total_carat = $("#total_number_of_carat").val();
@@ -597,10 +596,6 @@ $('#packet_details_submit').click((e) => {
 
     if (selectedDate == "" || selectedDate == null) {
         alert('Please select date')
-        return false
-    }
-    else if (inputedCompanyName == '' || inputedCompanyName == null) {
-        alert('Please Enter company name')
         return false
     }
     else if (packetNum == '' || packetNum == null) {
@@ -632,17 +627,16 @@ $('#packet_details_submit').click((e) => {
     }
 
     else {
-        addCaratDetails(selectedDate, company_id, inputedCompanyName, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat);
+        addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat);
     }
 
 })
 
-const addCaratDetails = (selectedDate, company_id, inputedCompanyName, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat) => {
+const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat) => {
 
     let data = new FormData()
     data.append('selectedDate', selectedDate)
     data.append('company_id', company_id)
-    data.append('inputedCompanyName', inputedCompanyName)
     data.append('packetNum', packetNum)
     data.append('quantity', quantity)
     data.append('total_carat', total_carat)
@@ -710,9 +704,9 @@ const resetForm = ()=>{
 
 const fatchSelectedCompnay = () => {
 
-    let c_name = localStorage.getItem("selectedCompanyName");
     let data = new FormData()
-    data.append("c_name", c_name)
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    data.append("company_id", selected_value)
 
     $.ajax({
         url: base_url + 'Dashboard/fatchSelectedCompanyData',

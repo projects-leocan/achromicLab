@@ -80,8 +80,8 @@ class Dashboard extends CI_Controller
 
     public function fatchSelectedCompanyData()
     {
-        $company_name = $_REQUEST["c_name"];
-        $response = $this->dbhandler->fatchSelectedCompany($company_name);
+        $company_id = $_REQUEST["company_id"];
+        $response = $this->dbhandler->fatchSelectedCompany($company_id);
         echo json_encode($response);
     }
 
@@ -117,7 +117,6 @@ class Dashboard extends CI_Controller
     { 
         $selectedDate = $_REQUEST["selectedDate"];
         $company_id = $_REQUEST["company_id"];
-        $inputedCompanyName = $_REQUEST["inputedCompanyName"];
         $packetNum = $_REQUEST["packetNum"];
         $quantity = $_REQUEST["quantity"];
         $total_carat = $_REQUEST["total_carat"];
@@ -127,7 +126,7 @@ class Dashboard extends CI_Controller
         $broken_qty_carat = $_REQUEST["broken_qty_carat"];
         $price_per_carat = $_REQUEST["price_per_carat"];
 
-        $response = $this->dbhandler->addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat,$inputedCompanyName);
+        $response = $this->dbhandler->addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat);
         echo json_encode($response);
     }
 
