@@ -90,7 +90,7 @@ class DbHandler
     public function fatchSelectedCompany($company_id)
     {
         
-        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and `company_id` = '$company_id'";
+        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id'";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
