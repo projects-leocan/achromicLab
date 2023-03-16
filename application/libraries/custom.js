@@ -1,8 +1,8 @@
 // live 
-const base_url = 'https://leocan.co/subFolder/achromicLab/';
+// const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-// const base_url = 'http://localhost/achromicLab/';
+const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
@@ -455,22 +455,28 @@ function BindControls() {
 
         success: function (data) {
             data = JSON.parse(data);
-            let company_name = ["All Company",]
+            console.log("data ==",data);
+            let company_name = [{id: -1, name: "All Company"}];
 
             data.CompanyNames.map((currentCompanyName) => {
-                company_name.push(currentCompanyName.company_name)
+                company_name.push({id: currentCompanyName.company_id, name: currentCompanyName.company_name});
             })
 
             if (data.success) {
                 $('#inputedCompanyName').autocomplete({
-                    source: company_name,
+                    source: company_name.map(company => company.name),
                     minLength: 0,
                     scroll: true,
+                    select: function(event, ui) {
+                        var selectedCompany = company_name.find(company => company.name === ui.item.value);
+                        var selectedCompanyId = selectedCompany ? selectedCompany.id : -1;
+                        console.log("Selected company ID:", selectedCompanyId);
+                        localStorage.setItem("selecteCompanyID",selectedCompanyId)
+                    }
                 }).focus(function () {
                     $(this).autocomplete("search", "");
                 });
 
-                $("#inputedCompanyName").attr("selected_company_id", 1)
             }
         }
     })
@@ -564,7 +570,7 @@ $(document).on("click", "#packet_id", function (event) {
 $('#packet_details_submit').click((e) => {
 
     let selectedDate = $("#selected_date").val();
-    let company_id = localStorage.getItem("selected_company_id");
+    let company_id = localStorage.getItem("selecteCompanyID");
     let inputedCompanyName = $("#inputedCompanyName").val();
     let packetNum = $("#number_of_packet").val();
     let quantity = $("#number_of_qty").val();
