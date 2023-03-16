@@ -71,6 +71,13 @@ class Dashboard extends CI_Controller
         echo json_encode($response);
     }
 
+    public function print_invoice()
+    {
+        $packet_id = $_REQUEST["packet_id"];
+        $response = $this->dbhandler->print_invoice($packet_id);
+        echo json_encode($response);
+    }
+
     public function fatchSelectedCompanyData()
     {
         $company_name = $_REQUEST["c_name"];

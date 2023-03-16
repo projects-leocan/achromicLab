@@ -146,6 +146,36 @@ class DbHandler
         return $result;
     }
 
+    public function print_invoice($packet_id)
+    {
+
+        $sql_query = "SELECT * FROM `packet` where `packet_id`= $packet_id ";
+        $stmt = $this->conn->prepare($sql_query);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $packet = array();
+
+        while ($obj = $result->fetch_assoc()) {
+            $packet[] = $obj;
+        }
+
+        $stmt->close();
+
+        if (count($packet) > 0) {
+            $result = array(
+                'success' => true,
+                'packet' => $packet,
+            );
+        } else {
+            $result = array(
+                'success' => false,
+            );
+        }
+        return $result;
+    }
+
     public function addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat,$inputedCompanyName)
     {
         $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_caret`,`packet_dimond_qty`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`price_per_carat`,`company_name`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat,'$inputedCompanyName')";

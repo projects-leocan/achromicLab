@@ -516,7 +516,7 @@ const fetchPacketData = () => {
                     let pending_process = currentPacket.pending_process_diamond_carat;
                     let broken = currentPacket.broken_diamond_carat;
                     let price = currentPacket.price_per_carat;
-                    let invoice = `<a  id="downloadInvoice" style="text-decoration: underline;" > Invoice</a>`
+                    let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
                     $('#packet_list').DataTable().row.add([
                         count, date, company_name, packet_no, qty, carat, pending_process, broken, price,invoice
@@ -527,9 +527,35 @@ const fetchPacketData = () => {
     })
 }
 
-$("#downloadInvoice").click(()=>{
-    alert();
-})
+
+$(document).on("click", "#packet_id", function (event) {
+    let id = $(this).attr('packet_id');
+    let data = new FormData()
+    data.append("packet_id", id)
+
+
+    $.ajax({
+        url: base_url + 'Dashboard/print_invoice',
+        method: 'post',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data)
+            console.log("data :",data);
+        }
+    })
+
+
+});
+
+
 
 
 $('#packet_details_submit').click((e) => {

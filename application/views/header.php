@@ -93,6 +93,10 @@
         align-items: center;
         justify-content: center;
     }
+    .invoice-btn{
+        cursor:pointer;
+        text-decoration:underline;
+    }
     </style>
 
 </head>
