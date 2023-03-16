@@ -455,11 +455,13 @@ function BindControls() {
 
         success: function (data) {
             data = JSON.parse(data);
-            console.log("data ==",data);
             let company_name = [{id: -1, name: "All Company"}];
+            let company_name_for_packet = [];
 
             data.CompanyNames.map((currentCompanyName) => {
                 company_name.push({id: currentCompanyName.company_id, name: currentCompanyName.company_name});
+                company_name_for_packet.push({id: currentCompanyName.company_id, name: currentCompanyName.company_name});
+                
             })
 
             if (data.success) {
@@ -470,13 +472,25 @@ function BindControls() {
                     select: function(event, ui) {
                         var selectedCompany = company_name.find(company => company.name === ui.item.value);
                         var selectedCompanyId = selectedCompany ? selectedCompany.id : -1;
-                        console.log("Selected company ID:", selectedCompanyId);
                         localStorage.setItem("selecteCompanyID",selectedCompanyId)
                     }
                 }).focus(function () {
                     $(this).autocomplete("search", "");
                 });
 
+                // packet form 
+                $('#selectedCompanyName').autocomplete({
+                    source: company_name_for_packet.map(company => company.name),
+                    minLength: 0,
+                    scroll: true,
+                    select: function(event, ui) {
+                        var selectedCompany = company_name_for_packet.find(company => company.name === ui.item.value);
+                        var selectedCompanyId = selectedCompany ? selectedCompany.id : -1;
+                        localStorage.setItem("selecteCompanyID",selectedCompanyId)
+                    }
+                }).focus(function () {
+                    $(this).autocomplete("search", "");
+                });
             }
         }
     })

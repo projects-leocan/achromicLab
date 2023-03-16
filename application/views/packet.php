@@ -52,8 +52,7 @@
             <div class="form-group row">
                 <label for="company_name" class="col-sm-2 col-form-label">Company Name</label>
                 <div class="col-sm-10">
-                    <input class="form-control" type="text" autocomplete="off" list="company_name"
-                        id="inputedCompanyName" placeholder="Company name">
+                    <input class="form-control" type="text" id="selectedCompanyName" placeholder="Company name">
                 </div>
             </div>
 
