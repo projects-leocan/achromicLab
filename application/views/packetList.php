@@ -5,8 +5,8 @@
 
 .ui-autocomplete {
     cursor: pointer;
-    height: 120px;
-    overflow-y: scroll;
+    /* height: 120px; */
+    /* overflow-y: scroll; */
 }
 </style>
 <div class="wrapper ScrollStyle">
@@ -31,18 +31,27 @@
                 </div>
             </div>
 
-            <div class="form-group row">
+            <!-- <div class="form-group row">
                 <label for="inputedCompanyName" class="mx-3 col-form-label">Company Name</label>
                 <input class="form-control" type="text" id="inputedCompanyName"
                         placeholder="Company name" style="width:50%;">
 
-                <!-- <select class="form-select form-select-lg form-control" style="width:50%;" name=""
-                    id="inputedCompanyName">
-                    <option value="" disabled selected>Select Company </option> -->
-
-
                 </select>
 
+            </div> -->
+
+
+            <div class="container">
+                <div class="form-group row">
+                    <label for="company_name" class="col-sm-2 col-form-label">Company Name
+                        <span style="color:red;"> * </span>
+                    </label>
+                    <div class="col-sm-10 d-flex">
+                        <input type="text" value="" class="form-control mr-2" 
+                            placeholder="Enter Company Name" style="width:50%;" id="inputedCompanyName">
+                        <button type="submit" id="filterCompany" class="mx-2 btn btn-primary" style="padding:0px 30px;">Filter</button>
+                    </div>
+                </div>
             </div>
 
         </div>

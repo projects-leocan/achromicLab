@@ -465,7 +465,7 @@ function BindControls() {
                 $('#inputedCompanyName').autocomplete({
                     source: company_name,
                     minLength: 0,
-                    scroll: true
+                    scroll: true,
                 }).focus(function () {
                     $(this).autocomplete("search", "");
                 });
@@ -477,22 +477,19 @@ function BindControls() {
 }
 
 
-$('#inputedCompanyName').on('change', function (e) {
-    let valueSelected = this.value;
-    localStorage.setItem("selectedCompanyName", valueSelected)
-    if(valueSelected == "All Company"){
+$("#filterCompany").on("click",function(){
+    let selected_value = $('#inputedCompanyName').val();
+    localStorage.setItem("selectedCompanyName", selected_value)
+    if(selected_value == "All Company"){
         fetchPacketData();
     }
     else{
         fatchSelectedCompnay();
     }
-    
-});
-
+})
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
 const fetchPacketData = () => {
-
     $.ajax({
         url: base_url + 'Dashboard/fetchAllPackets',
         method: 'get',
@@ -519,7 +516,7 @@ const fetchPacketData = () => {
                     let pending_process = currentPacket.pending_process_diamond_carat;
                     let broken = currentPacket.broken_diamond_carat;
                     let price = currentPacket.price_per_carat;
-                    let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
+                    let invoice = `<a  id="downloadInvoice" style="text-decoration: underline;" > Invoice</a>`
 
                     $('#packet_list').DataTable().row.add([
                         count, date, company_name, packet_no, qty, carat, pending_process, broken, price,invoice
@@ -529,6 +526,10 @@ const fetchPacketData = () => {
         }
     })
 }
+
+$("#downloadInvoice").click(()=>{
+    alert();
+})
 
 
 $('#packet_details_submit').click((e) => {
@@ -661,13 +662,13 @@ const resetForm = ()=>{
 const fatchSelectedCompnay = () => {
 
     let c_name = localStorage.getItem("selectedCompanyName");
-    console.log("c_name ---",c_name);
     let data = new FormData()
     data.append("c_name", c_name)
 
     $.ajax({
         url: base_url + 'Dashboard/fatchSelectedCompanyData',
         method: 'post',
+        data: data,
         processData: false,
         contentType: false,
         beforeSend: function (data) { },
@@ -680,7 +681,6 @@ const fatchSelectedCompnay = () => {
             let table = $('#packet_list').DataTable()
             table.clear().draw()
             data = JSON.parse(data)
-            console.log("data ======",data);
             if (data.success) {
                 data.CompanyNames.forEach(function (currentPacket, index) {
                     let count = index + 1;
