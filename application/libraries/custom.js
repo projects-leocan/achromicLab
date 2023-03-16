@@ -605,6 +605,7 @@ $('#packet_details_submit').click((e) => {
 
     let selectedDate = $("#selected_date").val();
     let company_id = localStorage.getItem("selecteCompanyID");
+    let company_name = $("#selectedCompanyName").val()
     let packetNum = $("#number_of_packet").val();
     let quantity = $("#number_of_qty").val();
     let total_carat = $("#total_number_of_carat").val();
@@ -620,6 +621,10 @@ $('#packet_details_submit').click((e) => {
     }
     else if (packetNum == '' || packetNum == null) {
         alert('Please Enter packet Number')
+        return false
+    }
+    else if (company_name == '' || company_name == null) {
+        alert('Please select company name')
         return false
     }
     else if (quantity == '' || quantity == null) {
