@@ -1,7 +1,10 @@
-<div class="hold-transition login-page">
+<div class="hold-transition login-page" style="background: #3A3A3A;">
     <div class="login-box">
         <div class="login-logo">
-            <h3><b>Achromic Lab </b></h3>
+            <picture>
+                <img src="logo.png" class="img-fluid pb-3" style="max-width: 80%;" alt="image desc">
+              </picture>
+            <!-- <h3><b>Achromic Lab </b></h3> -->
         </div>
         <!-- /.login-logo -->
         <div class="card">

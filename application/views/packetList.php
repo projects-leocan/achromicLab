@@ -12,9 +12,7 @@
 <div class="wrapper ScrollStyle">
 
 
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
 
         <div class="content-header">
             <div class="container-fluid">
@@ -25,7 +23,7 @@
 
                  <div class="btn-center">
                     <div class="form-group row ">
-                        <label for="company_name" class="mx-3 mt-1"> Choose Company </label>
+                        <label for="company_name" class="mx-3 mt-1"> Choose Company: </label>
                         <div class=" d-flex">
                             <input type="text" class="form-control " style="width:80%;" id="inputedCompanyName">
                             <button type="submit" id="filterCompany" class="mx-2 btn btn-primary">Filter</button>
@@ -59,7 +57,7 @@
         </div>
 
         <!-- Main content -->
-        <section class="content p-0">
+        <section class="content ">
             <div class="container-fluid">
                 <div class="table-responsive">
                     <table id="packet_list" class="table table-bordered table-striped" style="text-align: center;">
@@ -69,12 +67,12 @@
                                 <th style="width:30px">Date</th>
                                 <th style="width:100px">Company Name</th>
                                 <th style="width:100px">Packet Number</th>
-                                <th style="width:30px">Quantity</th>
-                                <th style="width:30px">Carat</th>
-                                <th style="width:100px">Pending Process</th>
+                                <th style="width:30px">Packet Quantity</th>
+                                <th style="width:30px">Total Carat</th>
+                                <th style="width:100px">Process</th>
                                 <th style="width:30px">Broken</th>
-                                <th style="width:30px">Price</th>
-                                <th style="width:30px">Invoice</th>
+                                <th style="width:30px">Final Carat</th>
+                                <!-- <th style="width:30px">Invoice</th> -->
                                 <!-- <th style="width:30px">Total Amount</th> -->
                             </tr>
                         </thead>

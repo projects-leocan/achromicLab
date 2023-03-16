@@ -141,14 +141,14 @@ function singIn(email, password) {
                     complete: function () {
                     },
                     success: function (data) {
-                        Swal.fire({
-                            title: 'Login Success',
-                            text: 'Redirecting...',
-                            icon: 'success',
-                            timer: 2000,
-                        }).then(() => {
-                            window.location = 'company';
-                        });
+                        // Swal.fire({
+                        //     title: 'Login Success',
+                        //     text: 'Redirecting...',
+                        //     icon: 'success',
+                        //     timer: 2000,
+                        // }).then(() => {
+                        // });
+                        window.location = 'company';
                     }
                 })
             }

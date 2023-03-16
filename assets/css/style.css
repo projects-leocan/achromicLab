@@ -222,8 +222,8 @@ figure {
 img {
   vertical-align: middle;
   border-style: none;
-  height: 35px;
-  width: 35px;
+  /* height: 35px;
+  width: 35px; */
   max-width: calc(var(--height, 150px) * var(--img-ratio, 1));
   object-fit: cover;
   overflow: hidden;
