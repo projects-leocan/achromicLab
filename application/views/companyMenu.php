@@ -34,7 +34,7 @@
         </div>
 
         <!-- Main content -->
-        <section class="content">
+        <section class="content mt-0">
             <div class="container-fluid">
                 <div class="table-responsive">
                     <table id="category_list" class="table table-bordered table-striped" style="text-align: center;">

@@ -92,10 +92,15 @@
         display:flex;
         align-items: center;
         justify-content: center;
+        text-align:center;
     }
     .invoice-btn{
         cursor:pointer;
         text-decoration:underline;
+    }
+    .side-h1{
+        position:relative;
+        right:82px;
     }
     </style>
 

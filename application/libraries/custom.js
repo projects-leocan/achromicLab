@@ -226,7 +226,7 @@ $(document).on("click", "#company_delete", function (event) {
         showDenyButton: true,
         confirmButtonText: 'Yes',
         confirmButtonColor: '#F28123',
-        denyButtonText: `Cancel`,
+        denyButtonText: `No`,
     }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
@@ -529,6 +529,8 @@ const fetchPacketData = () => {
 
 
 $(document).on("click", "#packet_id", function (event) {
+
+
     let id = $(this).attr('packet_id');
     let data = new FormData()
     data.append("packet_id", id)
@@ -547,6 +549,7 @@ $(document).on("click", "#packet_id", function (event) {
             alert('Something went wrong while fatching packet ')
         },
         success: function (data) {
+            window.location = "invoice"
             data = JSON.parse(data)
             console.log("data :",data);
         }

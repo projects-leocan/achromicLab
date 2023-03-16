@@ -11,6 +11,7 @@ $route['packet_form'] = 'Dashboard/packet_form';
 
 $route['home'] = 'Dashboard';
 $route['signIn'] = 'Home';
+$route['invoice'] = 'Home/print';
 
 
 $route['404_override'] = '';
