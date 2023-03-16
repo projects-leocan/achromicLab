@@ -88,6 +88,11 @@
         text-transform: none;
         word-wrap: break-word;
     }
+    .btn-center{
+        display:flex;
+        align-items: center;
+        justify-content: center;
+    }
     </style>
 
 </head>

@@ -1,8 +1,8 @@
 // live 
-// const base_url = 'https://leocan.co/subFolder/achromicLab/';
+const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-const base_url = 'http://localhost/achromicLab/';
+// const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
@@ -178,7 +178,6 @@ function signOut() {
 
 // +++++++++++++++++++++++++ Company +++++++++++++++++++++++++++++++++
 const fetchAllComapany = () => {
-
     $.ajax({
         url: base_url + 'Dashboard/fatchAllCompanyName',
         method: 'get',
@@ -200,8 +199,8 @@ const fetchAllComapany = () => {
                     let names = company_names.company_name
                     $('#category_list').DataTable().row.add([
                         count, names,
-                        `<a class="btn btn-success" id="company_edit" com_id="${company_names.company_id}" com_name="${names}" >EDIT</a>
-                        <a class="btn btn-danger" id="company_delete" com_id="${company_names.company_id}"  >DELETE</a>`
+                        `<a  id="company_edit" com_id="${company_names.company_id}" com_name="${names}" ><i class="mx-2 fa fa-edit"></i></a>
+                        <a id="company_delete" com_id="${company_names.company_id}">  <i class="fa fa-trash"></i> </a>`
 
                     ]).draw()
                 })
@@ -348,21 +347,27 @@ function updateCompany(id, company_name) {
 
 const addCompany = () => {
     let company_name = $('#company_name').val()
-
     if (company_name == '' || company_name == null) {
         alert('Please Enter Company name')
         return false
     } else {
+        company_name = toTitleCase(company_name)
         addCompanyData(company_name)
     }
 }
 
-const addCompanyData = (company_name) => {
+const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+}
 
+const addCompanyData = (company_name) => {
     let data = new FormData()
     data.append('company_name', company_name)
+
     $.ajax({
-        url: base_url + 'Dashboard/addCompany',
+        url: base_url + 'Dashboard/uniqueName',
         data: data,
         type: 'POST',
         cache: false,
@@ -372,7 +377,7 @@ const addCompanyData = (company_name) => {
         beforeSend: function (data) { },
         complete: function (data) { },
         error: function (e) {
-            alert('Failed to Data Add.')
+            alert('something went wrong .')
         },
         success: function (data) {
             data = JSON.parse(data);
@@ -387,10 +392,47 @@ const addCompanyData = (company_name) => {
                     }
                 })
                 $("#company_name").val("");
-
             }
             else {
-                Swal.fire(`${data.message}`);
+
+                let data = new FormData()
+                data.append('company_name', company_name)
+
+                $.ajax({
+                    url: base_url + 'Dashboard/addCompany',
+                    data: data,
+                    type: 'POST',
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    dataType: false,
+                    beforeSend: function (data) { },
+                    complete: function (data) { },
+                    error: function (e) {
+                        alert('something went wrong .')
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        console.log("data :",data);
+            
+                        if (data.success) {
+                            Swal.fire({
+                                title: '',
+                                text: `${data.message}`,
+                                confirmButtonText: 'Ok',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    fetchAllComapany();
+                                }
+                            })
+                            $("#company_name").val("");
+            
+                        }
+                        else {
+                            Swal.fire(`${data.message}`);
+                        }
+                    },
+                })
             }
         },
     })
@@ -413,8 +455,7 @@ function BindControls() {
 
         success: function (data) {
             data = JSON.parse(data);
-            // console.log("data :",data.CompanyNames);
-            let company_name = []
+            let company_name = ["All Company",]
 
             data.CompanyNames.map((currentCompanyName) => {
                 company_name.push(currentCompanyName.company_name)
@@ -435,16 +476,17 @@ function BindControls() {
     })
 }
 
-// $("#inputedCompanyName option: selected").on("input",function () {
-//     alert()
-// });
 
 $('#inputedCompanyName').on('change', function (e) {
-    var optionSelected = $("option:selected", this);
-    var valueSelected = this.value;
-
-    console.log(valueSelected);
-
+    let valueSelected = this.value;
+    localStorage.setItem("selectedCompanyName", valueSelected)
+    if(valueSelected == "All Company"){
+        fetchPacketData();
+    }
+    else{
+        fatchSelectedCompnay();
+    }
+    
 });
 
 
@@ -477,9 +519,10 @@ const fetchPacketData = () => {
                     let pending_process = currentPacket.pending_process_diamond_carat;
                     let broken = currentPacket.broken_diamond_carat;
                     let price = currentPacket.price_per_carat;
+                    let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
 
                     $('#packet_list').DataTable().row.add([
-                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price,
+                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price,invoice
                     ]).draw()
                 })
             }
@@ -585,16 +628,7 @@ const addCaratDetails = (selectedDate, company_id, inputedCompanyName, packetNum
                     }
                 })
 
-                $("#selected_date").val('');
-                $("#inputedCompanyName").val('');
-                $("#number_of_packet").val('');
-                $("#number_of_qty").val('');
-                $("#total_number_of_carat").val('');
-                $("#pending_process_qty").val('');
-                $("#pending_process_carat").val('');
-                $("#broken_qty").val('');
-                $("#broken_carat").val('');
-                $("#price_per_carat").val('');
+                resetForm();
 
             }
             else {
@@ -606,16 +640,34 @@ const addCaratDetails = (selectedDate, company_id, inputedCompanyName, packetNum
 }
 
 
+$("#packet_details_reset").on("click", () => {
+    resetForm();
+})
+
+const resetForm = ()=>{
+    $("#selected_date").val('');
+    $("#inputedCompanyName").val('');
+    $("#number_of_packet").val('');
+    $("#number_of_qty").val('');
+    $("#total_number_of_carat").val('');
+    $("#pending_process_qty").val('');
+    $("#pending_process_carat").val('');
+    $("#broken_qty").val('');
+    $("#broken_carat").val('');
+    $("#price_per_carat").val('');
+}
+
+
 const fatchSelectedCompnay = () => {
 
-    let company_name = $("#inputedCompanyName").val()
-    console.log("company_name =====", company_name);
+    let c_name = localStorage.getItem("selectedCompanyName");
+    console.log("c_name ---",c_name);
     let data = new FormData()
-    data.append("company_name", company_name)
+    data.append("c_name", c_name)
 
     $.ajax({
         url: base_url + 'Dashboard/fatchSelectedCompanyData',
-        method: 'get',
+        method: 'post',
         processData: false,
         contentType: false,
         beforeSend: function (data) { },
@@ -625,27 +677,28 @@ const fatchSelectedCompnay = () => {
             alert('Something went wrong while fatching packet ')
         },
         success: function (data) {
-            console.log("data :",data);
-            // data = JSON.parse(data)
-            // let table = $('#packet_list').DataTable()
-            // table.clear().draw()
-            // if (data.success) {
-            //     data.packet.forEach(function (currentPacket, index) {
-            //         let count = index + 1;
-            //         let date = currentPacket.date;
-            //         let company_name = currentPacket.company_name;
-            //         let packet_no = currentPacket.packet_no;
-            //         let qty = currentPacket.packet_dimond_qty;
-            //         let carat = currentPacket.packet_dimond_caret;
-            //         let pending_process = currentPacket.pending_process_diamond_carat;
-            //         let broken = currentPacket.broken_diamond_carat;
-            //         let price = currentPacket.price_per_carat;
+            let table = $('#packet_list').DataTable()
+            table.clear().draw()
+            data = JSON.parse(data)
+            console.log("data ======",data);
+            if (data.success) {
+                data.CompanyNames.forEach(function (currentPacket, index) {
+                    let count = index + 1;
+                    let date = currentPacket.date;
+                    let company_name = currentPacket.company_name;
+                    let packet_no = currentPacket.packet_no;
+                    let qty = currentPacket.packet_dimond_qty;
+                    let carat = currentPacket.packet_dimond_caret;
+                    let pending_process = currentPacket.pending_process_diamond_carat;
+                    let broken = currentPacket.broken_diamond_carat;
+                    let price = currentPacket.price_per_carat;
+                    let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
 
-            //         $('#packet_list').DataTable().row.add([
-            //             count, date, company_name, packet_no, qty, carat, pending_process, broken, price,
-            //         ]).draw()
-            //     })
-            // }
+                    $('#packet_list').DataTable().row.add([
+                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price,invoice,
+                    ]).draw()
+                })
+            }
         }
     })
 }

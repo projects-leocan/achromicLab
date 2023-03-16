@@ -119,7 +119,7 @@ class DbHandler
     public function fatchPacketDetails()
     {
 
-        $sql_query = "SELECT * FROM `packet`";
+        $sql_query = "SELECT * FROM `packet` ORDER BY `packet_id`  DESC ";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -227,26 +227,42 @@ class DbHandler
         }
         return $result;
 
-        // $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done,@f_id AS f_id");
-        // $stmt1->execute();
-        // $stmt1->bind_result($is_done, $f_id);
-        // $stmt1->fetch();
-        // $stmt1->close();
-
-        // if ($is_done) {
-        //     $result = array(
-        //         'success' => true,
-        //         'user_id' => $f_id,
-        //         'message' => 'CATEGORY_SUCCESS'
-        //     );
-        // } else {
-        //     $result = array(
-        //         'success' => false,
-        //         'message' => 'CATEGORY_FAIL'
-        //     );
-        // }
-        // return $result;
     }
+
+    public function uniqueCompanyName($company_name)
+    {
+        $sql_query = "SELECT COUNT(*) FROM company WHERE `company_name` = '$company_name'";
+        $stmt = $this->conn->prepare($sql_query);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $response = array();
+
+        while ($obj = $result->fetch_assoc()) {
+            $response[] = $obj;
+        }
+
+        $stmt->close();
+
+        if($response[0]['COUNT(*)'] > 0){ // Access the count value from the response array
+            $result = array(
+                'success' => true,
+                'response' => $response,
+                'message' => 'Company name already exists'
+            );
+        }else {
+            $result = array(
+                'status' => true,
+                'message' => 'company added successfully',
+                'response' => $response,
+            );
+        }
+    return $result;
+
+}
+
+    
 
     public function fetchAllCategories()
     {

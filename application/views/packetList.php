@@ -32,11 +32,17 @@
             </div>
 
             <div class="form-group row">
-                <label for="company_name" class="mx-3 col-form-label">Company Name</label>
-                <!-- <div class="col-sm-10"> -->
-                    <input class="form-control" type="text" list="company_name" id="inputedCompanyName"
+                <label for="inputedCompanyName" class="mx-3 col-form-label">Company Name</label>
+                <input class="form-control" type="text" id="inputedCompanyName"
                         placeholder="Company name" style="width:50%;">
-                <!-- </div> -->
+
+                <!-- <select class="form-select form-select-lg form-control" style="width:50%;" name=""
+                    id="inputedCompanyName">
+                    <option value="" disabled selected>Select Company </option> -->
+
+
+                </select>
+
             </div>
 
         </div>
@@ -57,6 +63,7 @@
                                 <th style="width:100px">Pending Process</th>
                                 <th style="width:30px">Broken</th>
                                 <th style="width:30px">Price</th>
+                                <th style="width:30px">Invoice</th>
                                 <!-- <th style="width:30px">Total Amount</th> -->
                             </tr>
                         </thead>

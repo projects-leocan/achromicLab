@@ -64,10 +64,18 @@ class Dashboard extends CI_Controller
         echo json_encode($response);
     }
 
-    public function fatchSelectedCompanyData()
+    public function uniqueName()
     {
         $catName = $_REQUEST["company_name"];
-        $response = $this->dbhandler->fatchSelectedCompany($catName);
+        $response = $this->dbhandler->uniqueCompanyName($catName);
+        echo json_encode($response);
+    }
+
+    public function fatchSelectedCompanyData()
+    {
+        
+        $company_name = $_POST["c_name"];
+        $response = $this->dbhandler->fatchSelectedCompany($company_name);
         echo json_encode($response);
     }
 
