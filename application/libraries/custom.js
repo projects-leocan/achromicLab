@@ -6,7 +6,6 @@ const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // ready function 
 $(() => {
-    // var jq = $.noConflict();
 
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
@@ -14,6 +13,7 @@ $(() => {
 
     if (window.location.href == base_url + 'packet') {
         fetchPacketData();
+        $('#inputedCompanyName').val("All Company");
         BindControls();
     }
 

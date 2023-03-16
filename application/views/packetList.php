@@ -47,8 +47,7 @@
                         <span style="color:red;"> * </span>
                     </label>
                     <div class="col-sm-10 d-flex">
-                        <input type="text" value="" class="form-control mr-2" 
-                            placeholder="Enter Company Name" style="width:50%;" id="inputedCompanyName">
+                        <input type="text" class="form-control mr-2" style="width:50%;" id="inputedCompanyName">
                         <button type="submit" id="filterCompany" class="mx-2 btn btn-primary" style="padding:0px 30px;">Filter</button>
                     </div>
                 </div>
