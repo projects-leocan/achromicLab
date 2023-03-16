@@ -708,7 +708,7 @@ $("#packet_details_reset").on("click", () => {
 })
 
 const resetForm = ()=>{
-    $("#inputedCompanyName").val('');
+    $("#selectedCompanyName").val('');
     $("#number_of_qty").val('');
     $("#total_number_of_carat").val('');
     $("#pending_process_qty").val('');
