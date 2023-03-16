@@ -90,9 +90,9 @@
                 <label for="broken" class="col-sm-2 col-form-label">Broken</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <input type="text" id="broken_qty" class="form-control" placeholder="Quantity" />
+                        <input type="number" id="broken_qty" class="form-control" placeholder="Quantity" />
                         <span class="input-group-addon">-</span>
-                        <input type="text" id="broken_carat" class="form-control" placeholder="Carat" />
+                        <input type="number" id="broken_carat" class="form-control" placeholder="Carat" />
                     </div>
                 </div>
             </div>
