@@ -105,7 +105,7 @@
             </div>
 
             <div class="form-group row btn-center">
-                <button type="submit" id="packet_details_submit" class="btn btn-success"> Add </button>
+                <button type="submit" id="packet_details_submit" class="btn btn-success"> Add Packet </button>
                 <button type="submit" id="packet_details_reset" class="mx-2 btn btn-danger"> Reset </button>
             </div>
 
