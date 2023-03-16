@@ -45,7 +45,7 @@
             <div class="form-group row">
                 <label for="selected_date" class="col-sm-2 col-form-label">Date</label>
                 <div class="col-sm-10">
-                    <input type="date" class="form-control" id="selected_date">
+                    <input type="" class="form-control" id="selected_date" >
                 </div>
             </div>
 
@@ -59,27 +59,27 @@
             <div class="form-group row">
                 <label for="number_of_packet" class="col-sm-2 col-form-label">Packet Number</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="number_of_packet" placeholder="Add Packet number">
+                    <input type="number" readonly class="form-control" id="number_of_packet" placeholder="Add Packet number">
                 </div>
             </div>
             <div class="form-group row">
-                <label for="number_of_qty" class="col-sm-2 col-form-label">Quantity</label>
+                <label for="number_of_qty" class="col-sm-2 col-form-label">Packet Quantity</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="number_of_qty" placeholder="Quantity">
+                    <input type="number" class="form-control" id="number_of_qty" placeholder="Packet Quantity">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="total_number_of_carat" class="col-sm-2 col-form-label">Total Carat</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="total_number_of_carat" placeholder="Add Carat">
+                    <input type="number" class="form-control" id="total_number_of_carat" placeholder="Total Carat ">
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="pending_process" class="col-sm-2 col-form-label">Pending Process</label>
+                <label for="pending_process" class="col-sm-2 col-form-label">Pending</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <input type="number" id="pending_process_qty" class="form-control" placeholder="Add Quantity" />
+                        <input type="number" id="pending_process_qty" class="form-control" placeholder="Quantity" />
                         <span class="input-group-addon">-</span>
                         <input type="number" id="pending_process_carat" class="form-control" placeholder="Carat" />
                     </div>
@@ -90,7 +90,7 @@
                 <label for="broken" class="col-sm-2 col-form-label">Broken</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <input type="text" id="broken_qty" class="form-control" placeholder="Add Quantity" />
+                        <input type="text" id="broken_qty" class="form-control" placeholder="Quantity" />
                         <span class="input-group-addon">-</span>
                         <input type="text" id="broken_carat" class="form-control" placeholder="Carat" />
                     </div>
@@ -98,9 +98,9 @@
             </div>
 
             <div class="form-group row">
-                <label for="price_per_carat" class="col-sm-2 col-form-label">Price Per Carat</label>
+                <label for="price_per_carat" class="col-sm-2 col-form-label">Final Carat</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="price_per_carat" placeholder="Price per Carat">
+                    <input type="number" class="form-control" id="price_per_carat" placeholder="Final Carat">
                 </div>
             </div>
 

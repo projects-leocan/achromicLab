@@ -19,8 +19,7 @@
 
             <div class="container">
                 <div class="form-group row">
-                    <label for="company_name" class="col-sm-2 col-form-label">Company Name
-                        <span style="color:red;"> * </span>
+                    <label for="company_name" class="col-sm-2 col-form-label">Company Name:  
                     </label>
                     <div class="col-sm-10 d-flex">
                         <input type="text" value="" class="form-control mr-2" id="company_name"

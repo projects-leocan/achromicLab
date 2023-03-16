@@ -18,9 +18,29 @@ $(() => {
     }
 
     if (window.location.href == base_url + 'packet_form') {
+        $("#selected_date" ).datepicker({
+            dateFormat : 'dd/mm/yy',
+            defaultDate: new Date()
+        });
+       $("#selected_date").datepicker('setDate', new Date());
         BindControls();
+        autoIncPacketNum();
     }
 })
+
+$("#total_number_of_carat").on("input",()=>{
+    finalPrice()
+})
+
+$("#broken_carat").on("input",()=>{
+    finalPrice()
+})
+
+function finalPrice(){
+    let totalCarat = $("#total_number_of_carat").val();
+    let broken_qty_carat = $("#broken_carat").val();
+    $("#price_per_carat").val(totalCarat-broken_qty_carat);
+}
 
 // popup function...
 function showAlert(alertText) {
@@ -536,10 +556,10 @@ const fetchPacketData = () => {
                     let pending_process = currentPacket.pending_process_diamond_carat;
                     let broken = currentPacket.broken_diamond_carat;
                     let price = currentPacket.price_per_carat;
-                    let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
+                    // let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
                     $('#packet_list').DataTable().row.add([
-                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price,invoice
+                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price
                     ]).draw()
                 })
             }
@@ -745,6 +765,31 @@ const fatchSelectedCompnay = () => {
         }
     })
 }
+
+const autoIncPacketNum = () =>{
+
+    $.ajax({
+        url: base_url + 'Dashboard/autoIncPacketNum',
+        method: 'get',
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data)
+            if (data.success) {
+                
+                data.packet.forEach(function (currentPacket, index) {
+                    $("#number_of_packet").val(currentPacket.packet_count+1)
+                })
+            }
+        }
+    })
+} 
 
 
 

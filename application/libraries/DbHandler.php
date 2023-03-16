@@ -89,7 +89,8 @@ class DbHandler
 
     public function fatchSelectedCompany($company_id)
     {
-        $sql_query = "SELECT * FROM `packet` WHERE `company_id` = '$company_id'";
+        
+        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and `company_id` = '$company_id'";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -120,6 +121,35 @@ class DbHandler
     {
 
         $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id ";
+        $stmt = $this->conn->prepare($sql_query);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $packet = array();
+
+        while ($obj = $result->fetch_assoc()) {
+            $packet[] = $obj;
+        }
+
+        $stmt->close();
+
+        if (count($packet) > 0) {
+            $result = array(
+                'success' => true,
+                'packet' => $packet,
+            );
+        } else {
+            $result = array(
+                'success' => false,
+            );
+        }
+        return $result;
+    }
+    public function autoPacketNum()
+    {
+
+        $sql_query = "SELECT count(*) as packet_count FROM `packet` ";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();

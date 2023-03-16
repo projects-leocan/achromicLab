@@ -113,6 +113,12 @@ class Dashboard extends CI_Controller
         echo json_encode($response);
     }
 
+    public function autoIncPacketNum()
+    {
+        $response = $this->dbhandler->autoPacketNum();
+        echo json_encode($response);
+    }
+
     public function addPacketData()
     { 
         $selectedDate = $_REQUEST["selectedDate"];
