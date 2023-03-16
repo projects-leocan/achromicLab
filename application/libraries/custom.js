@@ -1,8 +1,8 @@
 // live 
-// const base_url = 'https://leocan.co/subFolder/achromicLab/';
+const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-const base_url = 'http://localhost/achromicLab/';
+// const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
