@@ -32,7 +32,7 @@ $("#total_number_of_carat").on("input",()=>{
     finalPrice()
 })
 
-$("#broken_carat").on("input",()=>{
+$("#pending_process_carat").on("input",()=>{
     finalPrice()
 })
 
