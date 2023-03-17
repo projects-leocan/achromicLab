@@ -79,9 +79,9 @@
                 <label for="pending_process" class="col-sm-2 col-form-label">Pending</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <input type="number" id="pending_process_qty" class="form-control" placeholder="Quantity" />
+                        <input type="number" id="pending_process_qty" class="form-control" value ="0" placeholder="Quantity" />
                         <span class="input-group-addon">-</span>
-                        <input type="number" id="pending_process_carat" class="form-control" placeholder="Carat" />
+                        <input type="number" id="pending_process_carat" class="form-control" value ="0" placeholder="Carat" />
                     </div>
                 </div>
             </div>
@@ -90,9 +90,9 @@
                 <label for="broken" class="col-sm-2 col-form-label">Broken</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <input type="number" id="broken_qty" class="form-control" placeholder="Quantity" />
+                        <input type="number" id="broken_qty" class="form-control" value ="0" placeholder="Quantity" />
                         <span class="input-group-addon">-</span>
-                        <input type="number" id="broken_carat" class="form-control" placeholder="Carat" />
+                        <input type="number" id="broken_carat" class="form-control" value ="0" placeholder="Carat" />
                     </div>
                 </div>
             </div>
