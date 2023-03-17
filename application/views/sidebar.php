@@ -16,9 +16,9 @@
                 <!-- Sidebar user (optional) -->
                 
                     
-                    <picture>
+              
                 <img src="logo.png" class="img-fluid pb-3" style="max-width: 80%;" alt="image desc">
-              </picture>
+              
                 <hr style="border-top: 1px solid #fff">        
             
 
