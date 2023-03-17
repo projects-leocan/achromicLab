@@ -232,16 +232,25 @@ class DbHandler
         $sql_query = "delete from `company` where `company_id` ='$id' ";
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
+
+        $result = $stmt->get_result();
+        
+
         $stmt->close();
+
+       // $stmt->close();
+
         if ($sql_query) {
             $result = array(
                 'success' => true,
                 'message' => 'Company deleted successfully',
+                'result' => $result
             );
         } else {
             $result = array(
                 'success' => false,
                 'message' => 'compnay not deleted',
+                'result' => $result
             );
         }
         return $result;
