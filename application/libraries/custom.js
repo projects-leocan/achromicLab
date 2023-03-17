@@ -288,7 +288,7 @@ function companyDelete(id) {
                 })
             }
             else {
-                Swal.fire('Company not Delete');
+                Swal.fire('Cannot delete this company because packet is already exist with this company.');
             }
         }
     });
