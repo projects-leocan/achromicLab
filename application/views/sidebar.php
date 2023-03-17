@@ -17,7 +17,7 @@
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="info">
                     <picture>
-                <img src="logo.png" class="img-fluid pb-3" style="max-height: 40%;" alt="image desc">
+                <img src="logo.png" class="img-fluid pb-3" style="max-width: 80%;" alt="image desc">
               </picture>
                     </div>
                 </div>
