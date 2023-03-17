@@ -714,13 +714,13 @@ $("#packet_details_reset").on("click", () => {
 
 const resetForm = ()=>{
     $("#selectedCompanyName").val('');
-    $("#number_of_qty").val('');
-    $("#total_number_of_carat").val('');
-    $("#pending_process_qty").val('');
-    $("#pending_process_carat").val('');
-    $("#broken_qty").val('');
-    $("#broken_carat").val('');
-    $("#price_per_carat").val('');
+    $("#number_of_qty").val('0');
+    $("#total_number_of_carat").val('0');
+    $("#pending_process_qty").val('0');
+    $("#pending_process_carat").val('0');
+    $("#broken_qty").val('0');
+    $("#broken_carat").val('0');
+    $("#price_per_carat").val('0');
 }
 
 
