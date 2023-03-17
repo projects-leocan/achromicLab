@@ -31,7 +31,8 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- favicon -->
-    <link rel="icon" type="image/png" href="#">
+    <link rel="icon" type="image/png" href="logo.png">
+
 
     <style>
     .ScrollStyle {
