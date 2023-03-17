@@ -234,7 +234,7 @@ class DbHandler
         $stmt->execute();
         $stmt->close();
 
-        if(mysqli_query($conn, $sql_query)){
+        if(mysqli_query($this->conn, $sql_query)){
             $result = array(
                 'success' => true,
                 'message' => 'Company deleted successfully'
