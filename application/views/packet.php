@@ -65,18 +65,18 @@
             <div class="form-group row">
                 <label for="number_of_qty" class="col-sm-2 col-form-label">Packet Quantity</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="number_of_qty" value ="0" placeholder="Packet Quantity">
+                    <input type="number" class="form-control" id="number_of_qty" placeholder="Packet Quantity">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="total_number_of_carat" class="col-sm-2 col-form-label">Total Carat</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="total_number_of_carat" value ="0" placeholder="Total Carat ">
+                    <input type="number" class="form-control" id="total_number_of_carat" placeholder="Total Carat ">
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="pending_process" class="col-sm-2 col-form-label">Pending</label>
+                <label for="pending_process" class="col-sm-2 col-form-label">None Process</label>
                 <div class="col-sm-10">
                     <div class="input-group">
                         <input type="number" id="pending_process_qty" class="form-control" value ="0" placeholder="Quantity" />

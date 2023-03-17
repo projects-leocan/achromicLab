@@ -13,7 +13,7 @@
 
                 <form method="post">
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" value="" id="signin_user_email" placeholder="Email">
+                        <input type="email" class="form-control" value="" id="signin_user_email" placeholder="User Id">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
