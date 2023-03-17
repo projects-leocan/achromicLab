@@ -38,7 +38,7 @@ $("#broken_carat").on("input",()=>{
 
 function finalPrice(){
     let totalCarat = $("#total_number_of_carat").val();
-    let broken_qty_carat = $("#broken_carat").val();
+    let broken_qty_carat = $("#pending_process_carat").val();
     $("#price_per_carat").val(totalCarat-broken_qty_carat);
 }
 
