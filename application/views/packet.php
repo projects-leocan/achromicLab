@@ -100,7 +100,7 @@
             <div class="form-group row">
                 <label for="price_per_carat" class="col-sm-2 col-form-label">Final Carat</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="price_per_carat" placeholder="Final Carat">
+                    <input type="number" class="form-control" id="price_per_carat" value ="0" placeholder="Final Carat">
                 </div>
             </div>
 
