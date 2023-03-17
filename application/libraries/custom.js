@@ -39,13 +39,9 @@ $("#pending_process_carat").on("input",()=>{
 function finalPrice(){
     let totalCarat = $("#total_number_of_carat").val();
     let broken_qty_carat = $("#pending_process_carat").val();
-    let final_carat = totalCarat-broken_qty_carat;
-    $string = floatval($final_carat);
- 
-// Use the number_format function to format the string
-$formatted = number_format($string, 2, '.', '');
+    $formatted_number = round_to_2dp(totalCarat-broken_qty_carat);
 
-    $("#price_per_carat").val(formatted);
+    $("#price_per_carat").val($formatted_number);
 }
 
 // popup function...
