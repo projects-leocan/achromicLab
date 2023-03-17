@@ -16,7 +16,9 @@
                 <!-- Sidebar user (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="info">
-                        <a href="#" class="d-block "> <span class="text-center">Achromic Lab <span></a>
+                    <picture>
+                <img src="logo.png" class="img-fluid pb-3" style="max-height: 40%;" alt="image desc">
+              </picture>
                     </div>
                 </div>
 
