@@ -242,7 +242,7 @@ class DbHandler
         }else{
             $result = array(
                 'success' => false,
-                'message' => 'compnay not deleted'
+                'message' => 'Cannot delete this company because packet is already exist with this company.'
                 
             );
         }
