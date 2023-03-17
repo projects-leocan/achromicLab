@@ -69,7 +69,7 @@
                                 <th style="width:100px">Packet Number</th>
                                 <th style="width:30px">Packet Quantity</th>
                                 <th style="width:30px">Total Carat</th>
-                                <th style="width:100px">Process</th>
+                                <th style="width:100px">None Process</th>
                                 <th style="width:30px">Broken</th>
                                 <th style="width:30px">Final Carat</th>
                                 <!-- <th style="width:30px">Invoice</th> -->
