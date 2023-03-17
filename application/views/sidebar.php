@@ -14,13 +14,13 @@
             <!-- Sidebar -->
             <div class="sidebar">
                 <!-- Sidebar user (optional) -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                
                     
-                    <picture>
+             
                 <img src="logo.png" class="img-fluid pb-3" style="max-width: 80%;" alt="image desc">
-              </picture>
+             
                     
-                </div>
+                
 
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
