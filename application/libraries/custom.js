@@ -39,9 +39,10 @@ $("#pending_process_carat").on("input",()=>{
 function finalPrice(){
     let totalCarat = $("#total_number_of_carat").val();
     let broken_qty_carat = $("#pending_process_carat").val();
-    $formatted_number = round((totalCarat-broken_qty_carat), 2); 
-    console.log("formated number===", $formatted_number);
-    $("#price_per_carat").val(totalCarat-broken_qty_carat);
+    let fixedNum = (totalCarat-broken_qty_carat).toFixed(2);
+    console.log("formated number===", $fixedNum);
+    
+    $("#price_per_carat").val(fixedNum);
 }
 
 // popup function...
