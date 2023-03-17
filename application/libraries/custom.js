@@ -714,8 +714,8 @@ $("#packet_details_reset").on("click", () => {
 
 const resetForm = ()=>{
     $("#selectedCompanyName").val('');
-    $("#number_of_qty").val('0');
-    $("#total_number_of_carat").val('0');
+    $("#number_of_qty").val('');
+    $("#total_number_of_carat").val('');
     $("#pending_process_qty").val('0');
     $("#pending_process_carat").val('0');
     $("#broken_qty").val('0');
