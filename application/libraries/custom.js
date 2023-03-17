@@ -40,8 +40,8 @@ function finalPrice(){
     let totalCarat = $("#total_number_of_carat").val();
     let broken_qty_carat = $("#pending_process_carat").val();
     $formatted_number = round((totalCarat-broken_qty_carat), 2); 
-
-    $("#price_per_carat").val($formatted_number);
+    console.log("formated number===", $formatted_number);
+    $("#price_per_carat").val(totalCarat-broken_qty_carat);
 }
 
 // popup function...
