@@ -40,7 +40,7 @@ function finalPrice(){
     let totalCarat = $("#total_number_of_carat").val();
     let broken_qty_carat = $("#pending_process_carat").val();
     let fixedNum = (totalCarat-broken_qty_carat).toFixed(2);
-    console.log("formated number===", $fixedNum);
+    console.log("formated number===", fixedNum);
     
     $("#price_per_carat").val(fixedNum);
 }
