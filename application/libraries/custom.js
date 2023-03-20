@@ -599,12 +599,11 @@ const fetchPacketData = () => {
 
                 let newTotalTR = `<tr>
                     <td colspan="4"> <b>Total <b></td>
-                    <td colspan="1"></td>
-                    <td colspan="1"> <b> ${totalQty} <b>  </td>
-                    <td colspan="1"> <b> ${totalCarat} <b> </td>
-                    <td colspan="1"> <b> ${totalNoneProcess} <b></td>
-                    <td colspan="1"> <b> ${totalBroken} <b></td>
-                    <td colspan="1"> <b> ${finalPrice} <b> </td>
+                    <td > <b> ${totalQty} <b>  </td>
+                    <td > <b> ${totalCarat} <b> </td>
+                    <td > <b> ${totalNoneProcess} <b></td>
+                    <td > <b> ${totalBroken} <b></td>
+                    <td > <b> ${finalPrice} <b> </td>
                     <td colspan="2"> </td>
                 
                 </tr>`
