@@ -235,9 +235,10 @@ class DbHandler
         return $result;
     }
 
-    public function addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat)
+    public function addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,$cube_time,$price_per_carat)
     {
-        $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_qty`,`packet_dimond_caret`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`price_per_carat`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat)";
+        $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_qty`,`packet_dimond_caret`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`cube_qty`,`cube_time`,`price_per_carat`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,'$cube_time',$price_per_carat)";
+
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
         $stmt->close();
@@ -279,9 +280,10 @@ class DbHandler
     }
 
 
-    public function updatePacket($packet_id,$broken_diamond_carat,$broken_diamond_qty,$date,$company_id,$packet_dimond_caret,$packet_dimond_qty,$pending_process_diamond_carat,$pending_process_diamond_qty,$price_per_carat)
+    public function updatePacket($packet_id,$broken_diamond_carat,$broken_diamond_qty,$date,$company_id,$packet_dimond_caret,$packet_dimond_qty,$pending_process_diamond_carat,$pending_process_diamond_qty,$cube_qty,$cube_time,$price_per_carat)
     {
-        $sql_query = "update `packet` set company_id=$company_id,	date='$date',packet_dimond_caret =$packet_dimond_caret ,packet_dimond_qty=$packet_dimond_qty, pending_process_diamond_qty =$pending_process_diamond_qty, pending_process_diamond_carat=$pending_process_diamond_carat,	broken_diamond_qty=$broken_diamond_qty,broken_diamond_carat=$broken_diamond_carat ,price_per_carat=$price_per_carat  where packet_id=$packet_id";
+        $sql_query = "update `packet` set company_id=$company_id,	date='$date',packet_dimond_caret =$packet_dimond_caret ,packet_dimond_qty=$packet_dimond_qty, pending_process_diamond_qty =$pending_process_diamond_qty, pending_process_diamond_carat=$pending_process_diamond_carat,	broken_diamond_qty=$broken_diamond_qty,broken_diamond_carat=$broken_diamond_carat ,
+        cube_qty=$cube_qty,cube_time='$cube_time', price_per_carat=$price_per_carat  where packet_id=$packet_id";
 
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();

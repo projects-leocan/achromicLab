@@ -576,6 +576,7 @@ const fetchPacketData = () => {
                         packet_no="${currentPacket.packet_no}" pending_process_diamond_carat="${currentPacket.pending_process_diamond_carat}" pending_process_diamond_qty="${currentPacket.pending_process_diamond_qty}" price_per_carat="${currentPacket.price_per_carat}">
                         <i class="mx-2 fa fa-edit"></i></a>
                         <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
+                        
                     ]).draw()
                 })
             }
@@ -654,6 +655,8 @@ function bindPacketData() {
                 $("#broken_qty").val(pack.broken_diamond_qty);
                 $("#broken_carat").val(pack.broken_diamond_carat);
                 $("#price_per_carat").val(pack.packet_dimond_caret - pack.pending_process_diamond_carat);
+                $("#cube_qty").val(pack.cube_qty);
+                $("#cube_time").val(pack.cube_time);
 
             })
         }
@@ -662,7 +665,7 @@ function bindPacketData() {
 }
 
 
-function updatePacket(id,selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat) {
+function updatePacket(id,selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat,cube_qty,cube_time, price_per_carat) {
 
     let data = new FormData();
     data.append('packet_id', id);
@@ -674,6 +677,8 @@ function updatePacket(id,selectedDate, company_id, packetNum, quantity, total_ca
     data.append('packet_dimond_qty', quantity);
     data.append('pending_process_diamond_carat', pending_process_qty_carat);
     data.append('pending_process_diamond_qty', pending_process_qty_diamond);
+    data.append('cube_qty', cube_qty);
+    data.append('cube_time', cube_time);
     data.append('price_per_carat', price_per_carat);
 
     $.ajax({
@@ -751,11 +756,13 @@ $('#packet_details_submit').click((e) => {
     let pending_process_qty_carat = $("#pending_process_carat").val();
     let broken_qty_diamond = $("#broken_qty").val();
     let broken_qty_carat = $("#broken_carat").val();
+    let cube_qty = $("#cube_qty").val();
+    let cube_time = $("#cube_time").val();
     let price_per_carat = $("#price_per_carat").val();
 
 
     if (id != '' && id != undefined) {
-        updatePacket(id,selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat);
+        updatePacket(id,selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat,cube_qty,cube_time, price_per_carat);
     }
     else {
         if (selectedDate == "" || selectedDate == null) {
@@ -795,12 +802,12 @@ $('#packet_details_submit').click((e) => {
         }
 
         else {
-            addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat);
+            addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat,cube_qty,cube_time, price_per_carat);
         }
     }
 })
 
-const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat) => {
+const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat,cube_qty,cube_time, price_per_carat) => {
 
     let data = new FormData()
     data.append('selectedDate', selectedDate)
@@ -812,6 +819,8 @@ const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_ca
     data.append('pending_process_qty_carat', pending_process_qty_carat)
     data.append('broken_qty_diamond', broken_qty_diamond)
     data.append('broken_qty_carat', broken_qty_carat)
+    data.append('cube_qty', cube_qty)
+    data.append('cube_time', cube_time)
     data.append('price_per_carat', price_per_carat)
 
     $.ajax({

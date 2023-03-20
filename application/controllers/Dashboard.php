@@ -118,9 +118,11 @@ class Dashboard extends CI_Controller
         $packet_dimond_qty = $_REQUEST["packet_dimond_qty"];
         $pending_process_diamond_carat = $_REQUEST["pending_process_diamond_carat"];
         $pending_process_diamond_qty = $_REQUEST["pending_process_diamond_qty"];
+        $cube_qty = $_REQUEST["cube_qty"];
+        $cube_time = $_REQUEST["cube_time"];
         $price_per_carat = $_REQUEST["price_per_carat"];
 
-        $response = $this->dbhandler->updatePacket($packet_id,$broken_diamond_carat,$broken_diamond_qty,$date,$company_id,$packet_dimond_caret,$packet_dimond_qty,$pending_process_diamond_carat,$pending_process_diamond_qty,$price_per_carat);
+        $response = $this->dbhandler->updatePacket($packet_id,$broken_diamond_carat,$broken_diamond_qty,$date,$company_id,$packet_dimond_caret,$packet_dimond_qty,$pending_process_diamond_carat,$pending_process_diamond_qty,$cube_qty,$cube_time,$price_per_carat);
         echo json_encode($response);
     }
 
@@ -161,9 +163,11 @@ class Dashboard extends CI_Controller
         $pending_process_qty_carat = $_REQUEST["pending_process_qty_carat"];
         $broken_qty_diamond = $_REQUEST["broken_qty_diamond"];
         $broken_qty_carat = $_REQUEST["broken_qty_carat"];
+        $cube_qty = $_REQUEST["cube_qty"];
+        $cube_time = $_REQUEST["cube_time"];
         $price_per_carat = $_REQUEST["price_per_carat"];
 
-        $response = $this->dbhandler->addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat);
+        $response = $this->dbhandler->addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,$cube_time,$price_per_carat);
         echo json_encode($response);
     }
 

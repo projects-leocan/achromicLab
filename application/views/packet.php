@@ -98,6 +98,17 @@
             </div>
 
             <div class="form-group row">
+                <label for="cube" class="col-sm-2 col-form-label">Cube</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <input type="number" id="cube_qty" class="form-control" value ="0" placeholder="Quantity" />
+                        <span class="input-group-addon">-</span>
+                        <input type="date" id="cube_time" class="form-control" value ="0" placeholder="Carat" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
                 <label for="price_per_carat" class="col-sm-2 col-form-label">Final Carat</label>
                 <div class="col-sm-10">
                     <input type="number" class="form-control" id="price_per_carat" value ="0" placeholder="Final Carat">
