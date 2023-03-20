@@ -623,33 +623,42 @@ $(document).on("click", "#packet_delete", function (event) {
     data.append("packet_id", id)
 
 
-    $.ajax({
-        url: base_url + 'Dashboard/deletePacket',
-        method: 'post',
-        data: data,
-        processData: false,
-        contentType: false,
-        beforeSend: function (data) { },
-        complete: function (data) {
-        },
-        error: function (data) {
-            alert('Something went wrong while fatching packet ')
-        },
-        success: function (data) {
-            data = JSON.parse(data)
-            Swal.fire({
-                title: '',
-                text: `${data.message}`,
-                confirmButtonText: 'Ok',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetchPacketData();
+    Swal.fire({
+        title: 'Do You want to delete this packet ?',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        confirmButtonColor: '#F28123',
+        denyButtonText: `No`,
+
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: base_url + 'Dashboard/deletePacket',
+                method: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                beforeSend: function (data) { },
+                complete: function (data) {
+                },
+                error: function (data) {
+                    alert('Something went wrong while fatching packet ')
+                },
+                success: function (data) {
+                    data = JSON.parse(data)
+                    Swal.fire({
+                        title: '',
+                        text: `${data.message}`,
+                        confirmButtonText: 'Ok',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetchPacketData();
+                        }
+                    })
                 }
             })
-        }
+        } 
     })
-
-
 });
 
 
