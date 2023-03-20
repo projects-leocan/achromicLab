@@ -18,9 +18,9 @@ $(() => {
     }
 
     if (window.location.href == base_url + 'packet_form') {
-        if (localStorage.getItem("packet_id") != ""  ) {
+        if (localStorage.getItem("packet_id") != "") {
             bindPacketData();
-        } 
+        }
         $("#selected_date").datepicker({
             dateFormat: 'dd/mm/yy',
             defaultDate: new Date()
@@ -93,7 +93,7 @@ $('#Add_packet').click((e) => {
 })
 
 $('#back_to_packet').click((e) => {
-    localStorage.setItem("packet_id","");
+    localStorage.setItem("packet_id", "");
     window.location = 'packet';
 })
 
@@ -539,6 +539,7 @@ $("#filterCompany").on("click", function () {
 })
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
+
 const fetchPacketData = () => {
     $.ajax({
         url: base_url + 'Dashboard/fetchAllPackets',
@@ -555,9 +556,13 @@ const fetchPacketData = () => {
             data = JSON.parse(data)
             let table = $('#packet_list').DataTable()
             table.clear().draw()
+            let totalQty = 0;
+            let totalCarat = 0;
+            let totalNoneProcess = 0;
+            let totalBroken = 0;
+            let finalPrice = 0;
             if (data.success) {
                 data.packet.forEach(function (currentPacket, index) {
-                    // console.log("currentPacket :",currentPacket);
                     let count = index + 1;
                     let date = currentPacket.date;
                     let company_name = currentPacket.company_name;
@@ -569,20 +574,48 @@ const fetchPacketData = () => {
                     let price = currentPacket.price_per_carat;
                     let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
+
+                    totalQty += parseInt(qty);
+                    totalCarat += parseFloat(carat);
+                    totalNoneProcess += parseFloat(pending_process);
+                    totalBroken += parseFloat(broken);
+                    finalPrice += parseFloat(price);
+                    
+
                     $('#packet_list').DataTable().row.add([
                         count, date, company_name, packet_no, qty, carat, pending_process, broken, price, invoice,
-                        `<a  id="packet_edit" packet_id="${currentPacket.packet_id}" broken_diamond_carat="${currentPacket.broken_diamond_carat}" broken_diamond_qty="${currentPacket.broken_diamond_qty}"  company_name="${currentPacket.company_id}" date="${currentPacket.date}"  
-                         packet_dimond_caret="${currentPacket.packet_dimond_caret}"  packet_dimond_qty="${currentPacket.packet_dimond_qty}"  
-                        packet_no="${currentPacket.packet_no}" pending_process_diamond_carat="${currentPacket.pending_process_diamond_carat}" pending_process_diamond_qty="${currentPacket.pending_process_diamond_qty}" price_per_carat="${currentPacket.price_per_carat}">
+                        `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                         <i class="mx-2 fa fa-edit"></i></a>
                         <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
-                        
+
                     ]).draw()
+
                 })
+                // console.log('totalQty :',totalQty);
+                // console.log('totalCarat :',totalCarat);
+                // console.log('totalNoneProcess :',totalNoneProcess);
+                // console.log('totalBroken :',totalBroken);
+                // console.log('finalPrice :',finalPrice);
+
+                let newTotalTR = `<tr>
+                    <td colspan="3"> <b>Total <b></td>
+                    <td colspan="1"></td>
+                    <td colspan="1"> <b> ${totalQty} <b>  </td>
+                    <td colspan="1"> <b> ${totalCarat} <b> </td>
+                    <td colspan="1"> <b> ${totalNoneProcess} <b></td>
+                    <td colspan="1"> <b> ${totalBroken} <b></td>
+                    <td colspan="1"> <b> ${finalPrice} <b> </td>
+                    <td colspan="2"> </td>
+                
+                </tr>`
+
+                $('#packet_list').append(newTotalTR);
             }
         }
     })
 }
+
+
 
 $(document).on("click", "#packet_delete", function (event) {
     let id = $(this).attr('packet_id');
@@ -665,7 +698,7 @@ function bindPacketData() {
 }
 
 
-function updatePacket(id,selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat,cube_qty,cube_time, price_per_carat) {
+function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat) {
 
     let data = new FormData();
     data.append('packet_id', id);
@@ -762,7 +795,7 @@ $('#packet_details_submit').click((e) => {
 
 
     if (id != '' && id != undefined) {
-        updatePacket(id,selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat,cube_qty,cube_time, price_per_carat);
+        updatePacket(id, selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat);
     }
     else {
         if (selectedDate == "" || selectedDate == null) {
@@ -802,12 +835,12 @@ $('#packet_details_submit').click((e) => {
         }
 
         else {
-            addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat,cube_qty,cube_time, price_per_carat);
+            addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat);
         }
     }
 })
 
-const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat,cube_qty,cube_time, price_per_carat) => {
+const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat) => {
 
     let data = new FormData()
     data.append('selectedDate', selectedDate)
@@ -846,6 +879,7 @@ const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_ca
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetchPacketData();
+                        window.location = "packet";
                     }
                 })
 
