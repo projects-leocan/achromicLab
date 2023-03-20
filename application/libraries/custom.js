@@ -598,7 +598,7 @@ const fetchPacketData = () => {
                 // console.log('finalPrice :',finalPrice);
 
                 let newTotalTR = `<tr>
-                    <td colspan="3"> <b>Total <b></td>
+                    <td colspan="4"> <b>Total <b></td>
                     <td colspan="1"></td>
                     <td colspan="1"> <b> ${totalQty} <b>  </td>
                     <td colspan="1"> <b> ${totalCarat} <b> </td>
@@ -892,7 +892,6 @@ const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_ca
         },
     })
 }
-
 
 $("#packet_details_reset").on("click", () => {
     resetForm();
