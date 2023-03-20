@@ -881,6 +881,7 @@ const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_ca
                     confirmButtonText: 'Ok',
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        localStorage.removeItem("packet_id");
                         fetchPacketData();
                         window.location = "packet";
                     }
