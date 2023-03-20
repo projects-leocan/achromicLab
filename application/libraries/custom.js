@@ -18,30 +18,36 @@ $(() => {
     }
 
     if (window.location.href == base_url + 'packet_form') {
-        $("#selected_date" ).datepicker({
-            dateFormat : 'dd/mm/yy',
+        if (localStorage.getItem("packet_id") != ""  ) {
+            bindPacketData();
+        } 
+        $("#selected_date").datepicker({
+            dateFormat: 'dd/mm/yy',
             defaultDate: new Date()
         });
-       $("#selected_date").datepicker('setDate', new Date());
+        $("#selected_date").datepicker('setDate', new Date());
         BindControls();
         autoIncPacketNum();
+
+
+
     }
 })
 
-$("#total_number_of_carat").on("input",()=>{
+$("#total_number_of_carat").on("input", () => {
     finalPrice()
 })
 
-$("#pending_process_carat").on("input",()=>{
+$("#pending_process_carat").on("input", () => {
     finalPrice()
 })
 
-function finalPrice(){
+function finalPrice() {
     let totalCarat = $("#total_number_of_carat").val();
     let broken_qty_carat = $("#pending_process_carat").val();
-    let fixedNum = (totalCarat-broken_qty_carat).toFixed(2);
+    let fixedNum = (totalCarat - broken_qty_carat).toFixed(2);
     // console.log("formated number===", fixedNum);
-    
+
     $("#price_per_carat").val(fixedNum);
 }
 
@@ -87,6 +93,7 @@ $('#Add_packet').click((e) => {
 })
 
 $('#back_to_packet').click((e) => {
+    localStorage.setItem("packet_id","");
     window.location = 'packet';
 })
 
@@ -380,7 +387,7 @@ const addCompany = () => {
 }
 
 const toTitleCase = (str) => {
-    return str.replace(/\w\S*/g, function(txt){
+    return str.replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 }
@@ -436,8 +443,8 @@ const addCompanyData = (company_name) => {
                     },
                     success: function (data) {
                         data = JSON.parse(data);
-                        console.log("data :",data);
-            
+                        console.log("data :", data);
+
                         if (data.success) {
                             Swal.fire({
                                 title: '',
@@ -449,7 +456,7 @@ const addCompanyData = (company_name) => {
                                 }
                             })
                             $("#company_name").val("");
-            
+
                         }
                         else {
                             Swal.fire(`${data.message}`);
@@ -478,13 +485,13 @@ function BindControls() {
 
         success: function (data) {
             data = JSON.parse(data);
-            let company_name = [{id: -1, name: "All Company"}];
+            let company_name = [{ id: -1, name: "All Company" }];
             let company_name_for_packet = [];
 
             data.CompanyNames.map((currentCompanyName) => {
-                company_name.push({id: currentCompanyName.company_id, name: currentCompanyName.company_name});
-                company_name_for_packet.push({id: currentCompanyName.company_id, name: currentCompanyName.company_name});
-                
+                company_name.push({ id: currentCompanyName.company_id, name: currentCompanyName.company_name });
+                company_name_for_packet.push({ id: currentCompanyName.company_id, name: currentCompanyName.company_name });
+
             })
 
             if (data.success) {
@@ -492,10 +499,10 @@ function BindControls() {
                     source: company_name.map(company => company.name),
                     minLength: 0,
                     scroll: true,
-                    select: function(event, ui) {
+                    select: function (event, ui) {
                         var selectedCompany = company_name.find(company => company.name === ui.item.value);
                         var selectedCompanyId = selectedCompany ? selectedCompany.id : -1;
-                        localStorage.setItem("FilterSelecteCompanyID",selectedCompanyId)
+                        localStorage.setItem("FilterSelecteCompanyID", selectedCompanyId)
                     }
                 }).focus(function () {
                     $(this).autocomplete("search", "");
@@ -506,10 +513,10 @@ function BindControls() {
                     source: company_name_for_packet.map(company => company.name),
                     minLength: 0,
                     scroll: true,
-                    select: function(event, ui) {
+                    select: function (event, ui) {
                         var selectedCompany = company_name_for_packet.find(company => company.name === ui.item.value);
                         var selectedCompanyId = selectedCompany ? selectedCompany.id : -1;
-                        localStorage.setItem("selecteCompanyID",selectedCompanyId)
+                        localStorage.setItem("selecteCompanyID", selectedCompanyId)
                     }
                 }).focus(function () {
                     $(this).autocomplete("search", "");
@@ -520,13 +527,13 @@ function BindControls() {
 }
 
 
-$("#filterCompany").on("click",function(){
-    
+$("#filterCompany").on("click", function () {
+
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
-    if(selected_value == "-1"){
+    if (selected_value == "-1") {
         fetchPacketData();
     }
-    else{
+    else {
         fatchSelectedCompnay();
     }
 })
@@ -550,6 +557,7 @@ const fetchPacketData = () => {
             table.clear().draw()
             if (data.success) {
                 data.packet.forEach(function (currentPacket, index) {
+                    // console.log("currentPacket :",currentPacket);
                     let count = index + 1;
                     let date = currentPacket.date;
                     let company_name = currentPacket.company_name;
@@ -562,7 +570,12 @@ const fetchPacketData = () => {
                     let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
                     $('#packet_list').DataTable().row.add([
-                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price,invoice
+                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price, invoice,
+                        `<a  id="packet_edit" packet_id="${currentPacket.packet_id}" broken_diamond_carat="${currentPacket.broken_diamond_carat}" broken_diamond_qty="${currentPacket.broken_diamond_qty}"  company_name="${currentPacket.company_id}" date="${currentPacket.date}"  
+                         packet_dimond_caret="${currentPacket.packet_dimond_caret}"  packet_dimond_qty="${currentPacket.packet_dimond_qty}"  
+                        packet_no="${currentPacket.packet_no}" pending_process_diamond_carat="${currentPacket.pending_process_diamond_carat}" pending_process_diamond_qty="${currentPacket.pending_process_diamond_qty}" price_per_carat="${currentPacket.price_per_carat}">
+                        <i class="mx-2 fa fa-edit"></i></a>
+                        <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
                     ]).draw()
                 })
             }
@@ -570,14 +583,139 @@ const fetchPacketData = () => {
     })
 }
 
-
-$(document).on("click", "#packet_id", function (event) {
-
-
+$(document).on("click", "#packet_delete", function (event) {
     let id = $(this).attr('packet_id');
     let data = new FormData()
     data.append("packet_id", id)
 
+
+    $.ajax({
+        url: base_url + 'Dashboard/deletePacket',
+        method: 'post',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data)
+            Swal.fire({
+                title: '',
+                text: `${data.message}`,
+                confirmButtonText: 'Ok',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetchPacketData();
+                }
+            })
+        }
+    })
+
+
+});
+
+
+
+$(document).on("click", "#packet_edit", function (event) {
+    let id = $(this).attr('packet_id');
+    localStorage.setItem('packet_id', id)
+    window.location = `packet_form`;
+});
+
+function bindPacketData() {
+    let id = localStorage.getItem("packet_id");
+    let data = new FormData()
+    data.append("packet_id", id);
+
+    $.ajax({
+        url: base_url + 'Dashboard/fatchPacketById',
+        method: 'post',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            data.packet.map((pack) => {
+                $("#selected_date").val(pack.date);
+                $("#number_of_qty").val(pack.packet_dimond_qty);
+                $("#total_number_of_carat").val(pack.packet_dimond_caret);
+                $("#pending_process_qty").val(pack.pending_process_diamond_qty);
+                $("#pending_process_carat").val(pack.pending_process_diamond_carat);
+                $("#broken_qty").val(pack.broken_diamond_qty);
+                $("#broken_carat").val(pack.broken_diamond_carat);
+                $("#price_per_carat").val(pack.packet_dimond_caret - pack.pending_process_diamond_carat);
+
+            })
+        }
+    })
+
+}
+
+
+function updatePacket(id,selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat) {
+
+    let data = new FormData();
+    data.append('packet_id', id);
+    data.append('date', selectedDate);
+    data.append('company_id', company_id);
+    data.append('broken_diamond_carat', broken_qty_carat);
+    data.append('broken_diamond_qty', broken_qty_diamond);
+    data.append('packet_dimond_caret', total_carat);
+    data.append('packet_dimond_qty', quantity);
+    data.append('pending_process_diamond_carat', pending_process_qty_carat);
+    data.append('pending_process_diamond_qty', pending_process_qty_diamond);
+    data.append('price_per_carat', price_per_carat);
+
+    $.ajax({
+        url: base_url + 'Dashboard/updatePacket',
+        method: 'post',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.success) {
+                Swal.fire({
+                    title: '',
+                    text: `${data.message}`,
+                    confirmButtonText: 'Ok',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetchPacketData();
+                        window.location = "packet";
+
+                    }
+                })
+            }
+            else {
+                Swal.fire(`${data.message}`);
+            }
+        },
+    })
+}
+
+
+
+$(document).on("click", "#packet_id", function (event) {
+    let id = $(this).attr('packet_id');
+    let data = new FormData()
+    data.append("packet_id", id)
 
     $.ajax({
         url: base_url + 'Dashboard/print_invoice',
@@ -594,18 +732,15 @@ $(document).on("click", "#packet_id", function (event) {
         success: function (data) {
             window.location = "invoice"
             data = JSON.parse(data)
-            console.log("data :",data);
+            console.log("data :", data);
         }
     })
 
 
 });
 
-
-
-
 $('#packet_details_submit').click((e) => {
-
+    let id = localStorage.getItem("packet_id");
     let selectedDate = $("#selected_date").val();
     let company_id = localStorage.getItem("selecteCompanyID");
     let company_name = $("#selectedCompanyName").val()
@@ -618,46 +753,51 @@ $('#packet_details_submit').click((e) => {
     let broken_qty_carat = $("#broken_carat").val();
     let price_per_carat = $("#price_per_carat").val();
 
-    if (selectedDate == "" || selectedDate == null) {
-        alert('Please select date')
-        return false
-    }
-    else if (packetNum == '' || packetNum == null) {
-        alert('Please Enter packet Number')
-        return false
-    }
-    else if (company_name == '' || company_name == null) {
-        alert('Please select company name')
-        return false
-    }
-    else if (quantity == '' || quantity == null) {
-        alert('Please Enter quantity ')
-        return false
-    }
-    else if (total_carat == '' || total_carat == null) {
-        alert('Please Enter total carat')
-        return false
-    }
-    else if (pending_process_qty_diamond == null || pending_process_qty_diamond == '') {
-        alert('Please Enter pending diamond quantity ')
-    }
-    else if (pending_process_qty_carat == null || pending_process_qty_carat == '') {
-        alert('Please Enter pending carat quantity ')
-    }
-    else if (broken_qty_diamond == null || broken_qty_diamond == '') {
-        alert('Please Enter broken diamond quantity ')
-    }
-    else if (broken_qty_carat == null || broken_qty_carat == '') {
-        alert('Please Enter broken carat quantity ')
-    }
-    else if (price_per_carat == null || price_per_carat == '') {
-        alert('Please Enter price per carat ')
-    }
 
+    if (id != '' && id != undefined) {
+        updatePacket(id,selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat);
+    }
     else {
-        addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat);
-    }
+        if (selectedDate == "" || selectedDate == null) {
+            alert('Please select date')
+            return false
+        }
+        else if (packetNum == '' || packetNum == null) {
+            alert('Please Enter packet Number')
+            return false
+        }
+        else if (company_name == '' || company_name == null) {
+            alert('Please select company name')
+            return false
+        }
+        else if (quantity == '' || quantity == null) {
+            alert('Please Enter quantity ')
+            return false
+        }
+        else if (total_carat == '' || total_carat == null) {
+            alert('Please Enter total carat')
+            return false
+        }
+        else if (pending_process_qty_diamond == null || pending_process_qty_diamond == '') {
+            alert('Please Enter pending diamond quantity ')
+        }
+        else if (pending_process_qty_carat == null || pending_process_qty_carat == '') {
+            alert('Please Enter pending carat quantity ')
+        }
+        else if (broken_qty_diamond == null || broken_qty_diamond == '') {
+            alert('Please Enter broken diamond quantity ')
+        }
+        else if (broken_qty_carat == null || broken_qty_carat == '') {
+            alert('Please Enter broken carat quantity ')
+        }
+        else if (price_per_carat == null || price_per_carat == '') {
+            alert('Please Enter price per carat ')
+        }
 
+        else {
+            addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat);
+        }
+    }
 })
 
 const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, price_per_carat) => {
@@ -715,7 +855,7 @@ $("#packet_details_reset").on("click", () => {
     resetForm();
 })
 
-const resetForm = ()=>{
+const resetForm = () => {
     $("#selectedCompanyName").val('');
     $("#number_of_qty").val('');
     $("#total_number_of_carat").val('');
@@ -763,7 +903,9 @@ const fatchSelectedCompnay = () => {
                     let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
 
                     $('#packet_list').DataTable().row.add([
-                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price,invoice,
+                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price, invoice,
+                        `<a  id="packet_edit" packet_id="${currentPacket.packet_id}"  ><i class="mx-2 fa fa-edit"></i></a>
+                        <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
                     ]).draw()
                 })
             }
@@ -771,7 +913,7 @@ const fatchSelectedCompnay = () => {
     })
 }
 
-const autoIncPacketNum = () =>{
+const autoIncPacketNum = () => {
 
     $.ajax({
         url: base_url + 'Dashboard/autoIncPacketNum',
@@ -787,14 +929,14 @@ const autoIncPacketNum = () =>{
         success: function (data) {
             data = JSON.parse(data)
             if (data.success) {
-                
+
                 data.packet.forEach(function (currentPacket, index) {
-                    $("#number_of_packet").val(currentPacket.packet_count+1)
+                    $("#number_of_packet").val(currentPacket.packet_count + 1)
                 })
             }
         }
     })
-} 
+}
 
 
 

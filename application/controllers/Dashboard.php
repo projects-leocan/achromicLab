@@ -92,11 +92,42 @@ class Dashboard extends CI_Controller
         echo json_encode($response);
     }
 
+    public function deletePacket()
+    {
+        $packet_id = $_REQUEST["packet_id"];
+        $response = $this->dbhandler->deletePacket($packet_id);
+        echo json_encode($response);
+    }
+
     public function updateCompany()
     {
         $company_id = $_REQUEST["company_id"];
         $catName = $_REQUEST["company_name"];
         $response = $this->dbhandler->updateCompany($company_id,$catName);
+        echo json_encode($response);
+    }
+
+    public function updatePacket()
+    {
+        $packet_id = $_REQUEST["packet_id"];
+        $broken_diamond_carat = $_REQUEST["broken_diamond_carat"];
+        $broken_diamond_qty = $_REQUEST["broken_diamond_qty"];
+        $date = $_REQUEST["date"];
+        $company_id = $_REQUEST["company_id"];
+        $packet_dimond_caret = $_REQUEST["packet_dimond_caret"];
+        $packet_dimond_qty = $_REQUEST["packet_dimond_qty"];
+        $pending_process_diamond_carat = $_REQUEST["pending_process_diamond_carat"];
+        $pending_process_diamond_qty = $_REQUEST["pending_process_diamond_qty"];
+        $price_per_carat = $_REQUEST["price_per_carat"];
+
+        $response = $this->dbhandler->updatePacket($packet_id,$broken_diamond_carat,$broken_diamond_qty,$date,$company_id,$packet_dimond_caret,$packet_dimond_qty,$pending_process_diamond_carat,$pending_process_diamond_qty,$price_per_carat);
+        echo json_encode($response);
+    }
+
+    public function fatchPacketById()
+    {
+        $packet_id = $_REQUEST["packet_id"];
+        $response = $this->dbhandler->fatchPacketByID($packet_id);
         echo json_encode($response);
     }
 
@@ -135,6 +166,8 @@ class Dashboard extends CI_Controller
         $response = $this->dbhandler->addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$price_per_carat);
         echo json_encode($response);
     }
+
+
 
 
     

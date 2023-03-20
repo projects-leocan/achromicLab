@@ -90,7 +90,7 @@ class DbHandler
     public function fatchSelectedCompany($company_id)
     {
         
-        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id'";
+        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -120,7 +120,7 @@ class DbHandler
     public function fatchPacketDetails()
     {
 
-        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id ";
+        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and is_delete = 0";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -146,6 +146,35 @@ class DbHandler
         }
         return $result;
     }
+    
+    public function fatchPacketByID($packet_id)
+    {
+        $sql_query = "select * from packet where packet_id ='$packet_id'";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $packet = array();
+
+        while ($obj = $result->fetch_assoc()) {
+            $packet[] = $obj;
+        }
+
+        $stmt->close();
+
+        if (count($packet) > 0) {
+            $result = array(
+                'success' => true,
+                'packet' => $packet,
+            );
+        } else {
+            $result = array(
+                'success' => false,
+            );
+        }
+        return $result;
+    }
+
     public function autoPacketNum()
     {
 
@@ -228,6 +257,50 @@ class DbHandler
     }
 
 
+    public function deletePacket($id){
+        $sql_query = "update packet set is_delete=1 where packet_id=$id ";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+        $stmt->close();
+
+        if($sql_query){
+            $result = array(
+                'success' => true,
+                'message' => 'packet deleted successfully',
+            );
+        }else{
+            $result = array(
+                'success' => false,
+                'message' => 'can not delete this packet.',
+                
+            );
+        }
+        return $result;
+    }
+
+
+    public function updatePacket($packet_id,$broken_diamond_carat,$broken_diamond_qty,$date,$company_id,$packet_dimond_caret,$packet_dimond_qty,$pending_process_diamond_carat,$pending_process_diamond_qty,$price_per_carat)
+    {
+        $sql_query = "update `packet` set company_id=$company_id,	date='$date',packet_dimond_caret =$packet_dimond_caret ,packet_dimond_qty=$packet_dimond_qty, pending_process_diamond_qty =$pending_process_diamond_qty, pending_process_diamond_carat=$pending_process_diamond_carat,	broken_diamond_qty=$broken_diamond_qty,broken_diamond_carat=$broken_diamond_carat ,price_per_carat=$price_per_carat  where packet_id=$packet_id";
+
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+        $stmt->close();
+        if ($sql_query) {
+            $result = array(
+                'success' => true,
+                'message' => 'packet updated successfully',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'packet can not update',
+            );
+        }
+        return $result;
+    }
+
+
     public function deleteCompany($id){
         $sql_query = "delete from `company` where `company_id` ='$id' ";
         $stmt = $this->conn->prepare($sql_query);
@@ -246,6 +319,8 @@ class DbHandler
                 
             );
         }
+
+        
        
         // if ($sql_query) {
         //     $result = array(
