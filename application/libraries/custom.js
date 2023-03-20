@@ -591,19 +591,14 @@ const fetchPacketData = () => {
                     ]).draw()
 
                 })
-                // console.log('totalQty :',totalQty);
-                // console.log('totalCarat :',totalCarat);
-                // console.log('totalNoneProcess :',totalNoneProcess);
-                // console.log('totalBroken :',totalBroken);
-                // console.log('finalPrice :',finalPrice);
 
                 let newTotalTR = `<tr>
                     <td colspan="4"> <b>Total <b></td>
-                    <td > <b> ${totalQty} <b>  </td>
-                    <td > <b> ${totalCarat} <b> </td>
-                    <td > <b> ${totalNoneProcess} <b></td>
-                    <td > <b> ${totalBroken} <b></td>
-                    <td > <b> ${finalPrice} <b> </td>
+                    <td> <b> ${totalQty} <b>  </td>
+                    <td> <b> ${totalCarat.toFixed(2)} <b> </td>
+                    <td> <b> ${totalNoneProcess.toFixed(2)} <b></td>
+                    <td> <b> ${totalBroken.toFixed(2)} <b></td>
+                    <td> <b> ${finalPrice.toFixed(2)} <b> </td>
                     <td colspan="2"> </td>
                 
                 </tr>`
