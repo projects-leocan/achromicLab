@@ -559,10 +559,10 @@ const fetchPacketData = () => {
                     let pending_process = currentPacket.pending_process_diamond_carat;
                     let broken = currentPacket.broken_diamond_carat;
                     let price = currentPacket.price_per_carat;
-                    // let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
+                    let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
                     $('#packet_list').DataTable().row.add([
-                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price
+                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price,invoice
                     ]).draw()
                 })
             }

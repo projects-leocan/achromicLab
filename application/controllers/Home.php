@@ -60,7 +60,10 @@ class Home extends CI_Controller {
         $this->session->sess_destroy();
     }
     public function print() {
+        $this->load->view('header');
+        $this->load->view('sidebar');
         $this->load->view('invoice');
+        $this->load->view('footer');
     }
 
 }

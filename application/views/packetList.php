@@ -72,7 +72,7 @@
                                 <th style="width:30px">None Process</th>
                                 <th style="width:30px">Broken</th>
                                 <th style="width:30px">Final Carat</th>
-                                <!-- <th style="width:30px">Invoice</th> -->
+                                <th style="width:30px">Invoice</th>
                                 <!-- <th style="width:30px">Total Amount</th> -->
                             </tr>
                         </thead>
