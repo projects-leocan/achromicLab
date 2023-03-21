@@ -530,12 +530,14 @@ function BindControls() {
 $("#filterCompany").on("click", function () {
 
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
-    if (selected_value == "-1") {
-        fetchPacketData();
-    }
-    else {
+    // if (selected_value == "-1") {
+    //     fetchPacketData();
+    // }
+    // else {
+    //     fatchSelectedCompnay();
+    // }
+    
         fatchSelectedCompnay();
-    }
 })
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
