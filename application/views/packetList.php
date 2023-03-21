@@ -23,9 +23,9 @@
 
                  <div class="btn-center">
                     <div class="form-group row ">
-                        <label for="company_name" class="mx-3 mt-1"> Choose Company: </label>
                         <div class=" d-flex">
                             <input type="text" class="form-control " style="width:80%;" id="inputedCompanyName">
+                            <input type="date" class="mx-2 form-control " style="width:80%;" id="selectedCompanyDate">
                             <button type="submit" id="filterCompany" class="mx-2 btn btn-primary">Filter</button>
                         </div>
                     </div>

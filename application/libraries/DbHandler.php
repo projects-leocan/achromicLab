@@ -87,10 +87,15 @@ class DbHandler
         return $result;
     }
 
-    public function fatchSelectedCompany($company_id)
+    public function fatchSelectedCompany($company_id,$selected_date)
     {
         
-        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0";
+        if(isset($selected_date)){
+            $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0 and date='$selected_date'";
+        }
+        else{
+            $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0";
+        }
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();

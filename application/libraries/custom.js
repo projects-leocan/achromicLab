@@ -918,6 +918,18 @@ const fatchSelectedCompnay = () => {
 
     let data = new FormData()
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let selected_date = $("#selectedCompanyDate").val();
+    if (selected_date) {
+        selected_date = selected_date.replaceAll('-', '/');
+        // Split the string into year, month, and day
+        const dateParts = selected_date.split('/');
+        const year = dateParts[0];
+        const month = dateParts[1];
+        const day = dateParts[2];
+        // Rearrange the parts in the desired format
+        const formatted_date = day + "/" + month + "/" + year;
+        data.append("selected_date", formatted_date)
+    }
     data.append("company_id", selected_value)
 
     $.ajax({

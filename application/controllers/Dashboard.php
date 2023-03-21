@@ -81,7 +81,8 @@ class Dashboard extends CI_Controller
     public function fatchSelectedCompanyData()
     {
         $company_id = $_REQUEST["company_id"];
-        $response = $this->dbhandler->fatchSelectedCompany($company_id);
+        $selected_date = isset($_REQUEST["selected_date"]) ? $_REQUEST["selected_date"] : null;
+        $response = $this->dbhandler->fatchSelectedCompany($company_id, $selected_date);
         echo json_encode($response);
     }
 
