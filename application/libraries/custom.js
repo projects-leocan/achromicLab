@@ -569,10 +569,10 @@ const fetchPacketData = () => {
                     company_name = company_name.toUpperCase();
                     let packet_no = currentPacket.packet_no;
                     let qty = currentPacket.packet_dimond_qty;
-                    let carat = currentPacket.packet_dimond_caret;
-                    let pending_process = currentPacket.pending_process_diamond_carat;
-                    let broken = currentPacket.broken_diamond_carat;
-                    let price = currentPacket.price_per_carat;
+                    let carat = currentPacket.packet_dimond_caret.toFixed(2);
+                    let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
+                    let broken = currentPacket.broken_diamond_carat.toFixed(2);
+                    let price = currentPacket.price_per_carat.toFixed(2);
                     let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
 
