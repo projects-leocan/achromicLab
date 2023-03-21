@@ -120,7 +120,7 @@ class DbHandler
     public function fatchPacketDetails()
     {
 
-        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and is_delete = 0";
+        $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and is_delete = 0 order by p.packet_id DESC";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
