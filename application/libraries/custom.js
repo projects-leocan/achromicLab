@@ -566,6 +566,7 @@ const fetchPacketData = () => {
                     let count = index + 1;
                     let date = currentPacket.date;
                     let company_name = currentPacket.company_name;
+                    company_name = company_name.toUpperCase();
                     let packet_no = currentPacket.packet_no;
                     let qty = currentPacket.packet_dimond_qty;
                     let carat = currentPacket.packet_dimond_caret;
