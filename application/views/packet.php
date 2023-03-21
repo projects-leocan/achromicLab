@@ -63,9 +63,9 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label for="number_of_qty" class="col-sm-2 col-form-label">Packet Quantity</label>
+                <label for="number_of_qty" class="col-sm-2 col-form-label">Total piece</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="number_of_qty" placeholder="Packet Quantity">
+                    <input type="number" class="form-control" id="number_of_qty" placeholder="Total piece">
                 </div>
             </div>
             <div class="form-group row">
