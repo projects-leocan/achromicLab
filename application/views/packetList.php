@@ -67,7 +67,7 @@
                                 <th style="width:30px">Date</th>
                                 <th style="width:100px">Company Name</th>
                                 <th style="width:100px">Packet Number</th>
-                                <th style="width:30px">Packet Quantity</th>
+                                <th style="width:30px">Total piece</th>
                                 <th style="width:30px">Total Carat</th>
                                 <th style="width:30px">None Process</th>
                                 <th style="width:30px">Broken</th>
