@@ -935,6 +935,11 @@ const fatchSelectedCompnay = () => {
         success: function (data) {
             let table = $('#packet_list').DataTable()
             table.clear().draw()
+            let totalQty = 0;
+            let totalCarat = 0;
+            let totalNoneProcess = 0;
+            let totalBroken = 0;
+            let finalPrice = 0;
             data = JSON.parse(data)
             if (data.success) {
                 data.CompanyNames.forEach(function (currentPacket, index) {
@@ -944,11 +949,17 @@ const fatchSelectedCompnay = () => {
                     company_name = company_name.toUpperCase();
                     let packet_no = currentPacket.packet_no;
                     let qty = currentPacket.packet_dimond_qty;
-                    let carat = currentPacket.packet_dimond_caret;
-                    let pending_process = currentPacket.pending_process_diamond_carat;
-                    let broken = currentPacket.broken_diamond_carat;
-                    let price = currentPacket.price_per_carat;
+                    let carat = currentPacket.packet_dimond_caret.toFixed(2);;
+                    let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);;
+                    let broken = currentPacket.broken_diamond_carat.toFixed(2);;
+                    let price = currentPacket.price_per_carat.toFixed(2);;
                     let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
+
+                    totalQty += parseInt(qty);
+                    totalCarat += parseFloat(carat);
+                    totalNoneProcess += parseFloat(pending_process);
+                    totalBroken += parseFloat(broken);
+                    finalPrice += parseFloat(price);
 
                     $('#packet_list').DataTable().row.add([
                         count,packet_no, date, company_name, qty, carat, pending_process, broken, price,
@@ -956,6 +967,19 @@ const fatchSelectedCompnay = () => {
                         <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
                     ]).draw()
                 })
+
+                let newTotalTR = `<tr>
+                <td colspan="4"> <b>Total <b></td>
+                <td> <b> ${totalQty} <b>  </td>
+                <td> <b> ${totalCarat.toFixed(2)} <b> </td>
+                <td> <b> ${totalNoneProcess.toFixed(2)} <b></td>
+                <td> <b> ${totalBroken.toFixed(2)} <b></td>
+                <td> <b> ${finalPrice.toFixed(2)} <b> </td>
+                <td colspan="2"> </td>
+            
+            </tr>`
+
+            $('#packet_list').append(newTotalTR);
             }
         }
     })
