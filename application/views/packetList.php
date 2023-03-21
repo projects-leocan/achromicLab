@@ -16,7 +16,7 @@
 
         <div class="content-header">
             <div class="container-fluid">
-                <div class="col-12 row ">
+                <div class="col-12 row " style="margin: 0 auto 0;!important">
                     <div class="col-sm-1">
                         <h1 class="side-h1">Packet</h1>
                     </div>
@@ -64,7 +64,7 @@
                         <thead>
                             <tr>
                                 <th style="width:30px">No.</th>
-                                <th style="width:100px">Packet Number</th>
+                                <th style="width:30px">Packet No.</th>
                                 <th style="width:30px">Date</th>
                                 <th style="width:100px">Company Name</th>
                                 <th style="width:30px">Total piece</th>
