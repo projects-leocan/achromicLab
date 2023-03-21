@@ -584,7 +584,7 @@ const fetchPacketData = () => {
                     
 
                     $('#packet_list').DataTable().row.add([
-                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price, invoice,
+                        count,packet_no, date, company_name, qty, carat, pending_process, broken, price, invoice,
                         `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                         <i class="mx-2 fa fa-edit"></i></a>
                         <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
@@ -941,6 +941,7 @@ const fatchSelectedCompnay = () => {
                     let count = index + 1;
                     let date = currentPacket.date;
                     let company_name = currentPacket.company_name;
+                    company_name = company_name.toUpperCase();
                     let packet_no = currentPacket.packet_no;
                     let qty = currentPacket.packet_dimond_qty;
                     let carat = currentPacket.packet_dimond_caret;
@@ -950,7 +951,7 @@ const fatchSelectedCompnay = () => {
                     let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
 
                     $('#packet_list').DataTable().row.add([
-                        count, date, company_name, packet_no, qty, carat, pending_process, broken, price, invoice,
+                        count,packet_no, date, company_name, qty, carat, pending_process, broken, price, invoice,
                         `<a  id="packet_edit" packet_id="${currentPacket.packet_id}"  ><i class="mx-2 fa fa-edit"></i></a>
                         <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
                     ]).draw()
