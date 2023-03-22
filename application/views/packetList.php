@@ -8,6 +8,30 @@
     /* height: 120px; */
     /* overflow-y: scroll; */
 }
+
+div.dt-buttons {
+    /* position: absolute; */
+    position: relative;
+    float: right;
+}
+
+#packet_list_length {
+    position: absolute;
+
+}
+
+.buttons-pdf {
+    color: #fff;
+    background-color: #0062cc !important;
+    border-color: #84b8f0 !important;
+    margin-left: 5rem !important;
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.25rem;
+}
 </style>
 <div class="wrapper ScrollStyle">
 
@@ -21,18 +45,19 @@
                         <h1 class="side-h1">Packet</h1>
                     </div>
 
-                 <div class="btn-center">
-                    <div class="form-group row ">
-                        <div class=" d-flex">
-                            <input type="text" class="form-control " style="width:80%;" id="inputedCompanyName">
-                            <input type="date" class="mx-2 form-control " style="width:80%;" id="selectedCompanyDate">
-                            <button type="submit" id="filterCompany" class="mx-2 btn btn-primary">Filter</button>
+                    <div class="btn-center">
+                        <div class="form-group row ">
+                            <div class=" d-flex">
+                                <input type="text" class="form-control " style="width:80%;" id="inputedCompanyName">
+                                <input type="date" class="mx-2 form-control " style="width:80%;"
+                                    id="selectedCompanyDate">
+                                <button type="submit" id="filterCompany" class="mx-2 btn btn-primary">Filter</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                    <div class="col-sm-2">
-                        <ol class="breadcrumb float-sm-right">
+                    <div class="col-sm-2 float-sm-right">
+                        <ol class="float-sm-right">
                             <button type="button" class="btn btn-block btn-primary" id="Add_packet"
                                 style=" width: 100%">Add Packet</button>
                         </ol>
@@ -40,26 +65,13 @@
                 </div>
             </div>
 
-
-
-            <!-- <div class="container">
-                <div class="form-group row">
-                    <label for="company_name" class="col-sm-2 col-form-label">Company Name
-                        <span style="color:red;"> * </span>
-                    </label>
-                    <div class="col-sm-10 d-flex">
-                        <input type="text" class="form-control mr-2" style="width:50%;" id="inputedCompanyName">
-                        <button type="submit" id="filterCompany" class="mx-2 btn btn-primary" style="padding:0px 30px;">Filter</button>
-                    </div>
-                </div>
-            </div> -->
-
         </div>
 
         <!-- Main content -->
         <section class="content ">
             <div class="container-fluid">
-                <div class="table-responsive">
+                <div class="table-responsive" id="importPDF">
+
                     <table id="packet_list" class="table table-bordered table-striped" style="text-align: center;">
                         <thead>
                             <tr>
@@ -77,6 +89,17 @@
                                 <!-- <th style="width:30px">Total Amount</th> -->
                             </tr>
                         </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="5" style="text-align:right"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>

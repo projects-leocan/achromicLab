@@ -12,9 +12,9 @@ $(() => {
     }
 
     if (window.location.href == base_url + 'packet') {
-        fetchPacketData();
         $('#inputedCompanyName').val("All Company");
         BindControls();
+        fetchPacketData();
     }
 
     if (window.location.href == base_url + 'packet_form') {
@@ -530,14 +530,7 @@ function BindControls() {
 $("#filterCompany").on("click", function () {
 
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
-    // if (selected_value == "-1") {
-    //     fetchPacketData();
-    // }
-    // else {
-    //     fatchSelectedCompnay();
-    // }
-    
-        fatchSelectedCompnay();
+    fatchSelectedCompnay();
 })
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
@@ -555,14 +548,79 @@ const fetchPacketData = () => {
             alert('Something went wrong while fatching packet ')
         },
         success: function (data) {
-            data = JSON.parse(data)
-            let table = $('#packet_list').DataTable()
+            data = JSON.parse(data);
+
+            var table = $('#packet_list').DataTable({
+                dom: 'lBfrtip',
+                pagging: true,
+
+                buttons: [
+                    {
+                        extend: 'pdfHtml5', footer: true,
+                        text: 'Download',
+                        // exportOptions: {
+                        //     modifier: {
+                        //         page: 'All'
+                        //     }
+                        // }
+                    }
+                ],
+
+                footerCallback: function (row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(8)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    broken = api
+                        .column(7)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    noneProcess = api
+                        .column(6)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    totalCarat = api
+                        .column(5)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(8, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(8).footer()).html(total);
+                    $(api.column(7).footer()).html(broken);
+                    $(api.column(6).footer()).html(noneProcess);
+                    $(api.column(5).footer()).html(totalCarat);
+                },
+            });
+
+            // table.buttons().container().appendTo('#example_wrapper' );
             table.clear().draw()
-            let totalQty = 0;
-            let totalCarat = 0;
-            let totalNoneProcess = 0;
-            let totalBroken = 0;
-            let finalPrice = 0;
+
             if (data.success) {
                 data.packet.forEach(function (currentPacket, index) {
                     let count = index + 1;
@@ -577,42 +635,20 @@ const fetchPacketData = () => {
                     let price = currentPacket.price_per_carat.toFixed(2);
                     let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
-
-                    totalQty += parseInt(qty);
-                    totalCarat += parseFloat(carat);
-                    totalNoneProcess += parseFloat(pending_process);
-                    totalBroken += parseFloat(broken);
-                    finalPrice += parseFloat(price);
-                    
-
-                    $('#packet_list').DataTable().row.add([
-                        count,packet_no, date, company_name, qty, carat, pending_process, broken, price,
+                    table.row.add([
+                        count, packet_no, date, company_name, qty, carat, pending_process, broken, price,
                         `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                         <i class="mx-2 fa fa-edit"></i></a>
                         <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
-
-                    ]).draw()
-
+                    ])
                 })
 
-                let newTotalTR = `<tr>
-                    <td colspan="4"> <b>Total <b></td>
-                    <td> <b> ${totalQty} <b>  </td>
-                    <td> <b> ${totalCarat.toFixed(2)} <b> </td>
-                    <td> <b> ${totalNoneProcess.toFixed(2)} <b></td>
-                    <td> <b> ${totalBroken.toFixed(2)} <b></td>
-                    <td> <b> ${finalPrice.toFixed(2)} <b> </td>
-                    <td colspan="2"> </td>
-                
-                </tr>`
-
-                $('#packet_list').append(newTotalTR);
+                table.draw()
             }
         }
     })
+
 }
-
-
 
 $(document).on("click", "#packet_delete", function (event) {
     let id = $(this).attr('packet_id');
@@ -654,10 +690,9 @@ $(document).on("click", "#packet_delete", function (event) {
                     })
                 }
             })
-        } 
+        }
     })
 });
-
 
 
 $(document).on("click", "#packet_edit", function (event) {
@@ -947,14 +982,60 @@ const fatchSelectedCompnay = () => {
             alert('Something went wrong while fatching packet ')
         },
         success: function (data) {
-            let table = $('#packet_list').DataTable()
-            table.clear().draw()
-            let totalQty = 0;
-            let totalCarat = 0;
-            let totalNoneProcess = 0;
-            let totalBroken = 0;
-            let finalPrice = 0;
             data = JSON.parse(data)
+            let table = $('#packet_list').DataTable({
+                footerCallback: function (row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(8)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    broken = api
+                        .column(7)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    noneProcess = api
+                        .column(6)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    totalCarat = api
+                        .column(5)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(8, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(8).footer()).html(total);
+                    $(api.column(7).footer()).html(broken);
+                    $(api.column(6).footer()).html(noneProcess);
+                    $(api.column(5).footer()).html(totalCarat);
+                },
+            });
+            table.clear().draw()
             if (data.success) {
                 data.CompanyNames.forEach(function (currentPacket, index) {
                     let count = index + 1;
@@ -969,31 +1050,13 @@ const fatchSelectedCompnay = () => {
                     let price = currentPacket.price_per_carat.toFixed(2);;
                     let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
 
-                    totalQty += parseInt(qty);
-                    totalCarat += parseFloat(carat);
-                    totalNoneProcess += parseFloat(pending_process);
-                    totalBroken += parseFloat(broken);
-                    finalPrice += parseFloat(price);
-
                     $('#packet_list').DataTable().row.add([
-                        count,packet_no, date, company_name, qty, carat, pending_process, broken, price,
+                        count, packet_no, date, company_name, qty, carat, pending_process, broken, price,
                         `<a  id="packet_edit" packet_id="${currentPacket.packet_id}"  ><i class="mx-2 fa fa-edit"></i></a>
                         <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
                     ]).draw()
                 })
 
-                let newTotalTR = `<tr>
-                <td colspan="4"> <b>Total <b></td>
-                <td> <b> ${totalQty} <b>  </td>
-                <td> <b> ${totalCarat.toFixed(2)} <b> </td>
-                <td> <b> ${totalNoneProcess.toFixed(2)} <b></td>
-                <td> <b> ${totalBroken.toFixed(2)} <b></td>
-                <td> <b> ${finalPrice.toFixed(2)} <b> </td>
-                <td colspan="2"> </td>
-            
-            </tr>`
-
-            $('#packet_list').append(newTotalTR);
             }
         }
     })
