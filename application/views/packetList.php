@@ -3,6 +3,24 @@
     height: 35px !important;
 }
 
+/* table {
+    table-layout: fixed;   
+    width: 100% !important;
+} */
+
+table.dataTable th:nth-child(1) {
+  width: 20px;
+  max-width:20px;
+}
+table.dataTable th:nth-child(2) {
+  width: 20px;
+  max-width:20px;
+}
+table.dataTable th:nth-child(3) {
+  width: 10px;
+  max-width:10px;
+}
+
 .ui-autocomplete {
     cursor: pointer;
     /* height: 120px; */
@@ -38,30 +56,29 @@ div.dt-buttons {
 
 
     <div class="content-wrapper">
-
-        <div class="content-header">
+    <div class="content-header">
             <div class="container-fluid">
-                <div class="col-12 row " style="margin: 0 auto 0;!important">
-                    <div class="col-sm-1">
-                        <h1 class="side-h1">Packet</h1>
+                <div class="row ">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Packet</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                        <button type="button" class="btn btn-block btn-primary" id="Add_packet">Add Packet</button>
+                            <!-- <button type="button" class="btn btn-block btn-primary" id="back_to_packet"
+                                style=" width: 100%">Back</button> -->
+                        </ol>
                     </div>
 
-                    <div class="btn-center">
+                    <div class="btn-center w-100">
                         <div class="form-group row ">
                             <div class=" d-flex">
                                 <input type="text" class="form-control " style="width:80%;" id="inputedCompanyName">
                                 <input type="text" name="daterange" class="mx-2 form-control " style="width:80%;"
-                                    id="selectedCompanyDate" placeholder="DD/MM/YYYY - DD/MM/YYYY"/>
+                                    id="selectedCompanyDate" />
                                 <button type="submit" id="filterCompany" class="mx-2 btn btn-primary">Filter</button>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="col-sm-2 float-sm-right">
-                        <ol class="float-sm-right">
-                            <button type="button" class="btn btn-block btn-primary" id="Add_packet"
-                                style=" width: 100%">Add Packet</button>
-                        </ol>
                     </div>
                 </div>
             </div>
@@ -83,7 +100,11 @@ div.dt-buttons {
                                 <th style="width:30px">Total piece</th>
                                 <th style="width:30px">Total Carat</th>
                                 <th style="width:30px">None Process</th>
+                                <th style="width:30px">None Process Qty</th>
                                 <th style="width:30px">Broken</th>
+                                <th style="width:30px">Broken Qty</th>
+                                <th style="width:30px">Cube</th>
+                                <th style="width:30px">Cube Date</th>
                                 <th style="width:30px">Final Carat</th>
                                 <!-- <th style="width:30px">Invoice</th> -->
                                 <th style="width:30px">Action</th>
@@ -95,6 +116,10 @@ div.dt-buttons {
                         <tfoot>
                             <tr>
                                 <th colspan="5" style="text-align:right"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>

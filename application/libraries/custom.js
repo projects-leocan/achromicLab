@@ -16,13 +16,19 @@ $(() => {
         BindControls();
         fetchPacketData();
 
+
         $('input[name="daterange"]').daterangepicker({
             opens: 'left',
-            dateFormat: 'dd/mm/yyyy', 
-            autoUpdateInput: false,
+            dateFormat: 'dd/mm/yyyy',
+            autoUpdateInput: true,
+            autoclose: true,
+            // alwaysShowCalendars: true,
+            // todayBtn: "linked",
+            // autoApply:true,
+            // todayHighlight: true,
         }, function (start, end, label) {
-            localStorage.setItem("startDate",start.format('DD/MM/YYYY'));
-            localStorage.setItem("endDate",end.format('DD/MM/YYYY'));
+            localStorage.setItem("startDate", start.format('DD/MM/YYYY'));
+            localStorage.setItem("endDate", end.format('DD/MM/YYYY'));
         });
 
     }
@@ -562,10 +568,23 @@ const fetchPacketData = () => {
                 dom: 'lBfrtip',
                 pagging: true,
                 destroy: true,
-
                 buttons: [
                     {
                         extend: 'pdfHtml5', footer: true,
+                        exportOptions: {
+                            columns: [0,1,2,3,4,5,6,7,8,9,10,11,12]
+                        },
+                        orientation: 'landscape',
+                        customize: function (doc) {
+                            doc.defaultStyle.alignment = 'center';
+                            doc.styles.tableHeader.alignment = 'center';
+                            // var rowCount = doc.content[1].table.body.length;
+                            // for (i = 1; i < rowCount; i++) {
+                            //     doc.content[1].table.body[i][4].alignment = 'right';
+                            //     doc.content[1].table.body[i][5].alignment = 'right';
+                            //     doc.content[1].table.body[i][6].alignment = 'right';
+                            // }
+                        },
                         text: 'Download',
                         // exportOptions: {
                         //     modifier: {
@@ -574,6 +593,7 @@ const fetchPacketData = () => {
                         // }
                     }
                 ],
+
 
                 footerCallback: function (row, data, start, end, display) {
                     var api = this.api();
@@ -597,6 +617,20 @@ const fetchPacketData = () => {
                             return intVal(a) + intVal(b);
                         }, 0);
 
+                    broken_qty = api
+                        .column(9)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    cube = api
+                        .column(10)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
                     noneProcess = api
                         .column(6)
                         .data()
@@ -611,6 +645,13 @@ const fetchPacketData = () => {
                             return intVal(a) + intVal(b);
                         }, 0);
 
+                    finalCarat = api
+                        .column(12)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
                     // Total over this page
                     pageTotal = api
                         .column(8, { page: 'current' })
@@ -620,6 +661,9 @@ const fetchPacketData = () => {
                         }, 0);
 
                     // Update footer
+                    $(api.column(12).footer()).html(finalCarat);
+                    $(api.column(10).footer()).html(cube);
+                    $(api.column(9).footer()).html(broken_qty);
                     $(api.column(8).footer()).html(total);
                     $(api.column(7).footer()).html(broken);
                     $(api.column(6).footer()).html(noneProcess);
@@ -640,12 +684,19 @@ const fetchPacketData = () => {
                     let qty = currentPacket.packet_dimond_qty;
                     let carat = currentPacket.packet_dimond_caret.toFixed(2);
                     let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
+                    let pending_process_qty = currentPacket.pending_process_diamond_qty.toFixed(2);
                     let broken = currentPacket.broken_diamond_carat.toFixed(2);
+                    let broken_carat = currentPacket.broken_diamond_qty.toFixed(2);
+                    let cube = currentPacket.cube_qty.toFixed(2);
+                    let cube_time = currentPacket.cube_time;
+                    if (cube_time == "" || cube_time == null) {
+                        cube_time = "-";
+                    }
                     let price = currentPacket.price_per_carat.toFixed(2);
                     let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
                     table.row.add([
-                        count, packet_no, date, company_name, qty, carat, pending_process, broken, price,
+                        count, packet_no, date, company_name, qty, carat, pending_process, pending_process_qty, broken, broken_carat, cube, cube_time, price,
                         `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                         <i class="mx-2 fa fa-edit"></i></a>
                         <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
@@ -658,6 +709,7 @@ const fetchPacketData = () => {
     })
 
 }
+
 
 $(document).on("click", "#packet_delete", function (event) {
     let id = $(this).attr('packet_id');
@@ -996,96 +1048,127 @@ const fatchSelectedCompnay = () => {
         },
         success: function (data) {
             data = JSON.parse(data);
-                let table = $('#packet_list').DataTable({
-                    "destroy": true,
-                    "dom": 'lBfrtip',
-                    "pagging": true,
-                    "buttons": [
-                        {
-                            extend: 'pdfHtml5', footer: true,
-                            text: 'Download',
-                            // exportOptions: {
-                            //     modifier: {
-                            //         page: 'All'
-                            //     }
-                            // }
-                        }
-                    ],
-                    footerCallback: function (row, data, start, end, display) {
-                        var api = this.api();
+            let table = $('#packet_list').DataTable({
+                "destroy": true,
+                "dom": 'lBfrtip',
+                "pagging": true,
+                "buttons": [
+                    {
+                        extend: 'pdfHtml5', footer: true,
+                        text: 'Download',
+                        // exportOptions: {
+                        //     modifier: {
+                        //         page: 'All'
+                        //     }
+                        // }
+                    }
+                ],
+                footerCallback: function (row, data, start, end, display) {
+                    var api = this.api();
 
-                        // Remove the formatting to get integer data for summation
-                        var intVal = function (i) {
-                            return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-                        };
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                    };
 
-                        // Total over all pages
-                        total = api
-                            .column(8)
-                            .data()
-                            .reduce(function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0);
-                        broken = api
-                            .column(7)
-                            .data()
-                            .reduce(function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0);
+                    // Total over all pages
+                    total = api
+                        .column(8)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    broken = api
+                        .column(7)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
 
-                        noneProcess = api
-                            .column(6)
-                            .data()
-                            .reduce(function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0);
-                        totalCarat = api
-                            .column(5)
-                            .data()
-                            .reduce(function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0);
+                    noneProcess = api
+                        .column(6)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
 
-                        // Total over this page
-                        pageTotal = api
-                            .column(8, { page: 'current' })
-                            .data()
-                            .reduce(function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0);
+                    broken_qty = api
+                        .column(9)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    cube = api
+                        .column(10)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    totalCarat = api
+                        .column(5)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    finalCarat = api
+                        .column(12)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(8, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
 
 
-                        // Update footer
-                        $(api.column(8).footer()).html(total);
-                        $(api.column(7).footer()).html(broken.toFixed(2));
-                        $(api.column(6).footer()).html(noneProcess.toFixed(2));
-                        $(api.column(5).footer()).html(totalCarat.toFixed(2));
-                    },
-                });
-                // table.buttons().container().appendTo('#example_wrapper' );
-                table.clear().draw()
-                if (data.success) {
-                    data.CompanyNames.forEach(function (currentPacket, index) {
-                        let count = index + 1;
-                        let date = currentPacket.date;
-                        let company_name = currentPacket.company_name;
-                        company_name = company_name.toUpperCase();
-                        let packet_no = currentPacket.packet_no;
-                        let qty = currentPacket.packet_dimond_qty;
-                        let carat = currentPacket.packet_dimond_caret.toFixed(2);
-                        let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
-                        let broken = currentPacket.broken_diamond_carat.toFixed(2);
-                        let price = currentPacket.price_per_carat.toFixed(2);
-                        let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
+                    // Update footer
+                    $(api.column(12).footer()).html(finalCarat);
+                    $(api.column(10).footer()).html(cube);
+                    $(api.column(9).footer()).html(broken_qty);
+                    $(api.column(8).footer()).html(total);
+                    $(api.column(7).footer()).html(broken.toFixed(2));
+                    $(api.column(6).footer()).html(noneProcess.toFixed(2));
+                    $(api.column(5).footer()).html(totalCarat.toFixed(2));
+                },
+            });
+            // table.buttons().container().appendTo('#example_wrapper' );
+            table.clear().draw()
+            if (data.success) {
+                data.CompanyNames.forEach(function (currentPacket, index) {
+                    let count = index + 1;
+                    let date = currentPacket.date;
+                    let company_name = currentPacket.company_name;
+                    company_name = company_name.toUpperCase();
+                    let packet_no = currentPacket.packet_no;
+                    let qty = currentPacket.packet_dimond_qty;
+                    let carat = currentPacket.packet_dimond_caret.toFixed(2);
+                    let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
+                    let pending_process_qty = currentPacket.pending_process_diamond_qty.toFixed(2);
+                    let broken = currentPacket.broken_diamond_carat.toFixed(2);
+                    let broken_carat = currentPacket.broken_diamond_qty.toFixed(2);
+                    let cube = currentPacket.cube_qty.toFixed(2);
+                    let cube_time = currentPacket.cube_time;
+                    if (cube_time == "" || cube_time == null) {
+                        cube_time = "-";
+                    }
+                    let price = currentPacket.price_per_carat.toFixed(2);
+                    let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
 
-                        $('#packet_list').DataTable().row.add([
-                            count, packet_no, date, company_name, qty, carat, pending_process, broken, price,
-                            `<a  id="packet_edit" packet_id="${currentPacket.packet_id}"  ><i class="mx-2 fa fa-edit"></i></a>
+                    $('#packet_list').DataTable().row.add([
+                        count, packet_no, date, company_name, qty, carat, pending_process, pending_process_qty, broken, broken_carat, cube, cube_time, price,
+                        `<a  id="packet_edit" packet_id="${currentPacket.packet_id}"  ><i class="mx-2 fa fa-edit"></i></a>
                             <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
-                        ]).draw()
-                    })
+                    ]).draw()
+                })
 
-                }
+            }
         }
     })
 }
