@@ -49,8 +49,8 @@ div.dt-buttons {
                         <div class="form-group row ">
                             <div class=" d-flex">
                                 <input type="text" class="form-control " style="width:80%;" id="inputedCompanyName">
-                                <input type="date" class="mx-2 form-control " style="width:80%;"
-                                    id="selectedCompanyDate">
+                                <input type="text" name="daterange" value="" class="mx-2 form-control " style="width:80%;"
+                                    id="selectedCompanyDate"/>
                                 <button type="submit" id="filterCompany" class="mx-2 btn btn-primary">Filter</button>
                             </div>
                         </div>

@@ -15,6 +15,16 @@ $(() => {
         $('#inputedCompanyName').val("All Company");
         BindControls();
         fetchPacketData();
+
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        }, function (start, end, label) {
+            // console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+            // console.log("A new date selection was made: " + start.format('DD/MM/YYYY') + ' to ' + end.format('DD/MM/YYYY'));
+            localStorage.setItem("startDate",start.format('DD/MM/YYYY'));
+            localStorage.setItem("endDate",end.format('DD/MM/YYYY'));
+        });
+
     }
 
     if (window.location.href == base_url + 'packet_form') {
@@ -528,8 +538,6 @@ function BindControls() {
 
 
 $("#filterCompany").on("click", function () {
-
-    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
     fatchSelectedCompnay();
 })
 
@@ -553,6 +561,7 @@ const fetchPacketData = () => {
             var table = $('#packet_list').DataTable({
                 dom: 'lBfrtip',
                 pagging: true,
+                destroy: true,
 
                 buttons: [
                     {
@@ -955,17 +964,21 @@ const fatchSelectedCompnay = () => {
 
     let data = new FormData()
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
-    let selected_date = $("#selectedCompanyDate").val();
-    if (selected_date) {
-        selected_date = selected_date.replaceAll('-', '/');
+    // let selected_date = $("#selectedCompanyDate").val();
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+
+    if (startDate && endDate) {
+        // selected_date = selected_date.replaceAll('-', '/');
         // Split the string into year, month, and day
-        const dateParts = selected_date.split('/');
-        const year = dateParts[0];
-        const month = dateParts[1];
-        const day = dateParts[2];
+        // const dateParts = selected_date.split('/');
+        // const year = dateParts[0];
+        // const month = dateParts[1];
+        // const day = dateParts[2];
         // Rearrange the parts in the desired format
-        const formatted_date = day + "/" + month + "/" + year;
-        data.append("selected_date", formatted_date)
+        // const formatted_date = day + "/" + month + "/" + year;
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
     }
     data.append("company_id", selected_value)
 
@@ -982,82 +995,97 @@ const fatchSelectedCompnay = () => {
             alert('Something went wrong while fatching packet ')
         },
         success: function (data) {
-            data = JSON.parse(data)
-            let table = $('#packet_list').DataTable({
-                footerCallback: function (row, data, start, end, display) {
-                    var api = this.api();
+            data = JSON.parse(data);
+                let table = $('#packet_list').DataTable({
+                    "destroy": true,
+                    "dom": 'lBfrtip',
+                    "pagging": true,
+                    "buttons": [
+                        {
+                            extend: 'pdfHtml5', footer: true,
+                            text: 'Download',
+                            // exportOptions: {
+                            //     modifier: {
+                            //         page: 'All'
+                            //     }
+                            // }
+                        }
+                    ],
+                    footerCallback: function (row, data, start, end, display) {
+                        var api = this.api();
 
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function (i) {
-                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-                    };
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) {
+                            return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                        };
 
-                    // Total over all pages
-                    total = api
-                        .column(8)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-                    broken = api
-                        .column(7)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
+                        // Total over all pages
+                        total = api
+                            .column(8)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        broken = api
+                            .column(7)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
 
-                    noneProcess = api
-                        .column(6)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
+                        noneProcess = api
+                            .column(6)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        totalCarat = api
+                            .column(5)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
 
-                    totalCarat = api
-                        .column(5)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
+                        // Total over this page
+                        pageTotal = api
+                            .column(8, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
 
-                    // Total over this page
-                    pageTotal = api
-                        .column(8, { page: 'current' })
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
 
-                    // Update footer
-                    $(api.column(8).footer()).html(total);
-                    $(api.column(7).footer()).html(broken);
-                    $(api.column(6).footer()).html(noneProcess);
-                    $(api.column(5).footer()).html(totalCarat);
-                },
-            });
-            table.clear().draw()
-            if (data.success) {
-                data.CompanyNames.forEach(function (currentPacket, index) {
-                    let count = index + 1;
-                    let date = currentPacket.date;
-                    let company_name = currentPacket.company_name;
-                    company_name = company_name.toUpperCase();
-                    let packet_no = currentPacket.packet_no;
-                    let qty = currentPacket.packet_dimond_qty;
-                    let carat = currentPacket.packet_dimond_caret.toFixed(2);;
-                    let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);;
-                    let broken = currentPacket.broken_diamond_carat.toFixed(2);;
-                    let price = currentPacket.price_per_carat.toFixed(2);;
-                    let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
+                        // Update footer
+                        $(api.column(8).footer()).html(total);
+                        $(api.column(7).footer()).html(broken.toFixed(2));
+                        $(api.column(6).footer()).html(noneProcess.toFixed(2));
+                        $(api.column(5).footer()).html(totalCarat.toFixed(2));
+                    },
+                });
+                // table.buttons().container().appendTo('#example_wrapper' );
+                table.clear().draw()
+                if (data.success) {
+                    data.CompanyNames.forEach(function (currentPacket, index) {
+                        let count = index + 1;
+                        let date = currentPacket.date;
+                        let company_name = currentPacket.company_name;
+                        company_name = company_name.toUpperCase();
+                        let packet_no = currentPacket.packet_no;
+                        let qty = currentPacket.packet_dimond_qty;
+                        let carat = currentPacket.packet_dimond_caret.toFixed(2);
+                        let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
+                        let broken = currentPacket.broken_diamond_carat.toFixed(2);
+                        let price = currentPacket.price_per_carat.toFixed(2);
+                        let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
 
-                    $('#packet_list').DataTable().row.add([
-                        count, packet_no, date, company_name, qty, carat, pending_process, broken, price,
-                        `<a  id="packet_edit" packet_id="${currentPacket.packet_id}"  ><i class="mx-2 fa fa-edit"></i></a>
-                        <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
-                    ]).draw()
-                })
+                        $('#packet_list').DataTable().row.add([
+                            count, packet_no, date, company_name, qty, carat, pending_process, broken, price,
+                            `<a  id="packet_edit" packet_id="${currentPacket.packet_id}"  ><i class="mx-2 fa fa-edit"></i></a>
+                            <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
+                        ]).draw()
+                    })
 
-            }
+                }
         }
     })
 }

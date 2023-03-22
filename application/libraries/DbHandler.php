@@ -87,17 +87,17 @@ class DbHandler
         return $result;
     }
 
-    public function fatchSelectedCompany($company_id,$selected_date)
+    public function fatchSelectedCompany($company_id, $start_date,$end_date)
     {
         
-        if($company_id > 0 && isset($selected_date)){
-            $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0 and date='$selected_date'";
+        if($company_id > 0 && isset($start_date) && isset($end_date)){
+            $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0 and date BETWEEN '$start_date' and '$end_date' ";
         }
         else if(($company_id > 0)){
             $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0 ";
         }
-        else if(isset($selected_date)){
-            $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id  and is_delete = 0 and date='$selected_date'";
+        else if(isset($start_date) && isset($end_date)){
+            $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id  and is_delete = 0 and date BETWEEN '$start_date' and '$end_date'";
         }
         else{
             $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id  and is_delete = 0";
