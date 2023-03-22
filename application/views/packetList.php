@@ -24,13 +24,14 @@ div.dt-buttons {
     color: #fff;
     background-color: #0062cc !important;
     border-color: #84b8f0 !important;
-    margin-left: 5rem !important;
+    margin-left: 1rem !important;
     display: inline-block;
     font-weight: 400;
     color: #fff;
     border: 1px solid transparent;
     padding: 0.375rem 0.75rem;
     border-radius: 0.25rem;
+    margin-bottom:8px;
 }
 </style>
 <div class="wrapper ScrollStyle">
