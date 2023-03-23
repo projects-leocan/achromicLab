@@ -35,6 +35,11 @@
 
 
     <style>
+
+    .nav-item:hover{
+        cursor:pointer;
+    }
+
     .ScrollStyle {
         overflow-y: auto;
         overflow-x: hidden;

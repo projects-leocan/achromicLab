@@ -20,17 +20,17 @@ $(() => {
         $('input[name="daterange"]').daterangepicker({
             opens: 'left',
             dateFormat: 'dd/mm/yyyy',
-            autoUpdateInput: true,
-            autoclose: true,
-            // alwaysShowCalendars: true,
-            // todayBtn: "linked",
-            // autoApply:true,
-            // todayHighlight: true,
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear'
+            }
         }, function (start, end, label) {
             localStorage.setItem("startDate", start.format('DD/MM/YYYY'));
             localStorage.setItem("endDate", end.format('DD/MM/YYYY'));
+            $("#selectedCompanyDate").val(`${start.format('DD/MM/YYYY')} - ${end.format('DD/MM/YYYY')}`);
         });
 
+        $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
     }
 
     if (window.location.href == base_url + 'packet_form') {
@@ -48,6 +48,14 @@ $(() => {
 
 
     }
+})
+
+$('#resetDate').click((e) => {
+    localStorage.removeItem("startDate");
+    localStorage.removeItem("endDate");
+    localStorage.removeItem("FilterSelecteCompanyID");
+    $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
+    $('#inputedCompanyName').val("All Company");
 })
 
 $("#total_number_of_carat").on("input", () => {
@@ -568,11 +576,14 @@ const fetchPacketData = () => {
                 dom: 'lBfrtip',
                 pagging: true,
                 destroy: true,
+                "sScrollX": "100%",
+                // "sScrollXInner": "110%",
+                // "bScrollCollapse": true,
                 buttons: [
                     {
                         extend: 'pdfHtml5', footer: true,
                         exportOptions: {
-                            columns: [0,1,2,3,4,5,6,7,8,9,10,11,12]
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                         },
                         orientation: 'landscape',
                         customize: function (doc) {
@@ -802,6 +813,28 @@ function bindPacketData() {
 
 function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat) {
 
+    if (pending_process_qty_diamond == undefined || pending_process_qty_diamond == "" || pending_process_qty_diamond == null) {
+        pending_process_qty_diamond = 0;
+    }
+    else if (pending_process_qty_carat == undefined || pending_process_qty_carat == "" || pending_process_qty_carat == null) {
+        pending_process_qty_carat = 0;
+    }
+    else if (broken_qty_diamond == undefined || broken_qty_diamond == "" || broken_qty_diamond == null) {
+        broken_qty_diamond = 0;
+    }
+    else if (broken_qty_carat == undefined || broken_qty_carat == "" || broken_qty_carat == null) {
+        broken_qty_carat = 0;
+    }
+    else if (quantity == undefined || quantity == "" || quantity == null) {
+        quantity = 0;
+    }
+    else if (total_carat == undefined || total_carat == "" || total_carat == null) {
+        total_carat = 0;
+    }
+    else if (cube_qty == undefined || cube_qty == "" || cube_qty == null) {
+        cube_qty = 0;
+    }
+
     let data = new FormData();
     data.append('packet_id', id);
     data.append('date', selectedDate);
@@ -826,7 +859,7 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
         complete: function (data) {
         },
         error: function (data) {
-            alert('Something went wrong while fatching packet ')
+            alert('Something went wrong while Update packet ')
         },
         success: function (data) {
             data = JSON.parse(data);
@@ -1055,12 +1088,21 @@ const fatchSelectedCompnay = () => {
                 "buttons": [
                     {
                         extend: 'pdfHtml5', footer: true,
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                        },
+                        orientation: 'landscape',
+                        customize: function (doc) {
+                            doc.defaultStyle.alignment = 'center';
+                            doc.styles.tableHeader.alignment = 'center';
+                            // var rowCount = doc.content[1].table.body.length;
+                            // for (i = 1; i < rowCount; i++) {
+                            //     doc.content[1].table.body[i][4].alignment = 'right';
+                            //     doc.content[1].table.body[i][5].alignment = 'right';
+                            //     doc.content[1].table.body[i][6].alignment = 'right';
+                            // }
+                        },
                         text: 'Download',
-                        // exportOptions: {
-                        //     modifier: {
-                        //         page: 'All'
-                        //     }
-                        // }
                     }
                 ],
                 footerCallback: function (row, data, start, end, display) {
