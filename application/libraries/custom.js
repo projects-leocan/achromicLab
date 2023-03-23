@@ -237,6 +237,7 @@ function signOut() {
         },
         success: function (data) {
             window.location = 'signIn';
+            localStorage.clear();
         },
     });
 }
@@ -809,6 +810,8 @@ $(document).on("click", "#packet_edit", function (event) {
 
 function bindPacketData() {
     let id = localStorage.getItem("packet_id");
+    $("#packet_details_submit").text("Update Packet");
+    $("#packet_details_reset").hide();
     let data = new FormData()
     data.append("packet_id", id);
 
@@ -831,13 +834,13 @@ function bindPacketData() {
                 $("#selected_date").val(pack.date);
                 $("#selectedCompanyName").val(pack.company_name);
                 $("#number_of_qty").val(pack.packet_dimond_qty);
-                $("#total_number_of_carat").val(pack.packet_dimond_caret);
-                $("#pending_process_qty").val(pack.pending_process_diamond_qty);
-                $("#pending_process_carat").val(pack.pending_process_diamond_carat);
-                $("#broken_qty").val(pack.broken_diamond_qty);
-                $("#broken_carat").val(pack.broken_diamond_carat);
-                $("#price_per_carat").val(pack.packet_dimond_caret - pack.pending_process_diamond_carat);
-                $("#cube_qty").val(pack.cube_qty);
+                $("#total_number_of_carat").val(pack.packet_dimond_caret).toFixed(2);
+                $("#pending_process_qty").val(pack.pending_process_diamond_qty).toFixed(2);
+                $("#pending_process_carat").val(pack.pending_process_diamond_carat).toFixed(2);
+                $("#broken_qty").val(pack.broken_diamond_qty).toFixed(2);
+                $("#broken_carat").val(pack.broken_diamond_carat).toFixed(2);
+                $("#price_per_carat").val(pack.packet_dimond_caret - pack.pending_process_diamond_carat).toFixed(2);
+                $("#cube_qty").val(pack.cube_qty).toFixed(2);
                 $("#cube_time").val(pack.cube_time);
 
             })
