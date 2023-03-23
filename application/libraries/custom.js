@@ -45,6 +45,10 @@ $(() => {
     if (window.location.href == base_url + 'packet_form') {
         if (localStorage.getItem("packet_id") != "") {
             bindPacketData();
+           
+        }
+        else{
+            autoIncPacketNum();
         }
         $("#selected_date").datepicker({
             dateFormat: 'yy/mm/dd',
@@ -53,8 +57,6 @@ $(() => {
         });
         $("#selected_date").datepicker('setDate', new Date());
         BindControls();
-        autoIncPacketNum();
-
 
 
     }
@@ -718,6 +720,7 @@ function dataBind(data) {
 
     if (data.success) {
         data.packet.forEach(function (currentPacket, index) {
+            console.log();
             let count = index + 1;
             let date = currentPacket.date;
             var mydate = new Date(date);
@@ -732,9 +735,9 @@ function dataBind(data) {
             let qty = currentPacket.packet_dimond_qty;
             let carat = currentPacket.packet_dimond_caret.toFixed(2);
             let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
-            let pending_process_qty = currentPacket.pending_process_diamond_qty.toFixed(2);
-            let broken = currentPacket.broken_diamond_carat.toFixed(2);
-            let broken_carat = currentPacket.broken_diamond_qty.toFixed(2);
+            let pending_process_qty = currentPacket.pending_process_diamond_qty;
+            let broken_carat = currentPacket.broken_diamond_carat.toFixed(2);
+            let broken_qty = currentPacket.broken_diamond_qty;
             // let cube = currentPacket.cube_qty.toFixed(2);
             // let cube_time = currentPacket.cube_time;
             // if (cube_time == "" || cube_time == null) {
@@ -744,7 +747,7 @@ function dataBind(data) {
             let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
             table.row.add([
-                count, packet_no, packetDate, company_name, qty, carat, pending_process, pending_process_qty, broken, broken_carat, price,
+                count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
                 `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                 <i class="mx-2 fa fa-edit"></i></a>
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
@@ -829,18 +832,20 @@ function bindPacketData() {
         },
         success: function (data) {
             data = JSON.parse(data);
+            console.log("data :",data);
             data.packet.map((pack) => {
                 localStorage.setItem("selecteCompanyID",pack.company_id);
                 $("#selected_date").val(pack.date);
                 $("#selectedCompanyName").val(pack.company_name);
+                $("#number_of_packet").val(pack.packet_no);
                 $("#number_of_qty").val(pack.packet_dimond_qty);
-                $("#total_number_of_carat").val(pack.packet_dimond_caret).toFixed(2);
-                $("#pending_process_qty").val(pack.pending_process_diamond_qty).toFixed(2);
-                $("#pending_process_carat").val(pack.pending_process_diamond_carat).toFixed(2);
-                $("#broken_qty").val(pack.broken_diamond_qty).toFixed(2);
-                $("#broken_carat").val(pack.broken_diamond_carat).toFixed(2);
-                $("#price_per_carat").val(pack.packet_dimond_caret - pack.pending_process_diamond_carat).toFixed(2);
-                $("#cube_qty").val(pack.cube_qty).toFixed(2);
+                $("#total_number_of_carat").val((pack.packet_dimond_caret).toFixed(2));
+                $("#pending_process_qty").val(pack.pending_process_diamond_qty);
+                $("#pending_process_carat").val((pack.pending_process_diamond_carat).toFixed(2));
+                $("#broken_qty").val(pack.broken_diamond_qty);
+                $("#broken_carat").val((pack.broken_diamond_carat).toFixed(2));
+                $("#price_per_carat").val((pack.packet_dimond_caret - pack.pending_process_diamond_carat).toFixed(2));
+                $("#cube_qty").val(pack.cube_qty);
                 $("#cube_time").val(pack.cube_time);
 
             })
@@ -855,22 +860,22 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
     if (pending_process_qty_diamond == undefined || pending_process_qty_diamond == "" || pending_process_qty_diamond == null) {
         pending_process_qty_diamond = 0;
     }
-    else if (pending_process_qty_carat == undefined || pending_process_qty_carat == "" || pending_process_qty_carat == null) {
+     if (pending_process_qty_carat == undefined || pending_process_qty_carat == "" || pending_process_qty_carat == null) {
         pending_process_qty_carat = 0;
     }
-    else if (broken_qty_diamond == undefined || broken_qty_diamond == "" || broken_qty_diamond == null) {
+     if (broken_qty_diamond == undefined || broken_qty_diamond == "" || broken_qty_diamond == null) {
         broken_qty_diamond = 0;
     }
-    else if (broken_qty_carat == undefined || broken_qty_carat == "" || broken_qty_carat == null) {
+     if (broken_qty_carat == undefined || broken_qty_carat == "" || broken_qty_carat == null) {
         broken_qty_carat = 0;
     }
-    else if (quantity == undefined || quantity == "" || quantity == null) {
+     if (quantity == undefined || quantity == "" || quantity == null) {
         quantity = 0;
     }
-    else if (total_carat == undefined || total_carat == "" || total_carat == null) {
+     if (total_carat == undefined || total_carat == "" || total_carat == null) {
         total_carat = 0;
     }
-    else if (cube_qty == undefined || cube_qty == "" || cube_qty == null) {
+     if (cube_qty == undefined || cube_qty == "" || cube_qty == null) {
         cube_qty = 0;
     }
 
