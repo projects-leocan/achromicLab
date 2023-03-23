@@ -76,7 +76,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="pending_process" class="col-sm-2 col-form-label">None Process</label>
+                <label for="pending_process" class="col-sm-2 col-form-label">None Process Piece</label>
                 <div class="col-sm-10">
                     <div class="input-group">
                         <input type="number" id="pending_process_qty" class="form-control" value ="0" placeholder="Quantity" />
@@ -87,7 +87,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="broken" class="col-sm-2 col-form-label">Broken</label>
+                <label for="broken" class="col-sm-2 col-form-label">Broken Piece</label>
                 <div class="col-sm-10">
                     <div class="input-group">
                         <input type="number" id="broken_qty" class="form-control" value ="0" placeholder="Quantity" />
@@ -111,7 +111,7 @@
             <div class="form-group row">
                 <label for="price_per_carat" class="col-sm-2 col-form-label">Final Carat</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="price_per_carat" value ="0" placeholder="Final Carat">
+                    <input type="number" class="form-control" id="price_per_carat" readonly value ="0" placeholder="Final Carat">
                 </div>
             </div>
 

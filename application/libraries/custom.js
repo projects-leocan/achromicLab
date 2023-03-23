@@ -19,14 +19,23 @@ $(() => {
 
         $('input[name="daterange"]').daterangepicker({
             opens: 'left',
-            dateFormat: 'dd/mm/yyyy',
+            // dateFormat: 'dd/mm/yyyy',
             autoUpdateInput: false,
+            autoclose: true,
+            clearBtn: true,
+            autoClear: false,
+            alwaysShowCalendars: false,
+            // autoclose: true,
+            // autoApply:true,
             locale: {
-                cancelLabel: 'Clear'
+                // cancelLabel: 'Clear',
+                clearBtn: true,
+                value: [null, null]
             }
+
         }, function (start, end, label) {
-            localStorage.setItem("startDate", start.format('DD/MM/YYYY'));
-            localStorage.setItem("endDate", end.format('DD/MM/YYYY'));
+            localStorage.setItem("startDate", start.format('YYYY/MM/DD'));
+            localStorage.setItem("endDate", end.format('YYYY/MM/DD'));
             $("#selectedCompanyDate").val(`${start.format('DD/MM/YYYY')} - ${end.format('DD/MM/YYYY')}`);
         });
 
@@ -38,8 +47,9 @@ $(() => {
             bindPacketData();
         }
         $("#selected_date").datepicker({
-            dateFormat: 'dd/mm/yy',
+            dateFormat: 'yy/mm/dd',
             defaultDate: new Date()
+            // 2023-03-21
         });
         $("#selected_date").datepicker('setDate', new Date());
         BindControls();
@@ -56,6 +66,8 @@ $('#resetDate').click((e) => {
     localStorage.removeItem("FilterSelecteCompanyID");
     $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
     $('#inputedCompanyName').val("All Company");
+    fetchPacketData();
+
 })
 
 $("#total_number_of_carat").on("input", () => {
@@ -571,153 +583,175 @@ const fetchPacketData = () => {
         },
         success: function (data) {
             data = JSON.parse(data);
+            dataBind(data);
 
-            var table = $('#packet_list').DataTable({
-                dom: 'lBfrtip',
-                pagging: true,
-                destroy: true,
-                "sScrollX": "100%",
-                // "sScrollXInner": "110%",
-                // "bScrollCollapse": true,
-                buttons: [
-                    {
-                        extend: 'pdfHtml5', footer: true,
-                        exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-                        },
-                        orientation: 'landscape',
-                        customize: function (doc) {
-                            doc.defaultStyle.alignment = 'center';
-                            doc.styles.tableHeader.alignment = 'center';
-                            // var rowCount = doc.content[1].table.body.length;
-                            // for (i = 1; i < rowCount; i++) {
-                            //     doc.content[1].table.body[i][4].alignment = 'right';
-                            //     doc.content[1].table.body[i][5].alignment = 'right';
-                            //     doc.content[1].table.body[i][6].alignment = 'right';
-                            // }
-                        },
-                        text: 'Download',
-                        // exportOptions: {
-                        //     modifier: {
-                        //         page: 'All'
-                        //     }
-                        // }
-                    }
-                ],
-
-
-                footerCallback: function (row, data, start, end, display) {
-                    var api = this.api();
-
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function (i) {
-                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-                    };
-
-                    // Total over all pages
-                    total = api
-                        .column(8)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-                    broken = api
-                        .column(7)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    broken_qty = api
-                        .column(9)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    cube = api
-                        .column(10)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    noneProcess = api
-                        .column(6)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    totalCarat = api
-                        .column(5)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    finalCarat = api
-                        .column(12)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    // Total over this page
-                    pageTotal = api
-                        .column(8, { page: 'current' })
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    // Update footer
-                    $(api.column(12).footer()).html(finalCarat);
-                    $(api.column(10).footer()).html(cube);
-                    $(api.column(9).footer()).html(broken_qty);
-                    $(api.column(8).footer()).html(total);
-                    $(api.column(7).footer()).html(broken);
-                    $(api.column(6).footer()).html(noneProcess);
-                    $(api.column(5).footer()).html(totalCarat);
-                },
-            });
-
-            // table.buttons().container().appendTo('#example_wrapper' );
-            table.clear().draw()
-
-            if (data.success) {
-                data.packet.forEach(function (currentPacket, index) {
-                    let count = index + 1;
-                    let date = currentPacket.date;
-                    let company_name = currentPacket.company_name;
-                    company_name = company_name.toUpperCase();
-                    let packet_no = currentPacket.packet_no;
-                    let qty = currentPacket.packet_dimond_qty;
-                    let carat = currentPacket.packet_dimond_caret.toFixed(2);
-                    let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
-                    let pending_process_qty = currentPacket.pending_process_diamond_qty.toFixed(2);
-                    let broken = currentPacket.broken_diamond_carat.toFixed(2);
-                    let broken_carat = currentPacket.broken_diamond_qty.toFixed(2);
-                    let cube = currentPacket.cube_qty.toFixed(2);
-                    let cube_time = currentPacket.cube_time;
-                    if (cube_time == "" || cube_time == null) {
-                        cube_time = "-";
-                    }
-                    let price = currentPacket.price_per_carat.toFixed(2);
-                    let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
-
-                    table.row.add([
-                        count, packet_no, date, company_name, qty, carat, pending_process, pending_process_qty, broken, broken_carat, cube, cube_time, price,
-                        `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
-                        <i class="mx-2 fa fa-edit"></i></a>
-                        <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
-                    ])
-                })
-
-                table.draw()
-            }
         }
     })
+
+}
+
+function dataBind(data) {
+
+    var table = $('#packet_list').DataTable({
+        dom: 'lBfrtip',
+        pagging: true,
+        destroy: true,
+        // "sScrollX": "100%",
+        // "sScrollXInner": "110%",
+        // "bScrollCollapse": true,
+        autoWidth: false,
+        "columns": [
+            { "width": "10px" },
+            { "width": "10px" },
+            { "width": "55px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            
+          ],
+        buttons: [
+            {
+                extend: 'pdfHtml5', footer: true,
+               
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                },
+                orientation: 'landscape',
+                customize: function (doc) {
+                    doc.defaultStyle.alignment = 'center';
+                    doc.styles.tableHeader.alignment = 'center';
+                    // var rowCount = doc.content[1].table.body.length;
+                    // for (i = 1; i < rowCount; i++) {
+                    //     doc.content[1].table.body[i][4].alignment = 'right';
+                    //     doc.content[1].table.body[i][5].alignment = 'right';
+                    //     doc.content[1].table.body[i][6].alignment = 'right';
+                    // }
+                },
+                text: 'Download',
+                // exportOptions: {
+                //     modifier: {
+                //         page: 'All'
+                //     }
+                // }
+            }
+        ],
+
+
+        footerCallback: function (row, data, start, end, display) {
+            var api = this.api();
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function (i) {
+                return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+            };
+
+            // Total over all pages
+
+            noneProcessPiece = api
+                .column(5)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+
+            noneProcessCarat = api
+                .column(6)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+            broken = api
+                .column(7)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+
+            broken_piece = api
+                .column(8)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+            broken_carat = api
+                .column(9)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+            finalCarat = api
+                .column(10)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+
+            // // Update footer
+
+            // $(api.column(4).footer()).html(totalCarat);
+            $(api.column(5).footer()).html(noneProcessPiece.toFixed(2));
+            $(api.column(6).footer()).html(noneProcessCarat.toFixed(2));
+            $(api.column(7).footer()).html(broken.toFixed(2));
+            $(api.column(8).footer()).html(broken_piece.toFixed(2));
+            $(api.column(9).footer()).html(broken_carat.toFixed(2));
+            $(api.column(10).footer()).html(finalCarat.toFixed(2));
+            // $(api.column(9).footer()).html(broken_qty);
+            // $(api.column(8).footer()).html(total);
+        },
+    });
+
+    // table.buttons().container().appendTo('#example_wrapper' );
+    table.clear().draw()
+
+    if (data.success) {
+        data.packet.forEach(function (currentPacket, index) {
+            let count = index + 1;
+            let date = currentPacket.date;
+            var mydate = new Date(date);
+            year = mydate.getFullYear();
+            month = (mydate.getMonth() + 1).toString().padStart(2, "0");
+            day = mydate.getDate().toString().padStart(2, "0");
+            var packetDate = day+ '-' + month + '-' + year;
+
+            let company_name = currentPacket.company_name;
+            company_name = company_name.toUpperCase();
+            let packet_no = currentPacket.packet_no;
+            let qty = currentPacket.packet_dimond_qty;
+            let carat = currentPacket.packet_dimond_caret.toFixed(2);
+            let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
+            let pending_process_qty = currentPacket.pending_process_diamond_qty.toFixed(2);
+            let broken = currentPacket.broken_diamond_carat.toFixed(2);
+            let broken_carat = currentPacket.broken_diamond_qty.toFixed(2);
+            // let cube = currentPacket.cube_qty.toFixed(2);
+            // let cube_time = currentPacket.cube_time;
+            // if (cube_time == "" || cube_time == null) {
+            //     cube_time = "-";
+            // }
+            let price = currentPacket.price_per_carat.toFixed(2);
+            let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
+
+            table.row.add([
+                count, packet_no, packetDate, company_name, qty, carat, pending_process, pending_process_qty, broken, broken_carat, price,
+                `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
+                <i class="mx-2 fa fa-edit"></i></a>
+                <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
+            ])
+        })
+        table.draw()
+    }
+
 
 }
 
@@ -793,7 +827,9 @@ function bindPacketData() {
         success: function (data) {
             data = JSON.parse(data);
             data.packet.map((pack) => {
+                localStorage.setItem("selecteCompanyID",pack.company_id);
                 $("#selected_date").val(pack.date);
+                $("#selectedCompanyName").val(pack.company_name);
                 $("#number_of_qty").val(pack.packet_dimond_qty);
                 $("#total_number_of_carat").val(pack.packet_dimond_caret);
                 $("#pending_process_qty").val(pack.pending_process_diamond_qty);
@@ -860,9 +896,11 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
         },
         error: function (data) {
             alert('Something went wrong while Update packet ')
+            localStorage.removeItem("selecteCompanyID");
         },
         success: function (data) {
             data = JSON.parse(data);
+            localStorage.removeItem("selecteCompanyID");
             if (data.success) {
                 Swal.fire({
                     title: '',
@@ -870,6 +908,7 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
                     confirmButtonText: 'Ok',
                 }).then((result) => {
                     if (result.isConfirmed) {
+
                         fetchPacketData();
                         window.location = "packet";
 
@@ -913,6 +952,7 @@ $(document).on("click", "#packet_id", function (event) {
 });
 
 $('#packet_details_submit').click((e) => {
+
     let id = localStorage.getItem("packet_id");
     let selectedDate = $("#selected_date").val();
     let company_id = localStorage.getItem("selecteCompanyID");
@@ -946,7 +986,7 @@ $('#packet_details_submit').click((e) => {
             return false
         }
         else if (quantity == '' || quantity == null) {
-            alert('Please Enter quantity ')
+            alert('Please Enter total piece ')
             return false
         }
         else if (total_carat == '' || total_carat == null) {
@@ -1081,136 +1121,7 @@ const fatchSelectedCompnay = () => {
         },
         success: function (data) {
             data = JSON.parse(data);
-            let table = $('#packet_list').DataTable({
-                "destroy": true,
-                "dom": 'lBfrtip',
-                "pagging": true,
-                "buttons": [
-                    {
-                        extend: 'pdfHtml5', footer: true,
-                        exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-                        },
-                        orientation: 'landscape',
-                        customize: function (doc) {
-                            doc.defaultStyle.alignment = 'center';
-                            doc.styles.tableHeader.alignment = 'center';
-                            // var rowCount = doc.content[1].table.body.length;
-                            // for (i = 1; i < rowCount; i++) {
-                            //     doc.content[1].table.body[i][4].alignment = 'right';
-                            //     doc.content[1].table.body[i][5].alignment = 'right';
-                            //     doc.content[1].table.body[i][6].alignment = 'right';
-                            // }
-                        },
-                        text: 'Download',
-                    }
-                ],
-                footerCallback: function (row, data, start, end, display) {
-                    var api = this.api();
-
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function (i) {
-                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-                    };
-
-                    // Total over all pages
-                    total = api
-                        .column(8)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-                    broken = api
-                        .column(7)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    noneProcess = api
-                        .column(6)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    broken_qty = api
-                        .column(9)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    cube = api
-                        .column(10)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-                    totalCarat = api
-                        .column(5)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    finalCarat = api
-                        .column(12)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    // Total over this page
-                    pageTotal = api
-                        .column(8, { page: 'current' })
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-
-                    // Update footer
-                    $(api.column(12).footer()).html(finalCarat);
-                    $(api.column(10).footer()).html(cube);
-                    $(api.column(9).footer()).html(broken_qty);
-                    $(api.column(8).footer()).html(total);
-                    $(api.column(7).footer()).html(broken.toFixed(2));
-                    $(api.column(6).footer()).html(noneProcess.toFixed(2));
-                    $(api.column(5).footer()).html(totalCarat.toFixed(2));
-                },
-            });
-            // table.buttons().container().appendTo('#example_wrapper' );
-            table.clear().draw()
-            if (data.success) {
-                data.CompanyNames.forEach(function (currentPacket, index) {
-                    let count = index + 1;
-                    let date = currentPacket.date;
-                    let company_name = currentPacket.company_name;
-                    company_name = company_name.toUpperCase();
-                    let packet_no = currentPacket.packet_no;
-                    let qty = currentPacket.packet_dimond_qty;
-                    let carat = currentPacket.packet_dimond_caret.toFixed(2);
-                    let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
-                    let pending_process_qty = currentPacket.pending_process_diamond_qty.toFixed(2);
-                    let broken = currentPacket.broken_diamond_carat.toFixed(2);
-                    let broken_carat = currentPacket.broken_diamond_qty.toFixed(2);
-                    let cube = currentPacket.cube_qty.toFixed(2);
-                    let cube_time = currentPacket.cube_time;
-                    if (cube_time == "" || cube_time == null) {
-                        cube_time = "-";
-                    }
-                    let price = currentPacket.price_per_carat.toFixed(2);
-                    let invoice = `<a href="#" style="text-decoration: underline;"> Invoice</a>`
-
-                    $('#packet_list').DataTable().row.add([
-                        count, packet_no, date, company_name, qty, carat, pending_process, pending_process_qty, broken, broken_carat, cube, cube_time, price,
-                        `<a  id="packet_edit" packet_id="${currentPacket.packet_id}"  ><i class="mx-2 fa fa-edit"></i></a>
-                            <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
-                    ]).draw()
-                })
-
-            }
+            dataBind(data);
         }
     })
 }

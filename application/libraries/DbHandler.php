@@ -89,7 +89,12 @@ class DbHandler
 
     public function fatchSelectedCompany($company_id, $start_date,$end_date)
     {
-        
+       
+        if( $company_id == "null"){
+          
+            $company_id = -1;
+        }
+
         if($company_id > 0 && isset($start_date) && isset($end_date)){
             $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0 and date BETWEEN '$start_date' and '$end_date' ";
         }
@@ -102,6 +107,7 @@ class DbHandler
         else{
             $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id  and is_delete = 0";
         }
+       
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -118,7 +124,7 @@ class DbHandler
         if (count($nameArr) > 0) {
             $result = array(
                 'success' => true,
-                'CompanyNames' => $nameArr,
+                'packet' => $nameArr,
             );
         } else {
             $result = array(
@@ -160,7 +166,7 @@ class DbHandler
     
     public function fatchPacketByID($packet_id)
     {
-        $sql_query = "select * from packet where packet_id ='$packet_id'";
+        $sql_query = "select p.*, c.company_name from packet p , company c where p.company_id = c.company_id and p.packet_id ='$packet_id' and p.is_delete = 0";
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
 
@@ -248,8 +254,13 @@ class DbHandler
 
     public function addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,$cube_time,$price_per_carat)
     {
-        $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_qty`,`packet_dimond_caret`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`cube_qty`,`cube_time`,`price_per_carat`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,'$cube_time',$price_per_carat)";
-
+        $sql_query;
+        if(($cube_time == null) || ($cube_time) == ""){
+            $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_qty`,`packet_dimond_caret`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`cube_qty`,`price_per_carat`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,$price_per_carat)";
+        }
+        else{
+            $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_qty`,`packet_dimond_caret`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`cube_qty`,`cube_time`,`price_per_carat`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,'$cube_time',$price_per_carat)";
+        }
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
         $stmt->close();
@@ -293,8 +304,19 @@ class DbHandler
 
     public function updatePacket($packet_id,$broken_diamond_carat,$broken_diamond_qty,$date,$company_id,$packet_dimond_caret,$packet_dimond_qty,$pending_process_diamond_carat,$pending_process_diamond_qty,$cube_qty,$cube_time,$price_per_carat)
     {
-        $sql_query = "update `packet` set company_id=$company_id,	date='$date',packet_dimond_caret =$packet_dimond_caret ,packet_dimond_qty=$packet_dimond_qty, pending_process_diamond_qty =$pending_process_diamond_qty, pending_process_diamond_carat=$pending_process_diamond_carat,	broken_diamond_qty=$broken_diamond_qty,broken_diamond_carat=$broken_diamond_carat ,
-        cube_qty=$cube_qty,cube_time='$cube_time', price_per_carat=$price_per_carat  where packet_id=$packet_id";
+
+        if(($cube_time == null) || ($cube_time) == ""){
+            $sql_query = "update `packet` set company_id=$company_id,	date='$date',packet_dimond_caret =$packet_dimond_caret ,packet_dimond_qty=$packet_dimond_qty, pending_process_diamond_qty =$pending_process_diamond_qty, pending_process_diamond_carat=$pending_process_diamond_carat,	broken_diamond_qty=$broken_diamond_qty,broken_diamond_carat=$broken_diamond_carat ,
+            cube_qty=$cube_qty, price_per_carat=$price_per_carat  where packet_id=$packet_id";
+    
+        }
+        else{
+            
+                    $sql_query = "update `packet` set company_id=$company_id,	date='$date',packet_dimond_caret =$packet_dimond_caret ,packet_dimond_qty=$packet_dimond_qty, pending_process_diamond_qty =$pending_process_diamond_qty, pending_process_diamond_carat=$pending_process_diamond_carat,	broken_diamond_qty=$broken_diamond_qty,broken_diamond_carat=$broken_diamond_carat ,
+                    cube_qty=$cube_qty,cube_time='$cube_time', price_per_carat=$price_per_carat  where packet_id=$packet_id";
+
+        }
+
 
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();

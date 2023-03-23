@@ -98,25 +98,25 @@ div.dt-buttons {
                     <table id="packet_list" class="table table-bordered table-striped" style="text-align: center;">
                         <thead>
                             <tr>
-                                <th style="width:30px">No.</th>
-                                <th style="width:30px">Packet No.</th>
-                                <th style="width:30px">Date</th>
+                                <th style="width:10px">No.</th>
+                                <th style="width:10px">Packet No.</th>
+                                <th style="width:55px">Date</th>
                                 <th style="width:100px">Company Name</th>
                                 <th style="width:30px">Total piece</th>
                                 <th style="width:30px">Total Carat</th>
-                                <th style="width:30px">None Process</th>
-                                <th style="width:30px">None Process Qty</th>
-                                <th style="width:30px">Broken</th>
-                                <th style="width:30px">Broken Qty</th>
-                                <th style="width:30px">Cube</th>
-                                <th style="width:30px">Cube Date</th>
+                                <th style="width:30px">None Process Piece</th>
+                                <th style="width:30px">None Process Carat</th>
+                                <th style="width:30px">Broken Piece</th>
+                                <th style="width:30px"> Broken Carat</th>
+                                <!-- <th style="width:30px">Cube</th>
+                                <th style="width:30px">Cube Date</th> -->
                                 <th style="width:30px">Final Carat</th>
                                 <!-- <th style="width:30px">Invoice</th> -->
                                 <th style="width:30px">Action</th>
                                 <!-- <th style="width:30px">Total Amount</th> -->
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody >
                         </tbody>
                         <tfoot>
                             <tr>
@@ -127,8 +127,8 @@ div.dt-buttons {
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th></th>
-                                <th></th>
+                                <!-- <th></th>
+                                <th></th> -->
                             </tr>
                         </tfoot>
                     </table>
