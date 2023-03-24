@@ -154,6 +154,20 @@ class Dashboard extends CI_Controller
         $response = $this->dbhandler->autoPacketNum();
         echo json_encode($response);
     }
+    
+    public function importCSV()
+    {
+        $data = $_REQUEST['data'];
+        $response = $this->dbhandler->importCSV($data);
+        echo json_encode($response);
+    }
+
+    public function newCompanies()
+    {
+        $company_names = $_REQUEST['company_names'];
+        $response = $this->dbhandler->bulkInsertNewCompany($company_names);
+        echo json_encode($response);
+    }
 
     public function addPacketData()
     { 

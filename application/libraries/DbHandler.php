@@ -279,8 +279,77 @@ class DbHandler
         return $result;
     }
 
+    public function importCSV($data)
+    {
+        $decodedData = json_decode($data, true);
+        // var_dump($data);
+        $sql_query = "INSERT INTO packet (`company_id`, `date`, `packet_no`, `packet_dimond_caret`, `packet_dimond_qty`) VALUES ";
 
-    public function deletePacket($id){
+        $query_parts = array();
+        foreach ($decodedData as $value) {
+            $companyId = $value['Company Name'];
+            $date = $value['Date'];
+            $packetNo = $value['packet_no'];
+            $packetDimondCaret = $value['Total Piece'];
+            $packetDimondQty = $value['Total Carat'];
+
+            $query_parts[] = "('" . $companyId . "', '" . $date . "', '" . $packetNo . "', '" . $packetDimondCaret . "', '" . $packetDimondQty . "')";
+        }
+        $query = implode(',', $query_parts);
+        $sql_query .= implode(',', $query_parts);
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+        $stmt->close();
+
+
+        if (mysqli_query($this->conn, $sql_query)) {
+            $result = array(
+                'success' => true,
+                'message' => 'packet added successfully',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'packet not added',
+            );
+        }
+        return $result;
+    }
+
+    public function bulkInsertNewCompany($company_names)
+    {
+        $decodedData = json_decode($company_names, true);
+
+        $sql_query = "INSERT INTO company (`company_name`) VALUES ";
+
+        $query_parts = array();
+        foreach ($decodedData as $value) {
+            $query_parts[] = "('" . $value . "')";
+        }
+        $sql_query .= implode(',', $query_parts);
+        // echo $sql_query;
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+        $stmt->close();
+
+        if (mysqli_query($this->conn, $sql_query)) {
+            $result = array(
+                'success' => true,
+                'message' => 'Companies added successfully',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'Companies not added',
+            );
+        }
+        return $result;
+    }
+
+
+
+    public function deletePacket($id)
+    {
         $sql_query = "update packet set is_delete=1 where packet_id=$id ";
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
@@ -479,4 +548,3 @@ class DbHandler
 
 }
 
-?>

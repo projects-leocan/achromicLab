@@ -7,6 +7,7 @@ const base_url = 'https://leocan.co/subFolder/achromicLab/';
 // ready function 
 $(() => {
 
+    fetchAllComapany();
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
     }
@@ -15,6 +16,8 @@ $(() => {
         $('#inputedCompanyName').val("All Company");
         BindControls();
         fetchPacketData();
+        autoIncPacketNum();
+        document.getElementById('upload').addEventListener('change', handleFileSelect, false);
 
 
         $('input[name="daterange"]').daterangepicker({
@@ -87,6 +90,144 @@ function finalPrice() {
     // console.log("formated number===", fixedNum);
 
     $("#price_per_carat").val(fixedNum);
+}
+
+let company_name_arr2 = [];
+let company_name_arr3 = [];
+let company_id = [];
+// import csv 
+var ExcelToJSON = function () {
+
+    this.parseExcel = function (file) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+            workbook.SheetNames.forEach(function (sheetName,index) {
+                // Here is your object
+                var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                var json_object = JSON.stringify(XL_row_object);
+                let json_data = JSON.parse(json_object);
+                // console.log(json_data);
+                let count = localStorage.getItem("last_packet_no");
+                let company_name_arr1 = []
+                json_data.forEach(function (obj) {
+                    count++;
+                    // Convert date to YYYY-MM-DD format
+                    var date = new Date(obj.Date);
+
+                    let cName = obj["Company Name"];
+                    if (!company_name_arr1.includes(cName)) {
+                        company_name_arr1.push(cName);
+                    }
+                    obj.Date = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
+                    let packet_num = 0;
+                    obj.packet_no = packet_num + count;
+
+
+                });
+                // console.log(json_data);
+                company_name_arr1 = company_name_arr1.filter(function (name) {
+                    return !company_name_arr2.includes(name);
+                });
+
+                if (company_name_arr1.length > 0) {
+                    // bulk insert new companies
+                    json_data.forEach(function (obj) {
+                        let companyName = obj["Company Name"];
+                        let companyIndex = company_name_arr3.indexOf(companyName);
+                        if (companyIndex !== -1) {
+                            obj["Company Name"] = company_id[companyIndex];
+                        }
+                    });
+                    // insertNewCompanies(company_name_arr1)
+                }
+                if (company_name_arr1.length == 0) {
+                    json_data.forEach(function (obj) {
+                        let companyName = obj["Company Name"];
+                        let companyIndex = company_name_arr3.indexOf(companyName);
+                        if (companyIndex !== -1) {
+                            obj["Company Name"] = company_id[companyIndex];
+                        }
+                    });
+                    sendJSON(json_data)
+                }
+            })
+        };
+
+        reader.onerror = function (ex) {
+            console.log(ex);
+        };
+
+        reader.readAsBinaryString(file);
+    };
+};
+
+function handleFileSelect(evt) {
+    var files = evt.target.files; 
+    var xl2json = new ExcelToJSON();
+    let jsonData = xl2json.parseExcel(files[0]);
+
+}
+
+function insertNewCompanies(insertNewCompanies) {
+    let newCompanyNames = JSON.stringify(insertNewCompanies)
+    let response = new FormData();
+    response.append("company_names", newCompanyNames)
+    $.ajax({
+        url: base_url + 'Dashboard/newCompanies',
+        type: "POST",
+        data: response,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (response) {
+            // console.log("data:",data);
+        }
+    })
+}
+
+function sendJSON(data) {
+    var jsonString = JSON.stringify(data);
+    let response = new FormData();
+    response.append("data", jsonString);
+
+    $.ajax({
+        url: base_url + 'Dashboard/importCSV',
+        type: "POST",
+        data: response,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (response) {
+            if (response.success) {
+                Swal.fire({
+                    title: '',
+                    text: `${response.message}`,
+                    confirmButtonText: 'Ok',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                       fetchPacketData();
+                    }
+                })
+                $("#company_name").val("");
+            }
+            // console.log("data:",data);
+        }
+    })
 }
 
 // popup function...
@@ -266,6 +407,9 @@ const fetchAllComapany = () => {
                 data.CompanyNames.forEach(function (company_names, index) {
                     let count = index + 1
                     let names = company_names.company_name
+                    company_name_arr2.push(names);
+                    company_name_arr3.push(names);
+                    company_id.push(company_names.company_id);
                     $('#category_list').DataTable().row.add([
                         count, names,
                         `<a  id="company_edit" com_id="${company_names.company_id}" com_name="${names}" ><i class="mx-2 fa fa-edit"></i></a>
@@ -482,7 +626,6 @@ const addCompanyData = (company_name) => {
                     },
                     success: function (data) {
                         data = JSON.parse(data);
-                        console.log("data :", data);
 
                         if (data.success) {
                             Swal.fire({
@@ -705,9 +848,9 @@ function dataBind(data) {
 
             // $(api.column(4).footer()).html(totalCarat);
             $(api.column(5).footer()).html(noneProcessPiece.toFixed(2));
-            $(api.column(6).footer()).html(noneProcessCarat.toFixed(2));
+            $(api.column(6).footer()).html(noneProcessCarat);
             $(api.column(7).footer()).html(broken.toFixed(2));
-            $(api.column(8).footer()).html(broken_piece.toFixed(2));
+            $(api.column(8).footer()).html(broken_piece);
             $(api.column(9).footer()).html(broken_carat.toFixed(2));
             $(api.column(10).footer()).html(finalCarat.toFixed(2));
             // $(api.column(9).footer()).html(broken_qty);
@@ -720,7 +863,6 @@ function dataBind(data) {
 
     if (data.success) {
         data.packet.forEach(function (currentPacket, index) {
-            console.log();
             let count = index + 1;
             let date = currentPacket.date;
             var mydate = new Date(date);
@@ -1153,6 +1295,7 @@ const autoIncPacketNum = () => {
 
                 data.packet.forEach(function (currentPacket, index) {
                     $("#number_of_packet").val(currentPacket.packet_count + 1)
+                    localStorage.setItem("last_packet_no",currentPacket.packet_count);
                 })
             }
         }
