@@ -1117,14 +1117,14 @@ $('#packet_details_submit').click((e) => {
     console.log("selectedDate1", selectedDate); 
     selectedDate = selectedDate.split("/").reverse().join("-");
     console.log("selectedDate2", selectedDate); 
-    var mydate = new Date(selectedDate);
-            year = mydate.getFullYear();
-            month = (mydate.getMonth() + 1).toString().padStart(2, "0");
-            day = mydate.getDate().toString().padStart(2, "0");
-            selectedDate = year+ '/' + month + '/' + day;
+    // var mydate = new Date(selectedDate);
+    //         year = mydate.getFullYear();
+    //         month = (mydate.getMonth() + 1).toString().padStart(2, "0");
+    //         day = mydate.getDate().toString().padStart(2, "0");
+    //         selectedDate = year+ '/' + month + '/' + day;
 
-    console.log("mydate", mydate); 
-    console.log("selected date", selectedDate);
+    // console.log("mydate", mydate); 
+    // console.log("selected date", selectedDate);
     let company_id = localStorage.getItem("selecteCompanyID");
     let company_name = $("#selectedCompanyName").val()
     let packetNum = $("#number_of_packet").val();
@@ -1180,7 +1180,7 @@ $('#packet_details_submit').click((e) => {
         }
 
         else {
-           // addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat);
+            addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat);
         }
     }
 })
