@@ -215,6 +215,7 @@ function sendJSON(data) {
             })
         },
         success: function (response) {
+            response= JSON.parse(response);
             if (response.success) {
                 fetchPacketData();
                 Swal.fire({
