@@ -308,7 +308,7 @@ class DbHandler
             $result = array(
                 'success' => true,
                 'query' => $sql_query,
-                'message' => 'packet added successfully',
+                'message' => 'File imported successfully',
             );
         } else {
             $result = array(
