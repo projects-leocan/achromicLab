@@ -313,7 +313,7 @@ class DbHandler
         } else {
             $result = array(
                 'success' => false,
-                'message' => 'packet not added',
+                'message' => 'Please add valid company Id in excel sheet which is available in company list',
             );
         }
     } catch (Exception $e) {
