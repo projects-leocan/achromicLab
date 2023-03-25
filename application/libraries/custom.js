@@ -54,7 +54,7 @@ $(() => {
             autoIncPacketNum();
         }
         $("#selected_date").datepicker({
-            dateFormat: 'yy/mm/dd',
+            dateFormat: 'dd/mm/yy',
             defaultDate: new Date()
             // 2023-03-21
         });
