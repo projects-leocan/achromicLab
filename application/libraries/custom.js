@@ -878,7 +878,7 @@ function dataBind(data) {
             year = mydate.getFullYear();
             month = (mydate.getMonth() + 1).toString().padStart(2, "0");
             day = mydate.getDate().toString().padStart(2, "0");
-            var packetDate = day+ '-' + month + '-' + year;
+            var packetDate = day+ '/' + month + '/' + year;
 
             let company_name = currentPacket.company_name;
             company_name = company_name.toUpperCase();
