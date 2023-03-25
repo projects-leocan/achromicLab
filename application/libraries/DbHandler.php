@@ -283,7 +283,7 @@ class DbHandler
     {
         $decodedData = json_decode($data, true);
         // var_dump($data);
-        $sql_query = "INSERT INTO packet (`company_id`, `date`, `packet_no`, `packet_dimond_caret`, `packet_dimond_qty`) VALUES ";
+        $sql_query = "INSERT INTO packet (`company_id`, `date`, `packet_no`, `packet_dimond_caret`, `packet_dimond_qty`,`price_per_carat`) VALUES ";
 
         $query_parts = array();
         foreach ($decodedData as $value) {
@@ -292,8 +292,9 @@ class DbHandler
             $packetNo = $value['packet_no'];
             $packetDimondCaret = $value['Total Piece'];
             $packetDimondQty = $value['Total Carat'];
+            $finalCaret = $value['Total Carat'];
 
-            $query_parts[] = "('" . $companyId . "', '" . $date . "', '" . $packetNo . "', '" . $packetDimondQty . "', '" .$packetDimondCaret . "')";
+            $query_parts[] = "('" . $companyId . "', '" . $date . "', '" . $packetNo . "', '" . $packetDimondQty . "', '" .$packetDimondCaret . "', '" .$finalCaret . "')";
         }
         $query = implode(',', $query_parts);
         $sql_query .= implode(',', $query_parts);
