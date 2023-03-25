@@ -1120,7 +1120,7 @@ $('#packet_details_submit').click((e) => {
             day = mydate.getDate().toString().padStart(2, "0");
             selectedDate = year+ '/' + month + '/' + day;
 
-    
+    console.log("selected date", mydate); 
     console.log("selected date", selectedDate);
     let company_id = localStorage.getItem("selecteCompanyID");
     let company_name = $("#selectedCompanyName").val()
@@ -1177,7 +1177,7 @@ $('#packet_details_submit').click((e) => {
         }
 
         else {
-            addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat);
+           // addCaratDetails(selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat);
         }
     }
 })
