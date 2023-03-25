@@ -1114,6 +1114,7 @@ $('#packet_details_submit').click((e) => {
 
     let id = localStorage.getItem("packet_id");
     let selectedDate = $("#selected_date").val();
+    //selectedDate = selectedDate.split("/").reverse().join("-");
     console.log("selected date", selectedDate);
     let company_id = localStorage.getItem("selecteCompanyID");
     let company_name = $("#selectedCompanyName").val()
