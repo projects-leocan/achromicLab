@@ -66,8 +66,8 @@
                         <!-- <ol class="breadcrumb float-sm-right"> -->
                         <!-- <div class="d-flex"> -->
                         <button type="button" class="btn btn-block btn-primary" id="Add_packet">Add Packet</button>
-                        <form enctype="multipart/form-data" id="import-csv" style="display:none">
-                            <!-- <input id="upload" class="mt-1" type=file name="files[]" > -->
+                        <form enctype="multipart/form-data" id="import-csv">
+                            <!-- <input id="upload" class="mt-1" type=file name="files[]" >  style="display:none"-->
                             <label class="btn btn-block btn-primary mt-1" style="font-weight: normal;">
                                 Import CSV <input id="upload" type="file" name="files[]" style="display: none;">
                             </label>

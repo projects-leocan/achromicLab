@@ -2,12 +2,12 @@
 const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-// const base_url = 'http://localhost/achromicLab/';
+// const base_url = 'http://localhost/achromicLab/achromicLab/';
 
 // ready function 
 $(() => {
 
-    fetchAllComapany();
+    //fetchAllComapany();
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
     }
@@ -16,10 +16,8 @@ $(() => {
         $('#inputedCompanyName').val("All Company");
         BindControls();
         fetchPacketData();
-        autoIncPacketNum();
-        document.getElementById('upload').addEventListener('change', handleFileSelect, false);
-
-
+        
+        
         $('input[name="daterange"]').daterangepicker({
             opens: 'left',
             // dateFormat: 'dd/mm/yyyy',
@@ -65,6 +63,13 @@ $(() => {
     }
 })
 
+
+
+$('#upload').change((e) => {
+    
+    handleFileSelect(e);
+    //document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+})
 $('#resetDate').click((e) => {
     localStorage.removeItem("startDate");
     localStorage.removeItem("endDate");
@@ -107,54 +112,41 @@ var ExcelToJSON = function () {
                 type: 'binary'
             });
             workbook.SheetNames.forEach(function (sheetName,index) {
+                console.log("workbook");
                 // Here is your object
                 var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
                 var json_object = JSON.stringify(XL_row_object);
                 let json_data = JSON.parse(json_object);
+                autoIncPacketNumExport(json_data);
+                
+
                 // console.log(json_data);
-                let count = localStorage.getItem("last_packet_no");
-                let company_name_arr1 = []
-                json_data.forEach(function (obj) {
-                    count++;
-                    // Convert date to YYYY-MM-DD format
-                    var date = new Date(obj.Date);
+                // company_name_arr1 = company_name_arr1.filter(function (name) {
+                //     return !company_name_arr2.includes(name);
+                // });
 
-                    let cName = obj["Company Name"];
-                    if (!company_name_arr1.includes(cName)) {
-                        company_name_arr1.push(cName);
-                    }
-                    obj.Date = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
-                    let packet_num = 0;
-                    obj.packet_no = packet_num + count;
-
-
-                });
-                // console.log(json_data);
-                company_name_arr1 = company_name_arr1.filter(function (name) {
-                    return !company_name_arr2.includes(name);
-                });
-
-                if (company_name_arr1.length > 0) {
-                    // bulk insert new companies
-                    json_data.forEach(function (obj) {
-                        let companyName = obj["Company Name"];
-                        let companyIndex = company_name_arr3.indexOf(companyName);
-                        if (companyIndex !== -1) {
-                            obj["Company Name"] = company_id[companyIndex];
-                        }
-                    });
-                    // insertNewCompanies(company_name_arr1)
-                }
-                if (company_name_arr1.length == 0) {
-                    json_data.forEach(function (obj) {
-                        let companyName = obj["Company Name"];
-                        let companyIndex = company_name_arr3.indexOf(companyName);
-                        if (companyIndex !== -1) {
-                            obj["Company Name"] = company_id[companyIndex];
-                        }
-                    });
-                    sendJSON(json_data)
-                }
+                // if (company_name_arr1.length > 0) {
+                //     // bulk insert new companies
+                //     json_data.forEach(function (obj) {
+                //         let companyName = obj["Company Name"];
+                //         let companyIndex = company_name_arr3.indexOf(companyName);
+                //         if (companyIndex !== -1) {
+                //             obj["Company Name"] = company_id[companyIndex];
+                //         }
+                //     });
+                //     // insertNewCompanies(company_name_arr1)
+                // }
+                // if (company_name_arr1.length == 0) {
+                //     json_data.forEach(function (obj) {
+                //         let companyName = obj["Company Name"];
+                //         let companyIndex = company_name_arr3.indexOf(companyName);
+                //         if (companyIndex !== -1) {
+                //             obj["Company Name"] = company_id[companyIndex];
+                //         }
+                //     });
+                //     console.log("====",json_data);
+                //     sendJSON(json_data)
+                // }
             })
         };
 
@@ -196,7 +188,9 @@ function insertNewCompanies(insertNewCompanies) {
 }
 
 function sendJSON(data) {
+    
     var jsonString = JSON.stringify(data);
+    
     let response = new FormData();
     response.append("data", jsonString);
 
@@ -210,20 +204,29 @@ function sendJSON(data) {
         complete: function (response) {
         },
         error: function (response) {
-            // alert('Something went wrong while fatching packet ')
+            Swal.fire({
+                title: '',
+                text: `Please choose valid xlsx file.`,
+                confirmButtonText: 'Ok',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                   //fetchPacketData();
+                }
+            })
         },
         success: function (response) {
             if (response.success) {
+                fetchPacketData();
                 Swal.fire({
                     title: '',
                     text: `${response.message}`,
                     confirmButtonText: 'Ok',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                       fetchPacketData();
+                       //fetchPacketData();
                     }
                 })
-                $("#company_name").val("");
+              
             }
             // console.log("data:",data);
         }
@@ -387,6 +390,8 @@ function signOut() {
 
 
 // +++++++++++++++++++++++++ Company +++++++++++++++++++++++++++++++++
+
+
 const fetchAllComapany = () => {
     $.ajax({
         url: base_url + 'Dashboard/fatchAllCompanyName',
@@ -1330,6 +1335,47 @@ const autoIncPacketNum = () => {
     })
 }
 
+
+const autoIncPacketNumExport = (json_data) => {
+
+    $.ajax({
+        url: base_url + 'Dashboard/autoIncPacketNum',
+        method: 'get',
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data)
+            if (data.success) {
+
+                data.packet.forEach(function (currentPacket, index) {
+
+                    let count = currentPacket.packet_count;
+                     console.log("count",count); 
+                    json_data.forEach(function (obj) {
+                    count++;
+                   
+                    var date = new Date(obj.Date);
+                    obj.Date = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
+                    obj.packet_no = count;
+
+
+                });
+                
+                // console.log(json_data);
+                sendJSON(json_data)
+
+                    
+                })
+            }
+        }
+    })
+}
 
 
 

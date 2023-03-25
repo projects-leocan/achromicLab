@@ -297,14 +297,16 @@ class DbHandler
         }
         $query = implode(',', $query_parts);
         $sql_query .= implode(',', $query_parts);
-        $stmt = $this->conn->prepare($sql_query);
-        $stmt->execute();
-        $stmt->close();
+        
+        // $stmt = $this->conn->prepare($sql_query);
+        // $stmt->execute();
+        // $stmt->close();
 
 
         if (mysqli_query($this->conn, $sql_query)) {
             $result = array(
                 'success' => true,
+                'query' => $sql_query,
                 'message' => 'packet added successfully',
             );
         } else {
@@ -316,35 +318,35 @@ class DbHandler
         return $result;
     }
 
-    public function bulkInsertNewCompany($company_names)
-    {
-        $decodedData = json_decode($company_names, true);
+    // public function bulkInsertNewCompany($company_names)
+    // {
+    //     $decodedData = json_decode($company_names, true);
 
-        $sql_query = "INSERT INTO company (`company_name`) VALUES ";
+    //     $sql_query = "INSERT INTO company (`company_name`) VALUES ";
 
-        $query_parts = array();
-        foreach ($decodedData as $value) {
-            $query_parts[] = "('" . $value . "')";
-        }
-        $sql_query .= implode(',', $query_parts);
-        // echo $sql_query;
-        $stmt = $this->conn->prepare($sql_query);
-        $stmt->execute();
-        $stmt->close();
+    //     $query_parts = array();
+    //     foreach ($decodedData as $value) {
+    //         $query_parts[] = "('" . $value . "')";
+    //     }
+    //     $sql_query .= implode(',', $query_parts);
+    //     // echo $sql_query;
+    //     $stmt = $this->conn->prepare($sql_query);
+    //     $stmt->execute();
+    //     $stmt->close();
 
-        if (mysqli_query($this->conn, $sql_query)) {
-            $result = array(
-                'success' => true,
-                'message' => 'Companies added successfully',
-            );
-        } else {
-            $result = array(
-                'success' => false,
-                'message' => 'Companies not added',
-            );
-        }
-        return $result;
-    }
+    //     if (mysqli_query($this->conn, $sql_query)) {
+    //         $result = array(
+    //             'success' => true,
+    //             'message' => 'Companies added successfully',
+    //         );
+    //     } else {
+    //         $result = array(
+    //             'success' => false,
+    //             'message' => 'Companies not added',
+    //         );
+    //     }
+    //     return $result;
+    // }
 
 
 
@@ -407,9 +409,9 @@ class DbHandler
 
     public function deleteCompany($id){
         $sql_query = "delete from `company` where `company_id` ='$id' ";
-        $stmt = $this->conn->prepare($sql_query);
-        $stmt->execute();
-        $stmt->close();
+        // $stmt = $this->conn->prepare($sql_query);
+        // $stmt->execute();
+        // $stmt->close();
 
         if(mysqli_query($this->conn, $sql_query)){
             $result = array(
