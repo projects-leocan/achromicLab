@@ -564,7 +564,9 @@ const addCompany = () => {
         alert('Please Enter Company name')
         return false
     } else {
-        company_name = toTitleCase(company_name)
+        //company_name = toTitleCase(company_name)
+        let company_name = company_name.toUpperCase();
+
         addCompanyData(company_name)
     }
 }
