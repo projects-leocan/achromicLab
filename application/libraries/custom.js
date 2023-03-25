@@ -1114,13 +1114,14 @@ $('#packet_details_submit').click((e) => {
 
     let id = localStorage.getItem("packet_id");
     let selectedDate = $("#selected_date").val();
+    console.log("selectedDate", selectedDate); 
     var mydate = new Date(selectedDate);
             year = mydate.getFullYear();
             month = (mydate.getMonth() + 1).toString().padStart(2, "0");
             day = mydate.getDate().toString().padStart(2, "0");
             selectedDate = year+ '/' + month + '/' + day;
 
-    console.log("selected date", mydate); 
+    console.log("mydate", mydate); 
     console.log("selected date", selectedDate);
     let company_id = localStorage.getItem("selecteCompanyID");
     let company_name = $("#selectedCompanyName").val()
