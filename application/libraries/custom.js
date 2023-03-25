@@ -799,7 +799,15 @@ function dataBind(data) {
 
             // Total over all pages
 
-            noneProcessPiece = api
+            total_piece = api
+                .column(4)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+
+            total_carat = api
                 .column(5)
                 .data()
                 .reduce(function (a, b) {
@@ -807,14 +815,14 @@ function dataBind(data) {
                 }, 0);
 
 
-            noneProcessCarat = api
+            noneProcessPiece = api
                 .column(6)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
-            broken = api
+            none_process_carat = api
                 .column(7)
                 .data()
                 .reduce(function (a, b) {
@@ -847,9 +855,10 @@ function dataBind(data) {
             // // Update footer
 
             // $(api.column(4).footer()).html(totalCarat);
-            $(api.column(5).footer()).html(noneProcessPiece.toFixed(2));
-            $(api.column(6).footer()).html(noneProcessCarat);
-            $(api.column(7).footer()).html(broken.toFixed(2));
+            $(api.column(4).footer()).html(total_piece);
+            $(api.column(5).footer()).html(total_carat.toFixed(2));
+            $(api.column(6).footer()).html(noneProcessPiece);
+            $(api.column(7).footer()).html(none_process_carat.toFixed(2));
             $(api.column(8).footer()).html(broken_piece);
             $(api.column(9).footer()).html(broken_carat.toFixed(2));
             $(api.column(10).footer()).html(finalCarat.toFixed(2));
