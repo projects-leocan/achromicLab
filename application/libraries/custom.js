@@ -1113,7 +1113,7 @@ $(document).on("click", "#packet_id", function (event) {
 $('#packet_details_submit').click((e) => {
 
     let id = localStorage.getItem("packet_id");
-    let selectedDate = ($("#selected_date").val()).format('YY-MM-DD');
+    let selectedDate = $("#selected_date").val();
     console.log("selected date", selectedDate);
     let company_id = localStorage.getItem("selecteCompanyID");
     let company_name = $("#selectedCompanyName").val()
