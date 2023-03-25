@@ -302,7 +302,8 @@ class DbHandler
         // $stmt->execute();
         // $stmt->close();
 
-
+        try
+        {
         if (mysqli_query($this->conn, $sql_query)) {
             $result = array(
                 'success' => true,
@@ -315,6 +316,13 @@ class DbHandler
                 'message' => 'packet not added',
             );
         }
+    } catch (Exception $e) {
+        $result = array(
+            'success' => false,
+            'message' => 'Please add valid company Id in excel sheet which is available in company list.',
+        );
+    }
+
         return $result;
     }
 

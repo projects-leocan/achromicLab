@@ -112,41 +112,18 @@ var ExcelToJSON = function () {
                 type: 'binary'
             });
             workbook.SheetNames.forEach(function (sheetName,index) {
-                console.log("workbook");
+                // console.log("workbook",index);
+                if(index == 0)
+                {
                 // Here is your object
                 var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
                 var json_object = JSON.stringify(XL_row_object);
                 let json_data = JSON.parse(json_object);
                 autoIncPacketNumExport(json_data);
+                }
                 
 
-                // console.log(json_data);
-                // company_name_arr1 = company_name_arr1.filter(function (name) {
-                //     return !company_name_arr2.includes(name);
-                // });
-
-                // if (company_name_arr1.length > 0) {
-                //     // bulk insert new companies
-                //     json_data.forEach(function (obj) {
-                //         let companyName = obj["Company Name"];
-                //         let companyIndex = company_name_arr3.indexOf(companyName);
-                //         if (companyIndex !== -1) {
-                //             obj["Company Name"] = company_id[companyIndex];
-                //         }
-                //     });
-                //     // insertNewCompanies(company_name_arr1)
-                // }
-                // if (company_name_arr1.length == 0) {
-                //     json_data.forEach(function (obj) {
-                //         let companyName = obj["Company Name"];
-                //         let companyIndex = company_name_arr3.indexOf(companyName);
-                //         if (companyIndex !== -1) {
-                //             obj["Company Name"] = company_id[companyIndex];
-                //         }
-                //     });
-                //     console.log("====",json_data);
-                //     sendJSON(json_data)
-                // }
+               
             })
         };
 
@@ -228,6 +205,18 @@ function sendJSON(data) {
                     }
                 })
               
+            }
+            else
+            {
+                Swal.fire({
+                    title: '',
+                    text: `${response.message}`,
+                    confirmButtonText: 'Ok',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                       //fetchPacketData();
+                    }
+                })
             }
             // console.log("data:",data);
         }
