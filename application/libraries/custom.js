@@ -565,7 +565,7 @@ const addCompany = () => {
         return false
     } else {
         //company_name = toTitleCase(company_name)
-        let company_name = company_name.toUpperCase();
+         company_name = company_name.toUpperCase();
 
         addCompanyData(company_name)
     }
