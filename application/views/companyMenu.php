@@ -40,6 +40,7 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
+                                <th>Company Id</th>
                                 <th>Company Name</th>
                                 <th>Actions</th>
                             </tr>

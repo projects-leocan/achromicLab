@@ -402,11 +402,12 @@ const fetchAllComapany = () => {
                 data.CompanyNames.forEach(function (company_names, index) {
                     let count = index + 1
                     let names = company_names.company_name
-                    company_name_arr2.push(names);
-                    company_name_arr3.push(names);
+                    let Id = company_names.company_id
+                    //company_name_arr2.push(names);
+                    //company_name_arr3.push(names);
                     company_id.push(company_names.company_id);
                     $('#category_list').DataTable().row.add([
-                        count, names,
+                        count,Id, names,
                         `<a  id="company_edit" com_id="${company_names.company_id}" com_name="${names}" ><i class="mx-2 fa fa-edit"></i></a>
                         <a id="company_delete" com_id="${company_names.company_id}">  <i class="fa fa-trash"></i> </a>`
 
