@@ -986,7 +986,13 @@ function bindPacketData() {
             console.log("data :",data);
             data.packet.map((pack) => {
                 localStorage.setItem("selecteCompanyID",pack.company_id);
-                $("#selected_date").val(pack.date);
+                var mydate = new Date(pack.date);
+                year = mydate.getFullYear();
+                month = (mydate.getMonth() + 1).toString().padStart(2, "0");
+                day = mydate.getDate().toString().padStart(2, "0");
+                var packetDate = day+ '/' + month + '/' + year;
+
+                $("#selected_date").val(packetDate);
                 $("#selectedCompanyName").val(pack.company_name);
                 $("#number_of_packet").val(pack.packet_no);
                 $("#number_of_qty").val(pack.packet_dimond_qty);
@@ -1114,9 +1120,9 @@ $('#packet_details_submit').click((e) => {
 
     let id = localStorage.getItem("packet_id");
     let selectedDate = $("#selected_date").val();
-    console.log("selectedDate1", selectedDate); 
+   // console.log("selectedDate1", selectedDate); 
     selectedDate = selectedDate.split("/").reverse().join("-");
-    console.log("selectedDate2", selectedDate); 
+    //console.log("selectedDate2", selectedDate); 
     // var mydate = new Date(selectedDate);
     //         year = mydate.getFullYear();
     //         month = (mydate.getMonth() + 1).toString().padStart(2, "0");
