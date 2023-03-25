@@ -46,7 +46,7 @@ $(() => {
     }
 
     if (window.location.href == base_url + 'packet_form') {
-        if (localStorage.getItem("packet_id") != "") {
+        if (localStorage.getItem("packet_id") != "" && localStorage.getItem("packet_id") != null) {
             bindPacketData();
            
         }
