@@ -1114,7 +1114,9 @@ $('#packet_details_submit').click((e) => {
 
     let id = localStorage.getItem("packet_id");
     let selectedDate = $("#selected_date").val();
-    console.log("selectedDate", selectedDate); 
+    console.log("selectedDate1", selectedDate); 
+    selectedDate = selectedDate.split("/").reverse().join("-");
+    console.log("selectedDate2", selectedDate); 
     var mydate = new Date(selectedDate);
             year = mydate.getFullYear();
             month = (mydate.getMonth() + 1).toString().padStart(2, "0");
