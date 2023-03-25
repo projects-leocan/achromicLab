@@ -293,7 +293,7 @@ class DbHandler
             $packetDimondCaret = $value['Total Piece'];
             $packetDimondQty = $value['Total Carat'];
 
-            $query_parts[] = "('" . $companyId . "', '" . $date . "', '" . $packetNo . "', '" . $packetDimondCaret . "', '" . $packetDimondQty . "')";
+            $query_parts[] = "('" . $companyId . "', '" . $date . "', '" . $packetNo . "', '" . $packetDimondQty . "', '" .$packetDimondCaret . "')";
         }
         $query = implode(',', $query_parts);
         $sql_query .= implode(',', $query_parts);
