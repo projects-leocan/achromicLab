@@ -2,7 +2,7 @@
 const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-// const base_url = 'http://localhost/achromicLab/achromicLab/';
+// const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
@@ -16,8 +16,6 @@ $(() => {
         $('#inputedCompanyName').val("All Company");
         BindControls();
         fetchPacketData();
-        
-        
         $('input[name="daterange"]').daterangepicker({
             opens: 'left',
             // dateFormat: 'dd/mm/yyyy',
@@ -46,9 +44,9 @@ $(() => {
     if (window.location.href == base_url + 'packet_form') {
         if (localStorage.getItem("packet_id") != "" && localStorage.getItem("packet_id") != null) {
             bindPacketData();
-           
+
         }
-        else{
+        else {
             autoIncPacketNum();
         }
         $("#selected_date").datepicker({
@@ -63,10 +61,10 @@ $(() => {
     }
 })
 
-
+let is_filer_clicked = false;
 
 $('#upload').change((e) => {
-    
+
     handleFileSelect(e);
     //document.getElementById('upload').addEventListener('change', handleFileSelect, false);
 })
@@ -111,19 +109,18 @@ var ExcelToJSON = function () {
             var workbook = XLSX.read(data, {
                 type: 'binary'
             });
-            workbook.SheetNames.forEach(function (sheetName,index) {
+            workbook.SheetNames.forEach(function (sheetName, index) {
                 // console.log("workbook",index);
-                if(index == 0)
-                {
-                // Here is your object
-                var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-                var json_object = JSON.stringify(XL_row_object);
-                let json_data = JSON.parse(json_object);
-                autoIncPacketNumExport(json_data);
+                if (index == 0) {
+                    // Here is your object
+                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                    var json_object = JSON.stringify(XL_row_object);
+                    let json_data = JSON.parse(json_object);
+                    autoIncPacketNumExport(json_data);
                 }
-                
 
-               
+
+
             })
         };
 
@@ -136,7 +133,7 @@ var ExcelToJSON = function () {
 };
 
 function handleFileSelect(evt) {
-    var files = evt.target.files; 
+    var files = evt.target.files;
     var xl2json = new ExcelToJSON();
     let jsonData = xl2json.parseExcel(files[0]);
 
@@ -165,9 +162,9 @@ function insertNewCompanies(insertNewCompanies) {
 }
 
 function sendJSON(data) {
-    
+
     var jsonString = JSON.stringify(data);
-    
+
     let response = new FormData();
     response.append("data", jsonString);
 
@@ -187,12 +184,12 @@ function sendJSON(data) {
                 confirmButtonText: 'Ok',
             }).then((result) => {
                 if (result.isConfirmed) {
-                   //fetchPacketData();
+                    //fetchPacketData();
                 }
             })
         },
         success: function (response) {
-            response= JSON.parse(response);
+            response = JSON.parse(response);
             if (response.success) {
                 fetchPacketData();
                 Swal.fire({
@@ -201,20 +198,19 @@ function sendJSON(data) {
                     confirmButtonText: 'Ok',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                       //fetchPacketData();
+                        //fetchPacketData();
                     }
                 })
-              
+
             }
-            else
-            {
+            else {
                 Swal.fire({
                     title: '',
                     text: `${response.message}`,
                     confirmButtonText: 'Ok',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                       //fetchPacketData();
+                        //fetchPacketData();
                     }
                 })
             }
@@ -407,7 +403,7 @@ const fetchAllComapany = () => {
                     //company_name_arr3.push(names);
                     company_id.push(company_names.company_id);
                     $('#category_list').DataTable().row.add([
-                        count,Id, names,
+                        count, Id, names,
                         `<a  id="company_edit" com_id="${company_names.company_id}" com_name="${names}" ><i class="mx-2 fa fa-edit"></i></a>
                         <a id="company_delete" com_id="${company_names.company_id}">  <i class="fa fa-trash"></i> </a>`
 
@@ -561,7 +557,7 @@ const addCompany = () => {
         return false
     } else {
         //company_name = toTitleCase(company_name)
-         company_name = company_name.toUpperCase();
+        company_name = company_name.toUpperCase();
 
         addCompanyData(company_name)
     }
@@ -735,7 +731,6 @@ const fetchPacketData = () => {
 }
 
 function dataBind(data) {
-
     var table = $('#packet_list').DataTable({
         dom: 'lBfrtip',
         pagging: true,
@@ -757,12 +752,12 @@ function dataBind(data) {
             { "width": "30px" },
             { "width": "30px" },
             { "width": "30px" },
-            
-          ],
+
+        ],
+        'order': [[1, 'asc']],
         buttons: [
             {
                 extend: 'pdfHtml5', footer: true,
-               
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 },
@@ -777,12 +772,20 @@ function dataBind(data) {
                     //     doc.content[1].table.body[i][6].alignment = 'right';
                     // }
                 },
-                text: 'Download',
+                text: 'Download',            
                 // exportOptions: {
                 //     modifier: {
                 //         page: 'All'
                 //     }
                 // }
+            },
+            {
+                text: 'Invoice',
+                attr:  {
+                    id: 'InvoiceBtn',
+                    class:'buttons-pdf',
+                    enabled: false,
+                }
             }
         ],
 
@@ -870,6 +873,7 @@ function dataBind(data) {
 
     if (data.success) {
         data.packet.forEach(function (currentPacket, index) {
+            let checkBox  = `<div class="checkbox"><input type="checkbox" packet_id="${currentPacket.packet_id}" id="selectedCheckBox" class="dt-checkboxes"><label></label></div>`;
             let count = index + 1;
             let date = currentPacket.date;
             var mydate = new Date(date);
@@ -896,7 +900,7 @@ function dataBind(data) {
             let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
             table.row.add([
-                count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
+                checkBox,count, packet_no, packetDate, company_name, qty, carat, pending_process_qty, pending_process, broken_qty, broken_carat, price,
                 `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                 <i class="mx-2 fa fa-edit"></i></a>
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
@@ -907,6 +911,36 @@ function dataBind(data) {
 
 
 }
+
+
+$(document).on("click", "#InvoiceBtn", function (event) {
+    $.ajax({
+        url: base_url + 'Dashboard/print_invoice',
+        method: 'post',
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong')
+        },
+        success: function (data) {
+            data = JSON.parse(data)
+            console.log("invoice :", data);
+        }
+    })
+})
+
+let selectedInvoiceArr = [];
+$(document).on("change", ".dt-checkboxes", function (event) {
+    let selectedInvoices =  $(this).attr("packet_id");
+    selectedInvoiceArr.push(selectedInvoices);
+    console.log("selectedInvoiceArr :",selectedInvoiceArr);
+})
+
+
+
 
 
 $(document).on("click", "#packet_delete", function (event) {
@@ -981,14 +1015,14 @@ function bindPacketData() {
         },
         success: function (data) {
             data = JSON.parse(data);
-            console.log("data :",data);
+            console.log("data :", data);
             data.packet.map((pack) => {
-                localStorage.setItem("selecteCompanyID",pack.company_id);
+                localStorage.setItem("selecteCompanyID", pack.company_id);
                 var mydate = new Date(pack.date);
                 year = mydate.getFullYear();
                 month = (mydate.getMonth() + 1).toString().padStart(2, "0");
                 day = mydate.getDate().toString().padStart(2, "0");
-                var packetDate = day+ '/' + month + '/' + year;
+                var packetDate = day + '/' + month + '/' + year;
 
                 $("#selected_date").val(packetDate);
                 $("#selectedCompanyName").val(pack.company_name);
@@ -1015,22 +1049,22 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
     if (pending_process_qty_diamond == undefined || pending_process_qty_diamond == "" || pending_process_qty_diamond == null) {
         pending_process_qty_diamond = 0;
     }
-     if (pending_process_qty_carat == undefined || pending_process_qty_carat == "" || pending_process_qty_carat == null) {
+    if (pending_process_qty_carat == undefined || pending_process_qty_carat == "" || pending_process_qty_carat == null) {
         pending_process_qty_carat = 0;
     }
-     if (broken_qty_diamond == undefined || broken_qty_diamond == "" || broken_qty_diamond == null) {
+    if (broken_qty_diamond == undefined || broken_qty_diamond == "" || broken_qty_diamond == null) {
         broken_qty_diamond = 0;
     }
-     if (broken_qty_carat == undefined || broken_qty_carat == "" || broken_qty_carat == null) {
+    if (broken_qty_carat == undefined || broken_qty_carat == "" || broken_qty_carat == null) {
         broken_qty_carat = 0;
     }
-     if (quantity == undefined || quantity == "" || quantity == null) {
+    if (quantity == undefined || quantity == "" || quantity == null) {
         quantity = 0;
     }
-     if (total_carat == undefined || total_carat == "" || total_carat == null) {
+    if (total_carat == undefined || total_carat == "" || total_carat == null) {
         total_carat = 0;
     }
-     if (cube_qty == undefined || cube_qty == "" || cube_qty == null) {
+    if (cube_qty == undefined || cube_qty == "" || cube_qty == null) {
         cube_qty = 0;
     }
 
@@ -1087,38 +1121,21 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
 
 
 
-$(document).on("click", "#packet_id", function (event) {
-    let id = $(this).attr('packet_id');
-    let data = new FormData()
-    data.append("packet_id", id)
+// $(document).on("click", "#packet_id", function (event) {
+//     let id = $(this).attr('packet_id');
+//     let data = new FormData()
+//     data.append("packet_id", id)
 
-    $.ajax({
-        url: base_url + 'Dashboard/print_invoice',
-        method: 'post',
-        data: data,
-        processData: false,
-        contentType: false,
-        beforeSend: function (data) { },
-        complete: function (data) {
-        },
-        error: function (data) {
-            alert('Something went wrong while fatching packet ')
-        },
-        success: function (data) {
-            window.location = "invoice"
-            data = JSON.parse(data)
-            console.log("data :", data);
-        }
-    })
+   
 
 
-});
+// });
 
 $('#packet_details_submit').click((e) => {
 
     let id = localStorage.getItem("packet_id");
     let selectedDate = $("#selected_date").val();
-   // console.log("selectedDate1", selectedDate); 
+    // console.log("selectedDate1", selectedDate); 
     selectedDate = selectedDate.split("/").reverse().join("-");
     //console.log("selectedDate2", selectedDate); 
     // var mydate = new Date(selectedDate);
@@ -1261,6 +1278,7 @@ const resetForm = () => {
 
 const fatchSelectedCompnay = () => {
 
+    is_filer_clicked = true;
     let data = new FormData()
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
     // let selected_date = $("#selectedCompanyDate").val();
@@ -1319,7 +1337,7 @@ const autoIncPacketNum = () => {
 
                 data.packet.forEach(function (currentPacket, index) {
                     $("#number_of_packet").val(currentPacket.packet_count + 1)
-                    localStorage.setItem("last_packet_no",currentPacket.packet_count);
+                    localStorage.setItem("last_packet_no", currentPacket.packet_count);
                 })
             }
         }
@@ -1347,21 +1365,20 @@ const autoIncPacketNumExport = (json_data) => {
                 data.packet.forEach(function (currentPacket, index) {
 
                     let count = currentPacket.packet_count;
-                     console.log("count",count); 
                     json_data.forEach(function (obj) {
-                    count++;
-                   
-                    var date = new Date(obj.Date);
-                    obj.Date = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
-                    obj.packet_no = count;
+                        count++;
+
+                        var date = new Date(obj.Date);
+                        obj.Date = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
+                        obj.packet_no = count;
 
 
-                });
-                
-                // console.log(json_data);
-                sendJSON(json_data)
+                    });
 
-                    
+                    // console.log(json_data);
+                    sendJSON(json_data)
+
+
                 })
             }
         }

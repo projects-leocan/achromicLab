@@ -73,8 +73,8 @@ class Dashboard extends CI_Controller
 
     public function print_invoice()
     {
-        $packet_id = $_REQUEST["packet_id"];
-        $response = $this->dbhandler->print_invoice($packet_id);
+        // $packet_id = $_REQUEST["packet_id"];
+        $response = $this->dbhandler->print_invoice();
         echo json_encode($response);
     }
 
