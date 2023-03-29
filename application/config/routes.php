@@ -7,6 +7,7 @@ $route['default_controller'] = 'Dashboard';
 $route['packet'] = 'Dashboard/packet_menu';
 $route['company'] = 'Dashboard/company_menu';
 $route['packet_form'] = 'Dashboard/packet_form';
+$route['invoice_form'] = 'Dashboard/invoice_form';
 
 
 $route['home'] = 'Dashboard';

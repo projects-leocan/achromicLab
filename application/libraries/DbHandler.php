@@ -556,6 +556,29 @@ class DbHandler
         return $result;
     }
 
+    public function show_invoice()
+    {
+        $sql_query = "SELECT * FROM `invoice`" ;
+        $stmt = $this->conn->prepare($sql_query);
 
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $packet = array();
+        while ($obj = $result->fetch_assoc()) {
+            $packet[] = $obj;
+        }
+        $stmt->close();
+        if (count($packet) > 0) {
+            $result = array(
+                'success' => true,
+                'packet' => $packet,
+            );
+        } else {
+            $result = array(
+                'success' => false,
+            );
+        }
+        return $result;
+    }
 }
 

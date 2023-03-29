@@ -39,6 +39,13 @@ class Dashboard extends CI_Controller
         $this->load->view('footer');
     }
 
+    public function invoice_form()
+    {
+        $this->load->view('header');
+        $this->load->view('sidebar');
+        $this->load->view('invoice');
+        $this->load->view('footer');
+    }
     // sidebar menu view for company list
     public function company_menu()
     {
@@ -75,6 +82,11 @@ class Dashboard extends CI_Controller
     {
         $packet_id = $_REQUEST["packet_id"];
         $response = $this->dbhandler->print_invoice($packet_id);
+        echo json_encode($response);
+    }
+    public function show_invoice()
+    {
+        $response = $this->dbhandler->show_invoice();
         echo json_encode($response);
     }
 

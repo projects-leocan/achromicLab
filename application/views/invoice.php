@@ -86,7 +86,7 @@
 
 <div class="col-lg-6">
 <ul class="list-unstyled text-right">
-<div class="invoice-logo"><img src="http://localhost/achromicLab/achromicLab/dist/img/logo1.png" alt="Invoice logo"></div>
+<div class="invoice-logo"><img src="http://localhost/achromicLab/dist/img/logo1.png" alt="Invoice logo"></div>
 
 </ul>
 </div>

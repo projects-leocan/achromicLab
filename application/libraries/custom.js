@@ -1,5 +1,5 @@
 // live 
-const base_url = 'https://leocan.co/subFolder/achromicLab/';
+// const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
 // const base_url = 'http://localhost/achromicLab/achromicLab/';
@@ -783,6 +783,14 @@ function dataBind(data) {
                 //         page: 'All'
                 //     }
                 // }
+            },
+            {
+                text: 'Invoice',
+                attr:  {
+                    id: 'InvoiceBtn',
+                    class:'buttons-pdf',
+                    enabled: false,
+                }
             }
         ],
 
@@ -1369,7 +1377,54 @@ const autoIncPacketNumExport = (json_data) => {
 }
 
 
+$(document).on("click", "#InvoiceBtn", function (event) {
+    $.ajax({
+        url: base_url + 'Dashboard/show_invoice',
+        method: 'post',
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong')
+        },
+        success: function (data) {
+            data = JSON.parse(data)
+            //console.log("invoice :", data);
+            window.location = 'invoice_form';
+        }
+    })
+})
 
+// $(document).on("click", "#download_btn", function (event) {
+//     CreatePDFfromHTML();
+// })
+
+
+
+
+// // Convert HTML content to PDF
+// function Convert_HTML_To_PDF() {
+//     window.jsPDF = window.jspdf.jsPDF;
+//     var doc = new jsPDF();
+	
+//     // Source HTMLElement or a string containing HTML.
+//     var elementHTML = document.querySelector("#contentToPrint");
+
+//     doc.html(elementHTML, {
+//         callback: function(doc) {
+//             // Save the PDF
+//             doc.save('document-html.pdf');
+//         },
+//         margin: [10, 10, 10, 10],
+//         autoPaging: 'text',
+//         x: 0,
+//         y: 0,
+//         width: 190, //target width in the PDF document
+//         windowWidth: 675 //window width in CSS pixels
+//     });
+// }
 
 
 
