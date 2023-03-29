@@ -2,7 +2,7 @@
 // const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-// const base_url = 'http://localhost/achromicLab/achromicLab/';
+const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
@@ -740,10 +740,13 @@ function dataBind(data) {
         columnDefs: [{
             'targets': 0,
             'searchable':false,
+            'checkboxes': {
+                'selectRow': true
+            },
             'orderable':false,
             'className': 'dt-body-center',
             'render': function (data, type, full, meta){
-                return '<input type="checkbox" name="cb[]" value="' 
+                return '<input type="checkbox" id="cb1" name="cb[]" value="' 
                    + $('<div/>').text(data).html() + '">';
             }
          }],
@@ -796,25 +799,22 @@ function dataBind(data) {
                 //     }
                 // }
             },
+            // {
+            //     text: 'Invoice',
+            //     attr:  {
+            //         id: 'InvoiceBtn',
+            //         class:'buttons-pdf',
+            //         enabled: false,
+            //     }
+            // },
             {
                 text: 'Invoice',
-                attr:  {
-                    id: 'InvoiceBtn',
-                    class:'buttons-pdf',
-                    enabled: false,
-                }
-            },
-            {
-                text: 'Send',
                 attr: {
-                  id: 'btn-send'
+                  id: 'btn-send',
+                  class:'buttons-pdf',
                 },
                 action: function(e, dt, node, config) { 
-                   var count=0;
-                  $('[name="cb[]"]:checked').each( function (){
-                    count++; 
-                  });
-                  alert("Checkbox selected:"+count);
+                    getSelectedInvoiceData();
             }          
                 
             }
@@ -934,9 +934,10 @@ function dataBind(data) {
             // }
             let price = currentPacket.price_per_carat.toFixed(2);
             let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
+            var invoice_data = packet_no+ ',' + company_name + ',' + qty+ ',' +carat;
 
             table.row.add([
-               '<td></td>', count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
+                invoice_data, count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
                 `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                 <i class="mx-2 fa fa-edit"></i></a>
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
@@ -1428,6 +1429,68 @@ $(document).on("click", "#InvoiceBtn", function (event) {
         }
     })
 })
+
+getSelectedInvoiceData = () => {
+    
+
+      $.ajax({
+        url: base_url + 'Dashboard/show_invoice',
+        method: 'post',
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong')
+        },
+        success: function (data) {
+            // data = JSON.parse(data)
+            // console.log("invoice :", data);
+            // window.location = 'invoice_form';
+
+            var invoice_data_arr=[];
+            var oTable = $('#packet_list').dataTable();
+            var rowcollection =  oTable.$("#cb1:checked", {"page": "all"});
+            rowcollection.each(function(index,elem){
+                var checkbox_value = $(elem).val();
+                invoice_data_arr.push(checkbox_value);
+            });
+             console.log("checkbox_value",invoice_data_arr);
+
+            let invoice_data = new FormData()
+            invoice_data.append('invoice_data', JSON.stringify(invoice_data_arr))
+           // window.location = 'invoice_form';
+
+            // $.ajax({
+            //     url: base_url + 'invoice_form',
+            //     method: 'post',
+            //     data: invoice_data,
+            //     processData: false,
+            //     contentType: false,
+            //     beforeSend: function (data) { },
+            //     complete: function (data) {
+            //     },
+            //     error: function (data) {
+            //         console.log("iwent");
+            //         alert('Something went wrong')
+            //     },
+            //     success: function (data) {
+            //         // console.log("invoice :", data);
+            //         // data = JSON.parse(data)
+            //         // console.log("invoice :", data);
+            //      //   window.location = 'invoice_form';
+        
+                    
+            //     }
+            // })
+
+
+        }
+    })
+
+    //return val1;
+  }
 
 // $(document).on("click", "#download_btn", function (event) {
 //     CreatePDFfromHTML();
