@@ -737,6 +737,17 @@ const fetchPacketData = () => {
 function dataBind(data) {
 
     var table = $('#packet_list').DataTable({
+        columnDefs: [{
+            'targets': 0,
+            'searchable':false,
+            'orderable':false,
+            'className': 'dt-body-center',
+            'render': function (data, type, full, meta){
+                return '<input type="checkbox" name="cb[]" value="' 
+                   + $('<div/>').text(data).html() + '">';
+            }
+         }],
+        order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
         pagging: true,
         destroy: true,
@@ -745,6 +756,7 @@ function dataBind(data) {
         // "bScrollCollapse": true,
         autoWidth: false,
         "columns": [
+            { "width": "10px" },
             { "width": "10px" },
             { "width": "10px" },
             { "width": "55px" },
@@ -764,7 +776,7 @@ function dataBind(data) {
                 extend: 'pdfHtml5', footer: true,
                
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                    columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11]
                 },
                 orientation: 'landscape',
                 customize: function (doc) {
@@ -791,8 +803,23 @@ function dataBind(data) {
                     class:'buttons-pdf',
                     enabled: false,
                 }
+            },
+            {
+                text: 'Send',
+                attr: {
+                  id: 'btn-send'
+                },
+                action: function(e, dt, node, config) { 
+                   var count=0;
+                  $('[name="cb[]"]:checked').each( function (){
+                    count++; 
+                  });
+                  alert("Checkbox selected:"+count);
+            }          
+                
             }
         ],
+        
 
 
         footerCallback: function (row, data, start, end, display) {
@@ -806,14 +833,6 @@ function dataBind(data) {
             // Total over all pages
 
             total_piece = api
-                .column(4)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-
-            total_carat = api
                 .column(5)
                 .data()
                 .reduce(function (a, b) {
@@ -821,15 +840,23 @@ function dataBind(data) {
                 }, 0);
 
 
-            noneProcessPiece = api
+            total_carat = api
                 .column(6)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
-            none_process_carat = api
+
+            noneProcessPiece = api
                 .column(7)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+            none_process_carat = api
+                .column(8)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
@@ -837,21 +864,21 @@ function dataBind(data) {
 
 
             broken_piece = api
-                .column(8)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            broken_carat = api
                 .column(9)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
-            finalCarat = api
+            broken_carat = api
                 .column(10)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+            finalCarat = api
+                .column(11)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
@@ -861,18 +888,23 @@ function dataBind(data) {
             // // Update footer
 
             // $(api.column(4).footer()).html(totalCarat);
-            $(api.column(4).footer()).html(total_piece);
-            $(api.column(5).footer()).html(total_carat.toFixed(2));
-            $(api.column(6).footer()).html(noneProcessPiece);
-            $(api.column(7).footer()).html(none_process_carat.toFixed(2));
-            $(api.column(8).footer()).html(broken_piece);
-            $(api.column(9).footer()).html(broken_carat.toFixed(2));
-            $(api.column(10).footer()).html(finalCarat.toFixed(2));
+            $(api.column(5).footer()).html(total_piece);
+            $(api.column(6).footer()).html(total_carat.toFixed(2));
+            $(api.column(7).footer()).html(noneProcessPiece);
+            $(api.column(8).footer()).html(none_process_carat.toFixed(2));
+            $(api.column(9).footer()).html(broken_piece);
+            $(api.column(10).footer()).html(broken_carat.toFixed(2));
+            $(api.column(11).footer()).html(finalCarat.toFixed(2));
             // $(api.column(9).footer()).html(broken_qty);
             // $(api.column(8).footer()).html(total);
         },
     });
-
+    // Handle click on "Select all" control
+//    $('#example-select-all').on('click', function(){
+//     // Check/uncheck all checkboxes in the table
+//     var rows = table.rows({ 'search': 'applied' }).nodes();
+//     $('input[type="checkbox"]', rows).prop('checked', this.checked);
+//  });
     // table.buttons().container().appendTo('#example_wrapper' );
     table.clear().draw()
 
@@ -904,7 +936,7 @@ function dataBind(data) {
             let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
 
             table.row.add([
-                count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
+               '<td></td>', count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
                 `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                 <i class="mx-2 fa fa-edit"></i></a>
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
