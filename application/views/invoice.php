@@ -75,7 +75,7 @@
                      </div>
                      <div class="col-lg-6">
                         <ul class="list-unstyled text-right">
-                           <div class="invoice-logo"><img src="http://localhost/achromicLab/dist/img/logo1.png" alt="Invoice logo"></div>
+                           <div class="invoice-logo"><img src="https://leocan.co/subFolder/achromicLab/dist/img/logo1.png" alt="Invoice logo"></div>
                         </ul>
                      </div>
                      <div class="col-lg-12">
