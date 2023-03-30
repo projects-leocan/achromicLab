@@ -1482,7 +1482,7 @@ getSelectedInvoiceData = () => {
                     localStorage.setItem("Invoice_num", data.packet[0].challan_no);
                     localStorage.setItem("last_downloaded_invoice", 0);
                     var today = new Date();
-                    console.log("current date",today);
+                    // console.log("current date",today);
                     var dd = String(today.getDate()).padStart(2, '0');
                     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
                     var yyyy = today.getFullYear();
