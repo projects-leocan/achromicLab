@@ -39,6 +39,13 @@ class Dashboard extends CI_Controller
         $this->load->view('footer');
     }
 
+    public function invoice_form()
+    {
+        $this->load->view('header');
+        $this->load->view('sidebar');
+        $this->load->view('invoice');
+        $this->load->view('footer');
+    }
     // sidebar menu view for company list
     public function company_menu()
     {
@@ -77,7 +84,19 @@ class Dashboard extends CI_Controller
         $response = $this->dbhandler->print_invoice();
         echo json_encode($response);
     }
-
+    public function show_invoice()
+    {
+        $response = $this->dbhandler->show_invoice();
+        echo json_encode($response);
+    }
+    // public function redirect_invoice()
+    // {
+    //     $invoice_data = $_REQUEST["invoice_data"];
+    //     $this->load->view('header');
+    //     $this->load->view('sidebar');
+    //     $this->load->view('invoice',$invoice_data);
+    //     $this->load->view('footer');
+    // }
     public function fatchSelectedCompanyData()
     {
         $company_id = $_REQUEST["company_id"];
@@ -107,6 +126,12 @@ class Dashboard extends CI_Controller
         $company_id = $_REQUEST["company_id"];
         $catName = $_REQUEST["company_name"];
         $response = $this->dbhandler->updateCompany($company_id,$catName);
+        echo json_encode($response);
+    }
+    public function updateChallanNo()
+    {
+        $challan_no = $_REQUEST["challan_no"];
+        $response = $this->dbhandler->updateChallan($challan_no);
         echo json_encode($response);
     }
 

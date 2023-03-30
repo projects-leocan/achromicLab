@@ -472,6 +472,25 @@ class DbHandler
         return $result;
     }
 
+    public function updateChallan($updateChallanNo){
+        $sql_query = "update `invoice` set 	`challan_no`='$updateChallanNo'";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->execute();
+        $stmt->close();
+        if ($sql_query) {
+            $result = array(
+                'success' => true,
+                'message' => 'Challan no updated successfully',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'Challan not update',
+            );
+        }
+        return $result;
+    }
+
     public function addCompany($name)
     {
         $sql_query = "insert into `company` (`company_name`) VALUES ('$name')";
@@ -556,6 +575,29 @@ class DbHandler
         return $result;
     }
 
+    public function show_invoice()
+    {
+        $sql_query = "SELECT * FROM `invoice`" ;
+        $stmt = $this->conn->prepare($sql_query);
 
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $packet = array();
+        while ($obj = $result->fetch_assoc()) {
+            $packet[] = $obj;
+        }
+        $stmt->close();
+        if (count($packet) > 0) {
+            $result = array(
+                'success' => true,
+                'packet' => $packet,
+            );
+        } else {
+            $result = array(
+                'success' => false,
+            );
+        }
+        return $result;
+    }
 }
 

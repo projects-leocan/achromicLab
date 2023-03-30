@@ -11,11 +11,15 @@ $(() => {
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
     }
-
+    if (window.location.href == base_url + 'invoice_form') {
+        BindInvoiceData();
+    }
     if (window.location.href == base_url + 'packet') {
         $('#inputedCompanyName').val("All Company");
         BindControls();
         fetchPacketData();
+        
+        
         $('input[name="daterange"]').daterangepicker({
             opens: 'left',
             // dateFormat: 'dd/mm/yyyy',
@@ -44,9 +48,9 @@ $(() => {
     if (window.location.href == base_url + 'packet_form') {
         if (localStorage.getItem("packet_id") != "" && localStorage.getItem("packet_id") != null) {
             bindPacketData();
-
+           
         }
-        else {
+        else{
             autoIncPacketNum();
         }
         $("#selected_date").datepicker({
@@ -61,10 +65,10 @@ $(() => {
     }
 })
 
-let is_filer_clicked = false;
+
 
 $('#upload').change((e) => {
-
+    
     handleFileSelect(e);
     //document.getElementById('upload').addEventListener('change', handleFileSelect, false);
 })
@@ -72,6 +76,9 @@ $('#resetDate').click((e) => {
     localStorage.removeItem("startDate");
     localStorage.removeItem("endDate");
     localStorage.removeItem("FilterSelecteCompanyID");
+    localStorage.removeItem("FilterSelecteCompanyName");
+    localStorage.removeItem("invoice_company");
+    
     $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
     $('#inputedCompanyName').val("All Company");
     fetchPacketData();
@@ -109,18 +116,19 @@ var ExcelToJSON = function () {
             var workbook = XLSX.read(data, {
                 type: 'binary'
             });
-            workbook.SheetNames.forEach(function (sheetName, index) {
+            workbook.SheetNames.forEach(function (sheetName,index) {
                 // console.log("workbook",index);
-                if (index == 0) {
-                    // Here is your object
-                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-                    var json_object = JSON.stringify(XL_row_object);
-                    let json_data = JSON.parse(json_object);
-                    autoIncPacketNumExport(json_data);
+                if(index == 0)
+                {
+                // Here is your object
+                var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                var json_object = JSON.stringify(XL_row_object);
+                let json_data = JSON.parse(json_object);
+                autoIncPacketNumExport(json_data);
                 }
+                
 
-
-
+               
             })
         };
 
@@ -133,7 +141,7 @@ var ExcelToJSON = function () {
 };
 
 function handleFileSelect(evt) {
-    var files = evt.target.files;
+    var files = evt.target.files; 
     var xl2json = new ExcelToJSON();
     let jsonData = xl2json.parseExcel(files[0]);
 
@@ -162,9 +170,9 @@ function insertNewCompanies(insertNewCompanies) {
 }
 
 function sendJSON(data) {
-
+    
     var jsonString = JSON.stringify(data);
-
+    
     let response = new FormData();
     response.append("data", jsonString);
 
@@ -184,12 +192,12 @@ function sendJSON(data) {
                 confirmButtonText: 'Ok',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    //fetchPacketData();
+                   //fetchPacketData();
                 }
             })
         },
         success: function (response) {
-            response = JSON.parse(response);
+            response= JSON.parse(response);
             if (response.success) {
                 fetchPacketData();
                 Swal.fire({
@@ -198,19 +206,20 @@ function sendJSON(data) {
                     confirmButtonText: 'Ok',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        //fetchPacketData();
+                       //fetchPacketData();
                     }
                 })
-
+              
             }
-            else {
+            else
+            {
                 Swal.fire({
                     title: '',
                     text: `${response.message}`,
                     confirmButtonText: 'Ok',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        //fetchPacketData();
+                       //fetchPacketData();
                     }
                 })
             }
@@ -403,7 +412,7 @@ const fetchAllComapany = () => {
                     //company_name_arr3.push(names);
                     company_id.push(company_names.company_id);
                     $('#category_list').DataTable().row.add([
-                        count, Id, names,
+                        count,Id, names,
                         `<a  id="company_edit" com_id="${company_names.company_id}" com_name="${names}" ><i class="mx-2 fa fa-edit"></i></a>
                         <a id="company_delete" com_id="${company_names.company_id}">  <i class="fa fa-trash"></i> </a>`
 
@@ -557,7 +566,7 @@ const addCompany = () => {
         return false
     } else {
         //company_name = toTitleCase(company_name)
-        company_name = company_name.toUpperCase();
+         company_name = company_name.toUpperCase();
 
         addCompanyData(company_name)
     }
@@ -679,6 +688,7 @@ function BindControls() {
                         var selectedCompany = company_name.find(company => company.name === ui.item.value);
                         var selectedCompanyId = selectedCompany ? selectedCompany.id : -1;
                         localStorage.setItem("FilterSelecteCompanyID", selectedCompanyId)
+                        localStorage.setItem("FilterSelecteCompanyName", selectedCompany.name)
                     }
                 }).focus(function () {
                     $(this).autocomplete("search", "");
@@ -731,7 +741,22 @@ const fetchPacketData = () => {
 }
 
 function dataBind(data) {
+
     var table = $('#packet_list').DataTable({
+        columnDefs: [{
+            'targets': 0,
+            'searchable':false,
+            'checkboxes': {
+                'selectRow': true
+            },
+            'orderable':false,
+            'className': 'dt-body-center',
+            'render': function (data, type, full, meta){
+                return '<input type="checkbox" id="cb1" name="cb[]" value="' 
+                   + $('<div/>').text(data).html() + '">';
+            }
+         }],
+        order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
         pagging: true,
         destroy: true,
@@ -740,6 +765,7 @@ function dataBind(data) {
         // "bScrollCollapse": true,
         autoWidth: false,
         "columns": [
+            { "width": "10px" },
             { "width": "10px" },
             { "width": "10px" },
             { "width": "55px" },
@@ -752,14 +778,14 @@ function dataBind(data) {
             { "width": "30px" },
             { "width": "30px" },
             { "width": "30px" },
-
-        ],
-        'order': [[1, 'asc']],
+            
+          ],
         buttons: [
             {
                 extend: 'pdfHtml5', footer: true,
+               
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                    columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11]
                 },
                 orientation: 'landscape',
                 customize: function (doc) {
@@ -772,22 +798,34 @@ function dataBind(data) {
                     //     doc.content[1].table.body[i][6].alignment = 'right';
                     // }
                 },
-                text: 'Download',            
+                text: 'Download',
                 // exportOptions: {
                 //     modifier: {
                 //         page: 'All'
                 //     }
                 // }
             },
+            // {
+            //     text: 'Invoice',
+            //     attr:  {
+            //         id: 'InvoiceBtn',
+            //         class:'buttons-pdf',
+            //         enabled: false,
+            //     }
+            // },
             {
                 text: 'Invoice',
-                attr:  {
-                    id: 'InvoiceBtn',
-                    class:'buttons-pdf',
-                    enabled: false,
-                }
+                attr: {
+                  id: 'btn-send',
+                  class:'buttons-pdf',
+                },
+                action: function(e, dt, node, config) { 
+                    getSelectedInvoiceData();
+            }          
+                
             }
         ],
+        
 
 
         footerCallback: function (row, data, start, end, display) {
@@ -801,14 +839,6 @@ function dataBind(data) {
             // Total over all pages
 
             total_piece = api
-                .column(4)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-
-            total_carat = api
                 .column(5)
                 .data()
                 .reduce(function (a, b) {
@@ -816,15 +846,23 @@ function dataBind(data) {
                 }, 0);
 
 
-            noneProcessPiece = api
+            total_carat = api
                 .column(6)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
-            none_process_carat = api
+
+            noneProcessPiece = api
                 .column(7)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+            none_process_carat = api
+                .column(8)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
@@ -832,21 +870,21 @@ function dataBind(data) {
 
 
             broken_piece = api
-                .column(8)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            broken_carat = api
                 .column(9)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
-            finalCarat = api
+            broken_carat = api
                 .column(10)
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+            finalCarat = api
+                .column(11)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
@@ -856,24 +894,28 @@ function dataBind(data) {
             // // Update footer
 
             // $(api.column(4).footer()).html(totalCarat);
-            $(api.column(4).footer()).html(total_piece);
-            $(api.column(5).footer()).html(total_carat.toFixed(2));
-            $(api.column(6).footer()).html(noneProcessPiece);
-            $(api.column(7).footer()).html(none_process_carat.toFixed(2));
-            $(api.column(8).footer()).html(broken_piece);
-            $(api.column(9).footer()).html(broken_carat.toFixed(2));
-            $(api.column(10).footer()).html(finalCarat.toFixed(2));
+            $(api.column(5).footer()).html(total_piece);
+            $(api.column(6).footer()).html(total_carat.toFixed(2));
+            $(api.column(7).footer()).html(noneProcessPiece);
+            $(api.column(8).footer()).html(none_process_carat.toFixed(2));
+            $(api.column(9).footer()).html(broken_piece);
+            $(api.column(10).footer()).html(broken_carat.toFixed(2));
+            $(api.column(11).footer()).html(finalCarat.toFixed(2));
             // $(api.column(9).footer()).html(broken_qty);
             // $(api.column(8).footer()).html(total);
         },
     });
-
+    // Handle click on "Select all" control
+   $('#example-select-all').on('click', function(){
+    // Check/uncheck all checkboxes in the table
+    var rows = table.rows({ 'search': 'applied' }).nodes();
+    $('input[type="checkbox"]', rows).prop('checked', this.checked);
+ });
     // table.buttons().container().appendTo('#example_wrapper' );
     table.clear().draw()
 
     if (data.success) {
         data.packet.forEach(function (currentPacket, index) {
-            let checkBox  = `<div class="checkbox"><input type="checkbox" packet_id="${currentPacket.packet_id}" id="selectedCheckBox" class="dt-checkboxes"><label></label></div>`;
             let count = index + 1;
             let date = currentPacket.date;
             var mydate = new Date(date);
@@ -898,9 +940,10 @@ function dataBind(data) {
             // }
             let price = currentPacket.price_per_carat.toFixed(2);
             let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
+            var invoice_data = packet_no+ ',' + company_name + ',' + qty+ ',' +carat;
 
             table.row.add([
-                checkBox,count, packet_no, packetDate, company_name, qty, carat, pending_process_qty, pending_process, broken_qty, broken_carat, price,
+                invoice_data, count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
                 `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                 <i class="mx-2 fa fa-edit"></i></a>
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
@@ -911,36 +954,6 @@ function dataBind(data) {
 
 
 }
-
-
-$(document).on("click", "#InvoiceBtn", function (event) {
-    $.ajax({
-        url: base_url + 'Dashboard/print_invoice',
-        method: 'post',
-        processData: false,
-        contentType: false,
-        beforeSend: function (data) { },
-        complete: function (data) {
-        },
-        error: function (data) {
-            alert('Something went wrong')
-        },
-        success: function (data) {
-            data = JSON.parse(data)
-            console.log("invoice :", data);
-        }
-    })
-})
-
-let selectedInvoiceArr = [];
-$(document).on("change", ".dt-checkboxes", function (event) {
-    let selectedInvoices =  $(this).attr("packet_id");
-    selectedInvoiceArr.push(selectedInvoices);
-    console.log("selectedInvoiceArr :",selectedInvoiceArr);
-})
-
-
-
 
 
 $(document).on("click", "#packet_delete", function (event) {
@@ -1015,14 +1028,13 @@ function bindPacketData() {
         },
         success: function (data) {
             data = JSON.parse(data);
-            console.log("data :", data);
             data.packet.map((pack) => {
-                localStorage.setItem("selecteCompanyID", pack.company_id);
+                localStorage.setItem("selecteCompanyID",pack.company_id);
                 var mydate = new Date(pack.date);
                 year = mydate.getFullYear();
                 month = (mydate.getMonth() + 1).toString().padStart(2, "0");
                 day = mydate.getDate().toString().padStart(2, "0");
-                var packetDate = day + '/' + month + '/' + year;
+                var packetDate = day+ '/' + month + '/' + year;
 
                 $("#selected_date").val(packetDate);
                 $("#selectedCompanyName").val(pack.company_name);
@@ -1049,22 +1061,22 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
     if (pending_process_qty_diamond == undefined || pending_process_qty_diamond == "" || pending_process_qty_diamond == null) {
         pending_process_qty_diamond = 0;
     }
-    if (pending_process_qty_carat == undefined || pending_process_qty_carat == "" || pending_process_qty_carat == null) {
+     if (pending_process_qty_carat == undefined || pending_process_qty_carat == "" || pending_process_qty_carat == null) {
         pending_process_qty_carat = 0;
     }
-    if (broken_qty_diamond == undefined || broken_qty_diamond == "" || broken_qty_diamond == null) {
+     if (broken_qty_diamond == undefined || broken_qty_diamond == "" || broken_qty_diamond == null) {
         broken_qty_diamond = 0;
     }
-    if (broken_qty_carat == undefined || broken_qty_carat == "" || broken_qty_carat == null) {
+     if (broken_qty_carat == undefined || broken_qty_carat == "" || broken_qty_carat == null) {
         broken_qty_carat = 0;
     }
-    if (quantity == undefined || quantity == "" || quantity == null) {
+     if (quantity == undefined || quantity == "" || quantity == null) {
         quantity = 0;
     }
-    if (total_carat == undefined || total_carat == "" || total_carat == null) {
+     if (total_carat == undefined || total_carat == "" || total_carat == null) {
         total_carat = 0;
     }
-    if (cube_qty == undefined || cube_qty == "" || cube_qty == null) {
+     if (cube_qty == undefined || cube_qty == "" || cube_qty == null) {
         cube_qty = 0;
     }
 
@@ -1121,21 +1133,37 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
 
 
 
-// $(document).on("click", "#packet_id", function (event) {
-//     let id = $(this).attr('packet_id');
-//     let data = new FormData()
-//     data.append("packet_id", id)
+$(document).on("click", "#packet_id", function (event) {
+    let id = $(this).attr('packet_id');
+    let data = new FormData()
+    data.append("packet_id", id)
 
-   
+    $.ajax({
+        url: base_url + 'Dashboard/print_invoice',
+        method: 'post',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            window.location = "invoice"
+            data = JSON.parse(data)
+        }
+    })
 
 
-// });
+});
 
 $('#packet_details_submit').click((e) => {
 
     let id = localStorage.getItem("packet_id");
     let selectedDate = $("#selected_date").val();
-    // console.log("selectedDate1", selectedDate); 
+   // console.log("selectedDate1", selectedDate); 
     selectedDate = selectedDate.split("/").reverse().join("-");
     //console.log("selectedDate2", selectedDate); 
     // var mydate = new Date(selectedDate);
@@ -1278,9 +1306,18 @@ const resetForm = () => {
 
 const fatchSelectedCompnay = () => {
 
-    is_filer_clicked = true;
     let data = new FormData()
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    if(selected_value != "-1")
+    {
+        localStorage.setItem("invoice_company", localStorage.getItem("FilterSelecteCompanyName"))
+
+    }
+    else
+    {
+        localStorage.removeItem("invoice_company");
+
+    }
     // let selected_date = $("#selectedCompanyDate").val();
     let startDate = localStorage.getItem("startDate");
     let endDate = localStorage.getItem("endDate");
@@ -1337,7 +1374,7 @@ const autoIncPacketNum = () => {
 
                 data.packet.forEach(function (currentPacket, index) {
                     $("#number_of_packet").val(currentPacket.packet_count + 1)
-                    localStorage.setItem("last_packet_no", currentPacket.packet_count);
+                    localStorage.setItem("last_packet_no",currentPacket.packet_count);
                 })
             }
         }
@@ -1365,28 +1402,283 @@ const autoIncPacketNumExport = (json_data) => {
                 data.packet.forEach(function (currentPacket, index) {
 
                     let count = currentPacket.packet_count;
+                     
                     json_data.forEach(function (obj) {
-                        count++;
-
-                        var date = new Date(obj.Date);
-                        obj.Date = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
-                        obj.packet_no = count;
-
-
-                    });
-
-                    // console.log(json_data);
-                    sendJSON(json_data)
+                    count++;
+                   
+                    var date = new Date(obj.Date);
+                    obj.Date = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
+                    obj.packet_no = count;
 
 
+                });
+                
+                
+                sendJSON(json_data)
+
+                    
                 })
             }
         }
     })
 }
+$(document).on("click", "#back_to_pkg_btn", function (event) {
+    localStorage.removeItem("Invoice_date");
+    localStorage.removeItem("invoice_company");
+    localStorage.removeItem("Invoice_data_arr");
+    localStorage.removeItem("last_downloaded_invoice");
+    localStorage.removeItem("Invoice_num");
+    localStorage.removeItem("FilterSelecteCompanyName");
+    localStorage.removeItem("FilterSelecteCompanyID");
+    
+
+    window.location = "packet";
+})
+
+// $(document).on("click", "#InvoiceBtn", function (event) {
+
+//     $.ajax({
+//         url: base_url + 'Dashboard/show_invoice',
+//         method: 'post',
+//         processData: false,
+//         contentType: false,
+//         beforeSend: function (data) { },
+//         complete: function (data) {
+//         },
+//         error: function (data) {
+//             alert('Something went wrong')
+//         },
+//         success: function (data) {
+//             //data = JSON.parse(data)
+//             //console.log("invoice :", data);
+           
+            
+
+//             window.location = 'invoice_form';
+//         }
+//     })
+// })
+
+getSelectedInvoiceData = () => {
+    
+
+      $.ajax({
+        url: base_url + 'Dashboard/show_invoice',
+        method: 'post',
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { },
+        complete: function (data) {
+        },
+        error: function (data) {
+            alert('Something went wrong')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data.success) {
+                if (data.packet.length >0)
+                {
+                    //console.log("invoice :", data.packet[0].challan_no);
+                    localStorage.setItem("Invoice_num", data.packet[0].challan_no);
+                    localStorage.setItem("last_downloaded_invoice", 0);
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                    var yyyy = today.getFullYear();
+
+                    today = dd + '/' + mm + '/' + yyyy;
+                    localStorage.setItem("Invoice_date", today);
+                }
+            }
+            
+            // window.location = 'invoice_form';
+
+            var invoice_data_arr=[];
+            localStorage.removeItem("Invoice_data_arr");
+            var oTable = $('#packet_list').dataTable();
+            var rowcollection =  oTable.$("#cb1:checked", {"page": "all"});
+            rowcollection.each(function(index,elem){
+                var checkbox_value = $(elem).val();
+                invoice_data_arr.push(checkbox_value);
+            });
+            localStorage.setItem("Invoice_data_arr", JSON.stringify(invoice_data_arr));
+            
+            let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+            
+            if(selected_value == "-1" || selected_value == null) 
+            {
+                alert("Please Filter data for specific company to create invoice");
+
+            }
+            else
+            {
+                if( invoice_data_arr.length == 0)
+                {
+                    alert("Please select packet's entry to create invoice");
+                }
+                else if( invoice_data_arr.length > 25)
+                {
+                    alert("You cannot select more than 25 packets");
+                }
+                else
+                {
+                    window.location = 'invoice_form';
+                }
+                
+
+            }
+            
+
+            
+
+
+        }
+    })
+
+    //return val1;
+  }
+
+  BindInvoiceData = () => {
+    
+    $("#invoice_cname").text(localStorage.getItem("invoice_company"));
+    $("#invoice_cno").text(Number(localStorage.getItem("Invoice_num"))+ 1) ;
+    $("#invoice_date").text(localStorage.getItem("Invoice_date"));
+
+    invoice_data_arr = JSON.parse(localStorage.getItem("Invoice_data_arr"));
+
+    let tableRef = document.getElementById('invoice_table').getElementsByTagName('tbody')[0];
+    let total_pcs=0;
+    let total_weight=0;
+    for(i = 0; i < invoice_data_arr.length; i++)
+    {
+        result = invoice_data_arr[i].split(',');
+        total_pcs+=Number(result[2]);
+        total_weight+=Number(result[3]);
+
+        tableRef.insertRow().innerHTML = 
+        "<td class='text-center'>" + (i+1).toString()+ "</td>" + "<td></td>"+
+        "<td></td>"+
+        "<td class='text-center'>" +result[2]+ "</td>"+
+        "<td class='text-center'>" +result[3]+ "</td>"+ "<td></td>"+ "<td></td>";
+        
+        $("#sub_total_pcs").text(total_pcs);
+        $("#sub_total_Weight").text(total_weight.toFixed(2));
+    }
+
+  }
+  convertHtmlToPdf = () => {
+    var doc = new jsPDF();
+  
+    var specialElementHandlers = {
+        '#editor': function (element, renderer) {
+            return true;
+        }
+    };
+    doc.fromHTML($('#invoice_content').html(), 15, 15, {
+        'width': 170,
+            'elementHandlers': specialElementHandlers
+    });
+    doc.save('sample-file.pdf');
+  }
+
+
+  function CreatePDFfromHTML() {
+    var HTML_Width = ($("#invoice_content").width()*80/100);
+    var HTML_Height = ($("#invoice_content").height()*80/100);
+    var top_left_margin = 15;
+    var PDF_Width = HTML_Width + (top_left_margin * 2);
+    var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+    var canvas_image_width = HTML_Width;
+    var canvas_image_height = HTML_Height;
+
+    var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
 
 
 
+    html2canvas($("#invoice_content")[0], { scale: 2 }).then(function (canvas) {
+        var imgData = canvas.toDataURL("image/jpeg", 1.0);
+        var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+        //var pdf = new jsPDF('p', 'pt', 'A4');
+
+        pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+        for (var i = 1; i <= totalPDFPages; i++) { 
+            pdf.addPage(PDF_Width, PDF_Height);
+            pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+        }
+        pdf.save("Invoice.pdf");
+        // $(".container").hide();
+    });
+}
+
+function generatePDF() {
+    // Choose the element that your content will be rendered to.
+    const element = document.getElementById('invoice-content');
+    // Choose the element and save the PDF for your user.
+    html2pdf().from(element).save();
+}
+
+$(document).on("click", "#download_btn", function (event) {
+    // generatePDF();
+    CreatePDFfromHTML();
+    if((Number(localStorage.getItem("Invoice_num"))+ 1) != (Number(localStorage.getItem("last_downloaded_invoice"))))
+    {
+        updateChallanNo(Number(localStorage.getItem("Invoice_num"))+ 1)
+    }
+    
+    // convertHtmlToPdf();
+})
+
+function updateChallanNo(challan_no) {
+    
+    let data = new FormData();
+    data.append('challan_no', challan_no);
+    localStorage.setItem("last_downloaded_invoice", challan_no);
+    
+    $.ajax({
+        url: base_url + 'Dashboard/updateChallanNo',
+        data: data,
+        type: "POST",
+        cache: false,
+        processData: false,
+        contentType: false,
+        dataType: false,
+        beforeSend: function (data) {
+        },
+        complete: function (data) {
+        },
+        error: function (e) {
+            localStorage.setItem("last_downloaded_invoice", 0);
+            alert("Failed to Data Add.");
+        },
+        success: function (data) {
+            
+            
+        },
+    });
+}
+
+
+// // Convert HTML content to PDF
+// function Convert_HTML_To_PDF() {
+//     window.jsPDF = window.jspdf.jsPDF;
+//     var doc = new jsPDF();
+	
+//     // Source HTMLElement or a string containing HTML.
+//     var elementHTML = document.querySelector("#contentToPrint");
+
+//     doc.html(elementHTML, {
+//         callback: function(doc) {
+//             // Save the PDF
+//             doc.save('document-html.pdf');
+//         },
+//         margin: [10, 10, 10, 10],
+//         autoPaging: 'text',
+//         x: 0,
+//         y: 0,
+//         width: 190, //target width in the PDF document
+//         windowWidth: 675 //window width in CSS pixels
+//     });
+// }
 
 
 
