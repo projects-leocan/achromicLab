@@ -222,10 +222,10 @@ class DbHandler
         return $result;
     }
 
-    public function print_invoice($packet_id)
+    public function print_invoice()
     {
 
-        $sql_query = "SELECT * FROM `packet` where `packet_id`= $packet_id ";
+        $sql_query = "SELECT * FROM `invoice`" ;
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
