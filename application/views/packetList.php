@@ -89,8 +89,8 @@
                     <table id="packet_list" class="table table-bordered table-striped" style="text-align: center;">
                         <thead>
                             <tr>
-                            <!-- <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th> -->
-                            <th></th>
+                            <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
+                            <!-- <th></th> -->
                                 <th style="width:10px">No.</th>
                                 <th style="width:10px">Packet No.</th>
                                 <th style="width:55px">Date</th>

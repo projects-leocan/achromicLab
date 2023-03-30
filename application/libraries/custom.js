@@ -1,8 +1,8 @@
 // live 
-// const base_url = 'https://leocan.co/subFolder/achromicLab/';
+const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-const base_url = 'http://localhost/achromicLab/';
+// const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
@@ -11,7 +11,9 @@ $(() => {
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
     }
-
+    if (window.location.href == base_url + 'invoice_form') {
+        BindInvoiceData();
+    }
     if (window.location.href == base_url + 'packet') {
         $('#inputedCompanyName').val("All Company");
         BindControls();
@@ -74,6 +76,9 @@ $('#resetDate').click((e) => {
     localStorage.removeItem("startDate");
     localStorage.removeItem("endDate");
     localStorage.removeItem("FilterSelecteCompanyID");
+    localStorage.removeItem("FilterSelecteCompanyName");
+    localStorage.removeItem("invoice_company");
+    
     $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
     $('#inputedCompanyName').val("All Company");
     fetchPacketData();
@@ -683,6 +688,7 @@ function BindControls() {
                         var selectedCompany = company_name.find(company => company.name === ui.item.value);
                         var selectedCompanyId = selectedCompany ? selectedCompany.id : -1;
                         localStorage.setItem("FilterSelecteCompanyID", selectedCompanyId)
+                        localStorage.setItem("FilterSelecteCompanyName", selectedCompany.name)
                     }
                 }).focus(function () {
                     $(this).autocomplete("search", "");
@@ -900,11 +906,11 @@ function dataBind(data) {
         },
     });
     // Handle click on "Select all" control
-//    $('#example-select-all').on('click', function(){
-//     // Check/uncheck all checkboxes in the table
-//     var rows = table.rows({ 'search': 'applied' }).nodes();
-//     $('input[type="checkbox"]', rows).prop('checked', this.checked);
-//  });
+   $('#example-select-all').on('click', function(){
+    // Check/uncheck all checkboxes in the table
+    var rows = table.rows({ 'search': 'applied' }).nodes();
+    $('input[type="checkbox"]', rows).prop('checked', this.checked);
+ });
     // table.buttons().container().appendTo('#example_wrapper' );
     table.clear().draw()
 
@@ -1022,7 +1028,6 @@ function bindPacketData() {
         },
         success: function (data) {
             data = JSON.parse(data);
-            console.log("data :",data);
             data.packet.map((pack) => {
                 localStorage.setItem("selecteCompanyID",pack.company_id);
                 var mydate = new Date(pack.date);
@@ -1148,7 +1153,6 @@ $(document).on("click", "#packet_id", function (event) {
         success: function (data) {
             window.location = "invoice"
             data = JSON.parse(data)
-            console.log("data :", data);
         }
     })
 
@@ -1304,6 +1308,16 @@ const fatchSelectedCompnay = () => {
 
     let data = new FormData()
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    if(selected_value != "-1")
+    {
+        localStorage.setItem("invoice_company", localStorage.getItem("FilterSelecteCompanyName"))
+
+    }
+    else
+    {
+        localStorage.removeItem("invoice_company");
+
+    }
     // let selected_date = $("#selectedCompanyDate").val();
     let startDate = localStorage.getItem("startDate");
     let endDate = localStorage.getItem("endDate");
@@ -1388,7 +1402,7 @@ const autoIncPacketNumExport = (json_data) => {
                 data.packet.forEach(function (currentPacket, index) {
 
                     let count = currentPacket.packet_count;
-                     console.log("count",count); 
+                     
                     json_data.forEach(function (obj) {
                     count++;
                    
@@ -1399,7 +1413,7 @@ const autoIncPacketNumExport = (json_data) => {
 
                 });
                 
-                // console.log(json_data);
+                
                 sendJSON(json_data)
 
                     
@@ -1408,27 +1422,42 @@ const autoIncPacketNumExport = (json_data) => {
         }
     })
 }
+$(document).on("click", "#back_to_pkg_btn", function (event) {
+    localStorage.removeItem("Invoice_date");
+    localStorage.removeItem("invoice_company");
+    localStorage.removeItem("Invoice_data_arr");
+    localStorage.removeItem("last_downloaded_invoice");
+    localStorage.removeItem("Invoice_num");
+    localStorage.removeItem("FilterSelecteCompanyName");
+    localStorage.removeItem("FilterSelecteCompanyID");
+    
 
-
-$(document).on("click", "#InvoiceBtn", function (event) {
-    $.ajax({
-        url: base_url + 'Dashboard/show_invoice',
-        method: 'post',
-        processData: false,
-        contentType: false,
-        beforeSend: function (data) { },
-        complete: function (data) {
-        },
-        error: function (data) {
-            alert('Something went wrong')
-        },
-        success: function (data) {
-            data = JSON.parse(data)
-            //console.log("invoice :", data);
-            window.location = 'invoice_form';
-        }
-    })
+    window.location = "packet";
 })
+
+// $(document).on("click", "#InvoiceBtn", function (event) {
+
+//     $.ajax({
+//         url: base_url + 'Dashboard/show_invoice',
+//         method: 'post',
+//         processData: false,
+//         contentType: false,
+//         beforeSend: function (data) { },
+//         complete: function (data) {
+//         },
+//         error: function (data) {
+//             alert('Something went wrong')
+//         },
+//         success: function (data) {
+//             //data = JSON.parse(data)
+//             //console.log("invoice :", data);
+           
+            
+
+//             window.location = 'invoice_form';
+//         }
+//     })
+// })
 
 getSelectedInvoiceData = () => {
     
@@ -1445,45 +1474,62 @@ getSelectedInvoiceData = () => {
             alert('Something went wrong')
         },
         success: function (data) {
-            // data = JSON.parse(data)
-            // console.log("invoice :", data);
+            data = JSON.parse(data);
+            if (data.success) {
+                if (data.packet.length >0)
+                {
+                    //console.log("invoice :", data.packet[0].challan_no);
+                    localStorage.setItem("Invoice_num", data.packet[0].challan_no);
+                    localStorage.setItem("last_downloaded_invoice", 0);
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                    var yyyy = today.getFullYear();
+
+                    today = dd + '/' + mm + '/' + yyyy;
+                    localStorage.setItem("Invoice_date", today);
+                }
+            }
+            
             // window.location = 'invoice_form';
 
             var invoice_data_arr=[];
+            localStorage.removeItem("Invoice_data_arr");
             var oTable = $('#packet_list').dataTable();
             var rowcollection =  oTable.$("#cb1:checked", {"page": "all"});
             rowcollection.each(function(index,elem){
                 var checkbox_value = $(elem).val();
                 invoice_data_arr.push(checkbox_value);
             });
-             console.log("checkbox_value",invoice_data_arr);
+            localStorage.setItem("Invoice_data_arr", JSON.stringify(invoice_data_arr));
+            
+            let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+            
+            if(selected_value == "-1" || selected_value == null) 
+            {
+                alert("Please Filter data for specific company to create invoice");
 
-            let invoice_data = new FormData()
-            invoice_data.append('invoice_data', JSON.stringify(invoice_data_arr))
-           // window.location = 'invoice_form';
+            }
+            else
+            {
+                if( invoice_data_arr.length == 0)
+                {
+                    alert("Please select packet's entry to create invoice");
+                }
+                else if( invoice_data_arr.length > 25)
+                {
+                    alert("You cannot select more than 25 packets");
+                }
+                else
+                {
+                    window.location = 'invoice_form';
+                }
+                
 
-            // $.ajax({
-            //     url: base_url + 'invoice_form',
-            //     method: 'post',
-            //     data: invoice_data,
-            //     processData: false,
-            //     contentType: false,
-            //     beforeSend: function (data) { },
-            //     complete: function (data) {
-            //     },
-            //     error: function (data) {
-            //         console.log("iwent");
-            //         alert('Something went wrong')
-            //     },
-            //     success: function (data) {
-            //         // console.log("invoice :", data);
-            //         // data = JSON.parse(data)
-            //         // console.log("invoice :", data);
-            //      //   window.location = 'invoice_form';
-        
-                    
-            //     }
-            // })
+            }
+            
+
+            
 
 
         }
@@ -1492,11 +1538,124 @@ getSelectedInvoiceData = () => {
     //return val1;
   }
 
-// $(document).on("click", "#download_btn", function (event) {
-//     CreatePDFfromHTML();
-// })
+  BindInvoiceData = () => {
+    
+    $("#invoice_cname").text(localStorage.getItem("invoice_company"));
+    $("#invoice_cno").text(Number(localStorage.getItem("Invoice_num"))+ 1) ;
+    $("#invoice_date").text(localStorage.getItem("Invoice_date"));
+
+    invoice_data_arr = JSON.parse(localStorage.getItem("Invoice_data_arr"));
+
+    let tableRef = document.getElementById('invoice_table').getElementsByTagName('tbody')[0];
+    let total_pcs=0;
+    let total_weight=0;
+    for(i = 0; i < invoice_data_arr.length; i++)
+    {
+        result = invoice_data_arr[i].split(',');
+        total_pcs+=Number(result[2]);
+        total_weight+=Number(result[3]);
+
+        tableRef.insertRow().innerHTML = 
+        "<td class='text-center'>" + (i+1).toString()+ "</td>" + "<td></td>"+
+        "<td></td>"+
+        "<td class='text-center'>" +result[2]+ "</td>"+
+        "<td class='text-center'>" +result[3]+ "</td>"+ "<td></td>"+ "<td></td>";
+        
+        $("#sub_total_pcs").text(total_pcs);
+        $("#sub_total_Weight").text(total_weight.toFixed(2));
+    }
+
+  }
+  convertHtmlToPdf = () => {
+    var doc = new jsPDF();
+  
+    var specialElementHandlers = {
+        '#editor': function (element, renderer) {
+            return true;
+        }
+    };
+    doc.fromHTML($('#invoice_content').html(), 15, 15, {
+        'width': 170,
+            'elementHandlers': specialElementHandlers
+    });
+    doc.save('sample-file.pdf');
+  }
 
 
+  function CreatePDFfromHTML() {
+    var HTML_Width = ($("#invoice_content").width()*80/100);
+    var HTML_Height = ($("#invoice_content").height()*80/100);
+    var top_left_margin = 15;
+    var PDF_Width = HTML_Width + (top_left_margin * 2);
+    var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+    var canvas_image_width = HTML_Width;
+    var canvas_image_height = HTML_Height;
+
+    var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+
+    html2canvas($("#invoice_content")[0], { scale: 2 }).then(function (canvas) {
+        var imgData = canvas.toDataURL("image/jpeg", 1.0);
+        var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+        //var pdf = new jsPDF('p', 'pt', 'A4');
+
+        pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+        for (var i = 1; i <= totalPDFPages; i++) { 
+            pdf.addPage(PDF_Width, PDF_Height);
+            pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+        }
+        pdf.save("Invoice.pdf");
+        // $(".container").hide();
+    });
+}
+
+function generatePDF() {
+    // Choose the element that your content will be rendered to.
+    const element = document.getElementById('invoice-content');
+    // Choose the element and save the PDF for your user.
+    html2pdf().from(element).save();
+}
+
+$(document).on("click", "#download_btn", function (event) {
+    // generatePDF();
+    CreatePDFfromHTML();
+    if((Number(localStorage.getItem("Invoice_num"))+ 1) != (Number(localStorage.getItem("last_downloaded_invoice"))))
+    {
+        updateChallanNo(Number(localStorage.getItem("Invoice_num"))+ 1)
+    }
+    
+    // convertHtmlToPdf();
+})
+
+function updateChallanNo(challan_no) {
+    
+    let data = new FormData();
+    data.append('challan_no', challan_no);
+    localStorage.setItem("last_downloaded_invoice", challan_no);
+    
+    $.ajax({
+        url: base_url + 'Dashboard/updateChallanNo',
+        data: data,
+        type: "POST",
+        cache: false,
+        processData: false,
+        contentType: false,
+        dataType: false,
+        beforeSend: function (data) {
+        },
+        complete: function (data) {
+        },
+        error: function (e) {
+            localStorage.setItem("last_downloaded_invoice", 0);
+            alert("Failed to Data Add.");
+        },
+        success: function (data) {
+            
+            
+        },
+    });
+}
 
 
 // // Convert HTML content to PDF
