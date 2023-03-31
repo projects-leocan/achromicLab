@@ -105,10 +105,10 @@
                               <thead>
                                  <tr>
                                     <th class="per70 text-center">No.</th>
-                                    <th class="per70 text-center">Lot No</th>
-                                    <th class="per70 text-center">Remark/Description</th>
                                     <th class="per5 text-center">Pcs</th>
-                                    <th class="per25 text-center">Weight</th>
+                                    <th class="per25 text-center">Carat</th>
+                                    <th class="per70 text-center">None Process Piece</th>
+                                    <th class="per70 text-center">None Process Carat</th>
                                     <th class="per25 text-center">Rate</th>
                                     <th class="per25 text-center">Amount</th>
                                  </tr>
@@ -144,17 +144,29 @@
                               </tbody>
                               <tfoot>
                                  <tr>
-                                    <th colspan="3" class="text-right">Sub Total:</th>
+                                    <th class="text-right">Sub Total:</th>
                                     <th class="text-center" id = "sub_total_pcs"></th>
                                     <th class="text-center" id = "sub_total_Weight"></th>
+                                    <th class="text-center" id = "none_process_piece"></th>
+                                    <th class="text-center" id = "none_process_caret"></th>
+                                    <th class="text-center" id = "rate"></th>
+                                    <th class="text-center" id = "amount"></th>
                                  </tr>
                                  <tr>
-                                    <th colspan="3" class="text-right">Add/Less:</th>
+                                    <th class="text-right">Add/Less:</th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
                                     <th class="text-center"></th>
                                     <th class="text-center"></th>
                                  </tr>
                                  <tr>
-                                    <th colspan="3" class="text-right">Net Amount:</th>
+                                    <th class="text-right">Net Amount:</th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
                                     <th class="text-center"></th>
                                     <th class="text-center"></th>
                                  </tr>

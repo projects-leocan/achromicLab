@@ -940,7 +940,7 @@ function dataBind(data) {
             // }
             let price = currentPacket.price_per_carat.toFixed(2);
             let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
-            var invoice_data = packet_no+ ',' + company_name + ',' + qty+ ',' +carat;
+            var invoice_data = packet_no+ ',' + company_name + ',' + qty+ ',' +carat+ ',' +pending_process_qty+ ',' +pending_process;
 
             table.row.add([
                 invoice_data, count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
@@ -1550,20 +1550,37 @@ getSelectedInvoiceData = () => {
     let tableRef = document.getElementById('invoice_table').getElementsByTagName('tbody')[0];
     let total_pcs=0;
     let total_weight=0;
+    let None_Process_Piece=0;
+    let None_Process_Carat=0;
     for(i = 0; i < invoice_data_arr.length; i++)
     {
         result = invoice_data_arr[i].split(',');
         total_pcs+=Number(result[2]);
         total_weight+=Number(result[3]);
+        None_Process_Piece+=Number(result[4]);
+        None_Process_Carat+=Number(result[5]);
+
+        // <th class="per70 text-center">No.</th>
+        // <th class="per5 text-center">Pcs</th>
+        // <th class="per25 text-center">Carat</th>
+        // <th class="per70 text-center">None Process Piece</th>
+        // <th class="per70 text-center">None Process Carat</th>
+        // <th class="per25 text-center">Rate</th>
+        // <th class="per25 text-center">Amount</th>
 
         tableRef.insertRow().innerHTML = 
-        "<td class='text-center'>" + (i+1).toString()+ "</td>" + "<td></td>"+
-        "<td></td>"+
+        "<td class='text-center'>" + (i+1).toString()+ "</td>" + 
         "<td class='text-center'>" +result[2]+ "</td>"+
-        "<td class='text-center'>" +result[3]+ "</td>"+ "<td></td>"+ "<td></td>";
+        "<td class='text-center'>" +result[3]+ "</td>"+ 
+        "<td class='text-center'>" +result[4]+ "</td>"+
+        "<td class='text-center'>" +result[5]+ "</td>"+
+        "<td></td>"+
+        "<td></td>";
         
         $("#sub_total_pcs").text(total_pcs);
         $("#sub_total_Weight").text(total_weight.toFixed(2));
+        $("#none_process_piece").text(None_Process_Piece);
+        $("#none_process_caret").text(None_Process_Carat.toFixed(2));
     }
 
   }
