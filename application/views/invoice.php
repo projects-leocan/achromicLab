@@ -68,6 +68,7 @@
                                  <li>mini bazar varachha road,surat, gujarat - 395004</li>
                                  <li>Call: 99744 27300, 79841 02715</li>
                                  <li>Email: achromiclabllp1974@gmail.com</li>
+                                 <li>GSTIN 24ABXFA4579N1ZI</li>
                               </ul>
                            </div>
                            <!-- </ul> -->
@@ -152,7 +153,7 @@
                                     <th class="text-center" id = "rate"></th>
                                     <th class="text-center" id = "amount"></th>
                                  </tr>
-                                 <tr>
+                                 <!-- <tr>
                                     <th class="text-right">Add/Less:</th>
                                     <th class="text-center"></th>
                                     <th class="text-center"></th>
@@ -169,10 +170,10 @@
                                     <th class="text-center"></th>
                                     <th class="text-center"></th>
                                     <th class="text-center"></th>
-                                 </tr>
-                                 <tr>
+                                 </tr> -->
+                                 <!-- <tr>
                                     <th colspan="7" class="text-left">Total Amount In Rupees:</th>
-                                 </tr>
+                                 </tr> -->
                                  <tr>
                                     <td colspan="2" class="text-center">Authorised Sign</td>
                                     <td colspan="2" class="text-center">Inssuer Sign</td>
