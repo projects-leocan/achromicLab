@@ -1581,6 +1581,10 @@ getSelectedInvoiceData = () => {
         $("#sub_total_Weight").text(total_weight.toFixed(2));
         $("#none_process_piece").text(None_Process_Piece);
         $("#none_process_caret").text(None_Process_Carat.toFixed(2));
+
+        $("#total_pcs").text(total_pcs-None_Process_Piece);
+        $("#total_Weight").text(((total_weight.toFixed(2))-(None_Process_Carat.toFixed(2))).toFixed(2));
+
     }
 
   }

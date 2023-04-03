@@ -153,6 +153,15 @@
                                     <th class="text-center" id = "rate"></th>
                                     <th class="text-center" id = "amount"></th>
                                  </tr>
+                                 <tr>
+                                    <th class="text-right">Total:</th>
+                                    <th class="text-center" id = "total_pcs"></th>
+                                    <th class="text-center" id = "total_Weight"></th>
+                                    <th class="text-center" ></th>
+                                    <th class="text-center" ></th>
+                                    <th class="text-center" ></th>
+                                    <th class="text-center" ></th>
+                                 </tr>
                                  <!-- <tr>
                                     <th class="text-right">Add/Less:</th>
                                     <th class="text-center"></th>
