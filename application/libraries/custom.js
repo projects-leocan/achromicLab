@@ -1605,8 +1605,8 @@ getSelectedInvoiceData = () => {
 
 
   function CreatePDFfromHTML() {
-    var HTML_Width = ($("#invoice_content").width()*80/100);
-    var HTML_Height = ($("#invoice_content").height()*80/100);
+    var HTML_Width = ($("#invoice_content").width());
+    var HTML_Height = ($("#invoice_content").height());
     var top_left_margin = 15;
     var PDF_Width = HTML_Width + (top_left_margin * 2);
     var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
