@@ -26,7 +26,8 @@
 <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 <style type="text/css">
     	body{
-      font-weight: bold;
+      /* font-weight: bold; */
+      font-size: 20px;
 
     background:#eee;    
 }
