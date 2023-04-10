@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+   <meta charset="utf-8">
 
-<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+   <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript">
         $("#btnPrint").live("click", function () {
             var divContents = $("#download_content").html();
@@ -16,56 +16,29 @@
             printWindow.print();
         });
     </script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
+   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-<script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+   <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 
-<title>Invoice</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-<style type="text/css">
-    	body{
-      font-weight: bold;
-      font-size: 20px;
-
-    background:#eee;    
-}
-
-.side-logo h1 {
-        text-transform: uppercase;
-        color: #d4af37;
-    }
-
-    .side-logo p {
-        text-transform: uppercase;
-        width: 52%;
-        /* line-height: 0.3; */
-    }
-   
-
-    
-    </style>
+   <title>Invoice</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media='all'>
 </head>
 
 
-<body>
-   <div class="content-wrapper" >
+<body style="font-weight: bold;font-size:20px;">
+   <div class="content-wrapper">
       <div class=" row invoice row-printable" style="padding-top: 25px;">
          <div class="col-md-10">
-            <div class="panel panel-default plain"  id="invoice_content" >
+            <div class="panel panel-default plain" id="invoice_content">
                <div class="panel-body p30">
-                  <div class="row" >
-                     <div class="col-lg-6">
+                  <div class="row">
+                     <div class="col-lg-6" style="width: 50%;">
                         <div class="invoice-from">
-                           <!-- <ul class="list-unstyled text-left"> -->
-                           <!-- <li> <h1>achromic lab llp</h1></li>
-                              <li>2500 Ridgepoint Dr, Suite 105-C</li>
-                              <li>Austin TX 78754</li>
-                              <li>VAT Number EU826113958</li> -->
                            <div class="left-div side-logo">
-                              <ul class="list-unstyled text-left">
-                                 <h1>achromic lab llp</h1>
+                              <ul class="list-unstyled text-left" style="text-transform: uppercase;">
+                                 <h1 style="text-transform: uppercase;color: #d4af37;">achromic lab llp</h1>
                                  <li>32, Ground Floor,akshar dimoand market,</li>
                                  <li>mini bazar varachha road,surat, gujarat - 395004</li>
                                  <li>Call: 99744 27300, 79841 02715</li>
@@ -76,14 +49,19 @@
                            <!-- </ul> -->
                         </div>
                      </div>
-                     <div class="col-lg-6">
+                     <div class="col-lg-6" style="width: 50%;">
                         <ul class="list-unstyled text-right">
-                           <div class="invoice-logo"><img src="https://leocan.co/subFolder/achromicLab/dist/img/logo1.png" alt="Invoice logo"></div>
+                           <div class="invoice-logo">
+                              <img src="https://leocan.co/subFolder/achromicLab/dist/img/logo1.png" alt="Invoice logo">
+                           </div>
                         </ul>
+
                      </div>
                      <div class="col-lg-12">
                         <div class="invoice-details mt25">
-                           <div class="well">
+                           <div class="well"
+                              style="min-height: 20px; padding: 19px; margin-bottom: 20px;   background-color: #f5f5f5;
+                                    border: 1px solid #e3e3e3;border-radius: 4px;-webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);">
                               <!-- <ul class="list-unstyled mb0">
                                  <li><strong>From:</strong> Anil Gems</li>
                                  <li><strong>Challan No:</strong> #936988</li>
@@ -95,7 +73,7 @@
                                     <td>Mo:</td>
                                  </tr>
                                  <tr>
-                                    <td >Date: <span id="invoice_date"></span></td>
+                                    <td>Date: <span id="invoice_date"></span></td>
                                     <td>Challan No: <span id="invoice_cno"></span></td>
                                     <td>Ref No:</td>
                                  </tr>
@@ -104,7 +82,7 @@
                         </div>
                         <div class="invoice-items">
                            <!-- <div class="table-responsive"> -->
-                           <table class="table table-bordered" id = "invoice_table">
+                           <table class="table table-bordered" id="invoice_table">
                               <thead>
                                  <tr>
                                     <th class="per70 text-center">No.</th>
@@ -148,21 +126,21 @@
                               <tfoot>
                                  <tr>
                                     <th class="text-right">Sub Total:</th>
-                                    <th class="text-center" id = "sub_total_pcs"></th>
-                                    <th class="text-center" id = "sub_total_Weight"></th>
-                                    <th class="text-center" id = "none_process_piece"></th>
-                                    <th class="text-center" id = "none_process_caret"></th>
-                                    <th class="text-center" id = "rate"></th>
-                                    <th class="text-center" id = "amount"></th>
+                                    <th class="text-center" id="sub_total_pcs"></th>
+                                    <th class="text-center" id="sub_total_Weight"></th>
+                                    <th class="text-center" id="none_process_piece"></th>
+                                    <th class="text-center" id="none_process_caret"></th>
+                                    <th class="text-center" id="rate"></th>
+                                    <th class="text-center" id="amount"></th>
                                  </tr>
                                  <tr>
                                     <th class="text-right">Total:</th>
-                                    <th class="text-center" id = "total_pcs"></th>
-                                    <th class="text-center" id = "total_Weight"></th>
-                                    <th class="text-center" ></th>
-                                    <th class="text-center" ></th>
-                                    <th class="text-center" ></th>
-                                    <th class="text-center" ></th>
+                                    <th class="text-center" id="total_pcs"></th>
+                                    <th class="text-center" id="total_Weight"></th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center"></th>
                                  </tr>
                                  <!-- <tr>
                                     <th class="text-right">Add/Less:</th>
@@ -198,7 +176,15 @@
                                     <td colspan="1" class="text-center">&nbsp;</td>
                                  </tr>
                                  <tr>
-                                    <td colspan="7" class="text-left">HTHP પ્રોસેસ દરમિયાન ઉચ્ચ દબાણ ના પરિણામે ડાયમંડ માં નુકશાન થવાની પુરેપુરી સંભાવના છે. આ સ્થિતિથીની સંભવનના ૧૦૦ એ ૩% છે.HTHP દરમિયાન માલ ના તમામ નુકસાન થવાના જોખમને ગાહક દ્વારા પ્રતિબંધિત કરવામાં આવશે. ર) માલ સાથેની બીલ ની બે નકલોમાંથી,કૃપા કરી ને તમારા દ્વારા પ્રાપ્ત થયેલી  કૃતી ના પુરાવા રૂપે એક સહી કરેલ નકલ પરત કરો.એકવાર માલ ની રસીદ બિલ પર  હસ્ત્રક્ષાર કરીને પુષ્ટિ થઇ ગયા પછી કોઈ દાવા.દલીલો અથવા ફરિયાદો જેમકે વજન,શુદ્ધતા,ચારણી,કેટેગરી અને હિરા ની ગુણવતા ને ધ્યાન માં લેવામાં આવશે નહિ.3)બધા દાવાઓ સુરત અધિકારક્ષેત્રને આધિન છે. </th>
+                                    <td colspan="7" class="text-left">HTHP પ્રોસેસ દરમિયાન ઉચ્ચ દબાણ ના
+                                       પરિણામે ડાયમંડ માં નુકશાન થવાની પુરેપુરી સંભાવના છે. આ સ્થિતિથીની
+                                       સંભવનના ૧૦૦ એ ૩% છે.HTHP દરમિયાન માલ ના તમામ નુકસાન થવાના જોખમને
+                                       ગાહક દ્વારા પ્રતિબંધિત કરવામાં આવશે. ર) માલ સાથેની બીલ ની બે
+                                       નકલોમાંથી,કૃપા કરી ને તમારા દ્વારા પ્રાપ્ત થયેલી કૃતી ના પુરાવા રૂપે
+                                       એક સહી કરેલ નકલ પરત કરો.એકવાર માલ ની રસીદ બિલ પર હસ્ત્રક્ષાર કરીને
+                                       પુષ્ટિ થઇ ગયા પછી કોઈ દાવા.દલીલો અથવા ફરિયાદો જેમકે
+                                       વજન,શુદ્ધતા,ચારણી,કેટેગરી અને હિરા ની ગુણવતા ને ધ્યાન માં લેવામાં
+                                       આવશે નહિ.3)બધા દાવાઓ સુરત અધિકારક્ષેત્રને આધિન છે. </th>
                                  </tr>
                                  <tr>
                                     <td colspan="7" class="text-right">Original/Duplicate</th>
@@ -221,15 +207,17 @@
                            </table>
                            <!-- </div> -->
                         </div>
-                        
+
                      </div>
                   </div>
                </div>
             </div>
             <div class="invoice-footer mt25">
-                           <p class="text-center"> <a href="#" id="download_btn" class="btn btn-default ml15"><i class="fa fa-download mr5"></i> Download</a></p>
-                           <p class="text-center"> <a href="#" id="back_to_pkg_btn" class="btn btn-default ml15"><i class="fa fa-arrow-left mr5"></i> back</a></p>
-                        </div>
+               <p class="text-center"> <a href="#" id="download_btn" class="btn btn-default ml15"
+                     onclick="printDiv('invoice_content')"><i class="fa fa-download mr5"></i> Download</a></p>
+               <p class="text-center"> <a href="#" id="back_to_pkg_btn" class="btn btn-default ml15"><i
+                        class="fa fa-arrow-left mr5"></i> back</a></p>
+            </div>
          </div>
       </div>
    </div>
@@ -255,11 +243,17 @@
       
       
       </script> -->
+
+   <script>
+      function printDiv(divName) {
+         var printContents = document.getElementById(divName).innerHTML;
+         var originalContents = document.body.innerHTML;
+         document.body.innerHTML = printContents;
+         window.print();
+         document.body.innerHTML = originalContents;
+         window.location.reload();
+      }
+   </script>
 </body>
+
 </html>
-
-
-
-
-
-

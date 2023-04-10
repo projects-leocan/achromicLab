@@ -1598,7 +1598,60 @@ getSelectedInvoiceData = () => {
 //     }
 
 //   }
-  BindInvoiceData = () => {
+//   BindInvoiceData = () => {
+    
+//     $("#invoice_cname").text(localStorage.getItem("invoice_company"));
+//     $("#invoice_cno").text(Number(localStorage.getItem("Invoice_num"))+ 1) ;
+//     $("#invoice_date").text(localStorage.getItem("Invoice_date"));
+
+//     invoice_data_arr = JSON.parse(localStorage.getItem("Invoice_data_arr"));
+
+//     let tableRef = document.getElementById('invoice_table').getElementsByTagName('tbody')[0];
+//     let total_pcs=0;
+//     let total_weight=0;
+//     let None_Process_Piece=0;
+//     let None_Process_Carat=0;
+//     for(i = 0; i < invoice_data_arr.length; i++)
+//     {
+//         result = invoice_data_arr[i].split(',');
+//         total_pcs+=Number(result[2]);
+//         total_weight+=Number(result[3]);
+//         None_Process_Piece+=Number(result[4]);
+//         None_Process_Carat+=Number(result[5]);
+
+//         // <th class="per70 text-center">No.</th>
+//         // <th class="per5 text-center">Pcs</th>
+//         // <th class="per25 text-center">Carat</th>
+//         // <th class="per70 text-center">None Process Piece</th>
+//         // <th class="per70 text-center">None Process Carat</th>
+//         // <th class="per25 text-center">Rate</th>
+//         // <th class="per25 text-center">Amount</th>
+
+//         tableRef.insertRow().innerHTML = 
+//         "<td class='text-center'>" + (i+1).toString()+ "</td>" + 
+//         "<td class='text-center'>" +result[2]+ "</td>"+
+//         "<td class='text-center'>" +result[3]+ "</td>"+ 
+//         "<td class='text-center'>" +result[4]+ "</td>"+
+//         "<td class='text-center'>" +result[5]+ "</td>"+
+//         "<td></td>"+
+//         "<td></td>";
+
+
+        
+//         $("#sub_total_pcs").text(total_pcs);
+//         $("#sub_total_Weight").text(total_weight.toFixed(2));
+//         $("#none_process_piece").text(None_Process_Piece);
+//         $("#none_process_caret").text(None_Process_Carat.toFixed(2));
+
+//         $("#total_pcs").text(total_pcs-None_Process_Piece);
+//         $("#total_Weight").text(((total_weight.toFixed(2))-(None_Process_Carat.toFixed(2))).toFixed(2));
+
+//     }
+
+//   }
+
+
+BindInvoiceData = () => {
     
     $("#invoice_cname").text(localStorage.getItem("invoice_company"));
     $("#invoice_cno").text(Number(localStorage.getItem("Invoice_num"))+ 1) ;
@@ -1611,6 +1664,21 @@ getSelectedInvoiceData = () => {
     let total_weight=0;
     let None_Process_Piece=0;
     let None_Process_Carat=0;
+    
+    let recordCount = 0; // Counter variable to keep track of the number of records added to the table
+    
+    // Add empty rows to the table
+    for (let j = 0; j < 10; j++) {
+        tableRef.insertRow().innerHTML = 
+        "<td class='text-center'>" + (j+1).toString()+ "</td>" + 
+        "<td class='text-center'></td>"+
+        "<td class='text-center'></td>"+ 
+        "<td class='text-center'></td>"+
+        "<td class='text-center'></td>"+
+        "<td></td>"+
+        "<td></td>";
+    }
+    
     for(i = 0; i < invoice_data_arr.length; i++)
     {
         result = invoice_data_arr[i].split(',');
@@ -1618,24 +1686,20 @@ getSelectedInvoiceData = () => {
         total_weight+=Number(result[3]);
         None_Process_Piece+=Number(result[4]);
         None_Process_Carat+=Number(result[5]);
-
-        // <th class="per70 text-center">No.</th>
-        // <th class="per5 text-center">Pcs</th>
-        // <th class="per25 text-center">Carat</th>
-        // <th class="per70 text-center">None Process Piece</th>
-        // <th class="per70 text-center">None Process Carat</th>
-        // <th class="per25 text-center">Rate</th>
-        // <th class="per25 text-center">Amount</th>
-
-        tableRef.insertRow().innerHTML = 
-        "<td class='text-center'>" + (i+1).toString()+ "</td>" + 
-        "<td class='text-center'>" +result[2]+ "</td>"+
-        "<td class='text-center'>" +result[3]+ "</td>"+ 
-        "<td class='text-center'>" +result[4]+ "</td>"+
-        "<td class='text-center'>" +result[5]+ "</td>"+
-        "<td></td>"+
-        "<td></td>";
-        
+    
+        // Insert data into empty rows
+        for (let j = recordCount*10; j < (recordCount+1)*10; j++) {
+            if (tableRef.rows[j].cells[1].innerHTML === "") {
+                tableRef.rows[j].cells[1].innerHTML = result[2];
+                tableRef.rows[j].cells[2].innerHTML = result[3];
+                tableRef.rows[j].cells[3].innerHTML = result[4];
+                tableRef.rows[j].cells[4].innerHTML = result[5];
+                break;
+            }
+        }
+    
+        // recordCount++;
+    
         $("#sub_total_pcs").text(total_pcs);
         $("#sub_total_Weight").text(total_weight.toFixed(2));
         $("#none_process_piece").text(None_Process_Piece);
@@ -1645,8 +1709,8 @@ getSelectedInvoiceData = () => {
         $("#total_Weight").text(((total_weight.toFixed(2))-(None_Process_Carat.toFixed(2))).toFixed(2));
 
     }
+}
 
-  }
   convertHtmlToPdf = () => {
     var doc = new jsPDF();
   
@@ -1700,7 +1764,7 @@ function generatePDF() {
 
 $(document).on("click", "#download_btn", function (event) {
     // generatePDF();
-    CreatePDFfromHTML();
+    // CreatePDFfromHTML();
     if((Number(localStorage.getItem("Invoice_num"))+ 1) != (Number(localStorage.getItem("last_downloaded_invoice"))))
     {
         updateChallanNo(Number(localStorage.getItem("Invoice_num"))+ 1)
