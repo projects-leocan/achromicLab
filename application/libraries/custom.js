@@ -1764,7 +1764,7 @@ function generatePDF() {
 
 $(document).on("click", "#download_btn", function (event) {
     // generatePDF();
-    // CreatePDFfromHTML();
+    CreatePDFfromHTML();
     if((Number(localStorage.getItem("Invoice_num"))+ 1) != (Number(localStorage.getItem("last_downloaded_invoice"))))
     {
         updateChallanNo(Number(localStorage.getItem("Invoice_num"))+ 1)

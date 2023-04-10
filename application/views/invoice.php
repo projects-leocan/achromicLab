@@ -233,8 +233,7 @@
                </div>
             </div>
             <div class="invoice-footer mt25">
-               <p class="text-center"> <a href="#" id="download_btn" class="btn btn-default ml15"
-                     onclick="printDiv('invoice_content')"><i class="fa fa-download mr5"></i> Download</a></p>
+               <p class="text-center"> <a href="#" id="download_btn" class="btn btn-default ml15"><i class="fa fa-download mr5"></i> Download</a></p>
                <p class="text-center"> <a href="#" id="back_to_pkg_btn" class="btn btn-default ml15"><i
                         class="fa fa-arrow-left mr5"></i> back</a></p>
             </div>
@@ -264,7 +263,7 @@
       
       </script> -->
 
-   <script>
+   <!-- <script>
       function printDiv(divName) {
          var printContents = document.getElementById(divName).innerHTML;
          var originalContents = document.body.innerHTML;
@@ -273,7 +272,7 @@
          document.body.innerHTML = originalContents;
          window.location.reload();
       }
-   </script>
+   </script> -->
 </body>
 
 </html>
