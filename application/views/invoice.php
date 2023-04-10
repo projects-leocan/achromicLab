@@ -24,21 +24,43 @@
    <title>Invoice</title>
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media='all'>
+   <style type="text/css">
+    	body{
+      font-weight: bold;
+      font-size: 20px;
+
+    background:#eee;    
+}
+
+.side-logo h1 {
+        text-transform: uppercase;
+        color: #d4af37;
+    }
+
+    .side-logo p {
+        text-transform: uppercase;
+        width: 52%;
+        /* line-height: 0.3; */
+    }
+   
+
+    
+    </style>
 </head>
 
 
-<body style="font-weight: bold;font-size:20px;">
+<body >
    <div class="content-wrapper">
       <div class=" row invoice row-printable" style="padding-top: 25px;">
          <div class="col-md-10">
             <div class="panel panel-default plain" id="invoice_content">
                <div class="panel-body p30">
                   <div class="row">
-                     <div class="col-lg-6" style="width: 50%;">
+                     <div class="col-lg-6" >
                         <div class="invoice-from">
                            <div class="left-div side-logo">
-                              <ul class="list-unstyled text-left" style="text-transform: uppercase;">
-                                 <h1 style="text-transform: uppercase;color: #d4af37;">achromic lab llp</h1>
+                              <ul class="list-unstyled text-left" >
+                                 <h1 >achromic lab llp</h1>
                                  <li>32, Ground Floor,akshar dimoand market,</li>
                                  <li>mini bazar varachha road,surat, gujarat - 395004</li>
                                  <li>Call: 99744 27300, 79841 02715</li>
@@ -49,7 +71,7 @@
                            <!-- </ul> -->
                         </div>
                      </div>
-                     <div class="col-lg-6" style="width: 50%;">
+                     <div class="col-lg-6" >
                         <ul class="list-unstyled text-right">
                            <div class="invoice-logo">
                               <img src="https://leocan.co/subFolder/achromicLab/dist/img/logo1.png" alt="Invoice logo">
@@ -59,9 +81,7 @@
                      </div>
                      <div class="col-lg-12">
                         <div class="invoice-details mt25">
-                           <div class="well"
-                              style="min-height: 20px; padding: 19px; margin-bottom: 20px;   background-color: #f5f5f5;
-                                    border: 1px solid #e3e3e3;border-radius: 4px;-webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);">
+                           <div class="well">
                               <!-- <ul class="list-unstyled mb0">
                                  <li><strong>From:</strong> Anil Gems</li>
                                  <li><strong>Challan No:</strong> #936988</li>
