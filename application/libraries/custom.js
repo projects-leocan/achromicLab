@@ -1541,13 +1541,14 @@ getSelectedInvoiceData = () => {
 
   BindInvoiceData = () => {
     
-    $("#invoice_cname").text(localStorage.getItem("invoice_company"));
-    $("#invoice_cno").text(Number(localStorage.getItem("Invoice_num"))+ 1) ;
-    $("#invoice_date").text(localStorage.getItem("Invoice_date"));
+    $(".invoice_cname").text(localStorage.getItem("invoice_company"));
+    $(".invoice_cno").text(Number(localStorage.getItem("Invoice_num"))+ 1) ;
+    $(".invoice_date").text(localStorage.getItem("Invoice_date"));
 
     invoice_data_arr = JSON.parse(localStorage.getItem("Invoice_data_arr"));
 
     let tableRef = document.getElementById('invoice_table').getElementsByTagName('tbody')[0];
+    let tableRef2 = document.getElementById('invoice_table_2').getElementsByTagName('tbody')[0];
     let total_pcs=0;
     let total_weight=0;
     let None_Process_Piece=0;
@@ -1577,13 +1578,22 @@ getSelectedInvoiceData = () => {
         "<td></td>"+
         "<td></td>";
         
-        $("#sub_total_pcs").text(total_pcs);
-        $("#sub_total_Weight").text(total_weight.toFixed(2));
-        $("#none_process_piece").text(None_Process_Piece);
-        $("#none_process_caret").text(None_Process_Carat.toFixed(2));
+        tableRef2.insertRow().innerHTML = 
+        "<td class='text-center'>" + (i+1).toString()+ "</td>" + 
+        "<td class='text-center'>" +result[2]+ "</td>"+
+        "<td class='text-center'>" +result[3]+ "</td>"+ 
+        "<td class='text-center'>" +result[4]+ "</td>"+
+        "<td class='text-center'>" +result[5]+ "</td>"+
+        "<td></td>"+
+        "<td></td>";
+        
+        $(".sub_total_pcs").text(total_pcs);
+        $(".sub_total_Weight").text(total_weight.toFixed(2));
+        $(".none_process_piece").text(None_Process_Piece);
+        $(".none_process_caret").text(None_Process_Carat.toFixed(2));
 
-        $("#total_pcs").text(total_pcs-None_Process_Piece);
-        $("#total_Weight").text(((total_weight.toFixed(2))-(None_Process_Carat.toFixed(2))).toFixed(2));
+        $(".total_pcs").text(total_pcs-None_Process_Piece);
+        $(".total_Weight").text(((total_weight.toFixed(2))-(None_Process_Carat.toFixed(2))).toFixed(2));
 
     }
 

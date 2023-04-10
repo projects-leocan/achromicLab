@@ -46,6 +46,13 @@ class Dashboard extends CI_Controller
         $this->load->view('invoice');
         $this->load->view('footer');
     }
+    public function invoice_form_new()
+    {
+        $this->load->view('header');
+        $this->load->view('sidebar');
+        $this->load->view('invoice_new');
+        $this->load->view('footer');
+    }
     // sidebar menu view for company list
     public function company_menu()
     {

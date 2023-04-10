@@ -66,4 +66,11 @@ class Home extends CI_Controller {
         $this->load->view('footer');
     }
 
+    public function print_new() {
+        $this->load->view('header');
+        $this->load->view('sidebar');
+        $this->load->view('invoice_new');
+        $this->load->view('footer');
+    }
+
 }
