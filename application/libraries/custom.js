@@ -1728,8 +1728,11 @@ BindInvoiceData = () => {
 
 
   function CreatePDFfromHTML() {
-    var HTML_Width = ($("#invoice_content").width());
-    var HTML_Height = ($("#invoice_content").height());
+    var HTML_Width = 794; // A4 width in pixels at 72 DPI
+    var HTML_Height = 1123; // A4 height in pixels at 72 DPI
+
+    // var HTML_Width = ($("#invoice_content").width());
+    // var HTML_Height = ($("#invoice_content").height());
     var top_left_margin = 15;
     var PDF_Width = HTML_Width + (top_left_margin * 2);
     var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
@@ -1740,7 +1743,7 @@ BindInvoiceData = () => {
 
 
 
-    html2canvas($("#invoice_content")[0], { scale: 2 }).then(function (canvas) {
+    html2canvas($("#invoice_content")[0], { scale: 2,scrollY: 0 }).then(function (canvas) {
         var imgData = canvas.toDataURL("image/jpeg", 1.0);
         var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
         //var pdf = new jsPDF('p', 'pt', 'A4');
