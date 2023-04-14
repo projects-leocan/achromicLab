@@ -71,7 +71,7 @@ class DbHandler
         while ($obj = $result->fetch_assoc()) {
             $nameArr[] = $obj;
         }
-
+        $nameArr = usort($nameArr, "cmp");
         $stmt->close();
 
         if (count($nameArr) > 0) {
@@ -133,7 +133,9 @@ class DbHandler
         }
         return $result;
     }
-
+    function cmp($a, $b) {
+        return strcmp($a->company_name, $b->company_name);
+    }
     public function fatchPacketDetails()
     {
 
