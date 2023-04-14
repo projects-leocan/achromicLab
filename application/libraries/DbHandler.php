@@ -77,7 +77,7 @@ class DbHandler
         if (count($nameArr) > 0) {
             $result = array(
                 'success' => true,
-                'CompanyNames' => $nameArr,
+                'CompanyNames' => sort($nameArr),
             );
         } else {
             $result = array(
