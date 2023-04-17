@@ -1112,10 +1112,13 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
         error: function (data) {
             alert('Something went wrong while Update packet ')
             localStorage.removeItem("selecteCompanyID");
+            localStorage.removeItem("packet_id");
         },
         success: function (data) {
             data = JSON.parse(data);
             localStorage.removeItem("selecteCompanyID");
+            localStorage.removeItem("packet_id");
+            
             if (data.success) {
                 Swal.fire({
                     title: '',
@@ -1123,7 +1126,8 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
                     confirmButtonText: 'Ok',
                 }).then((result) => {
                     if (result.isConfirmed) {
-
+                        localStorage.removeItem("selecteCompanyID");
+                        localStorage.removeItem("packet_id");
                         fetchPacketData();
                         window.location = "packet";
 
