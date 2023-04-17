@@ -670,7 +670,7 @@ function BindControls() {
 
         success: function (data) {
             data = JSON.parse(data);
-            let company_name = [{ id: -1, name: "All Company" }];
+            let company_name = [];
             let company_name_for_packet = [];
 
             data.CompanyNames.map((currentCompanyName) => {
@@ -678,7 +678,13 @@ function BindControls() {
                 company_name_for_packet.push({ id: currentCompanyName.company_id, name: currentCompanyName.company_name });
 
             })
-
+            
+           
+           company_name.sort(function(a, b) {
+                return a.name.localeCompare(b.name);
+              });
+            company_name.unshift({ id: -1, name: "All Company" });
+            
             if (data.success) {
                 $('#inputedCompanyName').autocomplete({
                     source: company_name.map(company => company.name),

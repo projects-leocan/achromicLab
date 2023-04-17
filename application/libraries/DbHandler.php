@@ -73,11 +73,6 @@ class DbHandler
         }
 
         $stmt->close();
-        usort($nameArr, function($a, $b)
-        {
-            return strcmp($a['company_name'], $b['company_name']);
-        });
-
         if (count($nameArr) > 0) {
             $result = array(
                 'success' => true,
