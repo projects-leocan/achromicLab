@@ -91,7 +91,7 @@
                                  </ul> -->
                               <table class="w-100">
                                  <tr>
-                                    <td width="300px">From : <span id="invoice_cname"></span></td>
+                                    <td width="300px">To : <span id="invoice_cname"></span></td>
                                     <td>Mo:</td>
                                  </tr>
                                  <tr>
