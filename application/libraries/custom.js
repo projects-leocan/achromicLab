@@ -66,10 +66,10 @@ $(() => {
 })
 
 function showLoader(){
-    $(".semipolar-spinner").show();
+    $(".loader").show();
 }
 function hideLoader(){
-    $(".semipolar-spinner").hide();
+    $(".loader").hide();
 }
 
 

@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Achromic Lab</title>
 
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet"
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
@@ -35,9 +35,8 @@
 
 
     <style>
-
-    .nav-item:hover{
-        cursor:pointer;
+    .nav-item:hover {
+        cursor: pointer;
     }
 
     .ScrollStyle {
@@ -94,103 +93,48 @@
         text-transform: none;
         word-wrap: break-word;
     }
-    .btn-center{
-        display:flex;
+
+    .btn-center {
+        display: flex;
         align-items: center;
         justify-content: center;
-        text-align:center;
+        text-align: center;
     }
-    .invoice-btn{
-        cursor:pointer;
-        text-decoration:underline;
+
+    .invoice-btn {
+        cursor: pointer;
+        text-decoration: underline;
     }
-    .side-h1{
-        position:relative;
-        right:82px;
+
+    .side-h1 {
+        position: relative;
+        right: 82px;
     }
 
     /* loader  */
-    
-
-    .semipolar-spinner, .semipolar-spinner * {
-      box-sizing: border-box;
-    }
-
-    .semipolar-spinner {
-        height: 150px;
-        /* width: 150px; */
+    .loader {
+        width: 75px;
+        height: 75px;
+        border: 5px solid #0062cc;
+        border-top-color: transparent;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-}
-
-/* 
-    .semipolar-spinner {
-      height: 150px;
-      width: 150px;
-      position: relative;
-      margin:auto;
-    } */
-
-    .semipolar-spinner .ring {
-      border-radius: 50%;
-      position: absolute;
-      border: calc(150px * 0.05) solid transparent;
-      border-top-color: #007bff;
-      border-left-color: #007bff;
-      animation: semipolar-spinner-animation 2s infinite;
     }
 
-    .semipolar-spinner .ring:nth-child(1) {
-      height: calc(150px - 150px * 0.2 * 0);
-      width: calc(150px - 150px * 0.2 * 0);
-      top: calc(150px * 0.1 * 0);
-      left: calc(150px * 0.1 * 0);
-      animation-delay: calc(2000ms * 0.1 * 4);
-      z-index: 5;
-    }
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
 
-    .semipolar-spinner .ring:nth-child(2) {
-      height: calc(150px - 150px * 0.2 * 1);
-      width: calc(150px - 150px * 0.2 * 1);
-      top: calc(150px * 0.1 * 1);
-      left: calc(150px * 0.1 * 1);
-      animation-delay: calc(2000ms * 0.1 * 3);
-      z-index: 4;
-    }
-
-    .semipolar-spinner .ring:nth-child(3) {
-      height: calc(150px - 150px * 0.2 * 2);
-      width: calc(150px - 150px * 0.2 * 2);
-      top: calc(150px * 0.1 * 2);
-      left: calc(150px * 0.1 * 2);
-      animation-delay: calc(2000ms * 0.1 * 2);
-      z-index: 3;
-    }
-
-    .semipolar-spinner .ring:nth-child(4) {
-      height: calc(150px - 150px * 0.2 * 3);
-      width: calc(150px - 150px * 0.2 * 3);
-      top: calc(150px * 0.1 * 3);
-      left: calc(150px * 0.1 * 3);
-      animation-delay: calc(2000ms * 0.1 * 1);
-      z-index: 2;
-    }
-
-    .semipolar-spinner .ring:nth-child(5) {
-      height: calc(150px - 150px * 0.2 * 4);
-      width: calc(150px - 150px * 0.2 * 4);
-      top: calc(150px * 0.1 * 4);
-      left: calc(150px * 0.1 * 4);
-      animation-delay: calc(2000ms * 0.1 * 0);
-      z-index: 1;
-    }
-
-    @keyframes semipolar-spinner-animation {
-      50% {
-        transform: rotate(360deg) scale(0.7);
-      }
+        100% {
+            transform: rotate(360deg);
+        }
     }
     </style>
 

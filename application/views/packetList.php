@@ -91,13 +91,8 @@ div.dt-buttons {
                     <table id="packet_list" class="table table-bordered table-striped" style="text-align: center;">
                         <thead>
                             <tr>
-                                <div class="semipolar-spinner" :style="spinnerStyle">
-                                    <div class="ring"></div>
-                                    <div class="ring"></div>
-                                    <div class="ring"></div>
-                                    <div class="ring"></div>
-                                    <div class="ring"></div>
-                                </div>
+                            
+                                <span class="loader"></span>
                                 <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
                                 <!-- <th></th> -->
                                 <th style="width:10px">No.</th>
