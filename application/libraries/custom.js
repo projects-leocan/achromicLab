@@ -65,6 +65,12 @@ $(() => {
     }
 })
 
+function showLoader(){
+    $(".semipolar-spinner").show();
+}
+function hideLoader(){
+    $(".semipolar-spinner").hide();
+}
 
 
 $('#upload').change((e) => {
@@ -731,15 +737,20 @@ const fetchPacketData = () => {
         method: 'get',
         processData: false,
         contentType: false,
-        beforeSend: function (data) { },
+        beforeSend: function (data) { 
+            showLoader();
+        },
         complete: function (data) {
+            hideLoader()
         },
         error: function (data) {
-            alert('Something went wrong while fatching packet ')
+            alert('Something went wrong while fatching packet ');
+            hideLoader()
         },
         success: function (data) {
             data = JSON.parse(data);
             dataBind(data);
+            hideLoader()
 
         }
     })
@@ -784,6 +795,8 @@ function dataBind(data) {
             { "width": "30px" },
             { "width": "30px" },
             { "width": "30px" },
+            { "width": "10px" },
+            { "width": "30px" },
             
           ],
         buttons: [
@@ -791,7 +804,7 @@ function dataBind(data) {
                 extend: 'pdfHtml5', footer: true,
                
                 exportOptions: {
-                    columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11]
+                    columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13]
                 },
                 orientation: 'landscape',
                 customize: function (doc) {
@@ -939,6 +952,22 @@ function dataBind(data) {
             let pending_process_qty = currentPacket.pending_process_diamond_qty;
             let broken_carat = currentPacket.broken_diamond_carat.toFixed(2);
             let broken_qty = currentPacket.broken_diamond_qty;
+            let challan_no = currentPacket.challan_no;
+            let dDate = currentPacket.delivery_date;
+            var delivery_date = '-';
+            if(dDate){
+                var delDate = new Date(dDate);
+                year = delDate.getFullYear();
+                month = (delDate.getMonth() + 1).toString().padStart(2, "0");
+                day = delDate.getDate().toString().padStart(2, "0");
+                delivery_date = day+ '/' + month + '/' + year;
+            }
+            
+            if(challan_no == "" || challan_no == null ){
+                challan_no = '-';
+            }
+            
+
             // let cube = currentPacket.cube_qty.toFixed(2);
             // let cube_time = currentPacket.cube_time;
             // if (cube_time == "" || cube_time == null) {
@@ -949,7 +978,7 @@ function dataBind(data) {
             var invoice_data = packet_no+ ',' + company_name + ',' + qty+ ',' +carat+ ',' +pending_process_qty+ ',' +pending_process;
 
             table.row.add([
-                invoice_data, count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat,  price,
+                invoice_data, count, packet_no, packetDate, company_name, qty, carat,pending_process_qty, pending_process,broken_qty, broken_carat, price,challan_no,delivery_date,
                 `<a  id="packet_edit" packet_id="${currentPacket.packet_id}">
                 <i class="mx-2 fa fa-edit"></i></a>
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
@@ -1352,15 +1381,20 @@ const fatchSelectedCompnay = () => {
         data: data,
         processData: false,
         contentType: false,
-        beforeSend: function (data) { },
+        beforeSend: function (data) {
+            showLoader();
+         },
         complete: function (data) {
+            hideLoader();
         },
         error: function (data) {
-            alert('Something went wrong while fatching packet ')
+            alert('Something went wrong while fatching packet ');
+            hideLoader();
         },
         success: function (data) {
             data = JSON.parse(data);
             dataBind(data);
+            hideLoader();
         }
     })
 }

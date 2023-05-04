@@ -1,44 +1,44 @@
 <style>
-    .select2-container .select2-selection--single {
-        height: 35px !important;
-    }
+.select2-container .select2-selection--single {
+    height: 35px !important;
+}
 
-    /* table {
+/* table {
     table-layout: fixed;   
     width: 100% !important;
 } */
 
 
-    .ui-autocomplete {
-        cursor: pointer;
-        /* height: 120px; */
-        /* overflow-y: scroll; */
-    }
+.ui-autocomplete {
+    cursor: pointer;
+    /* height: 120px; */
+    /* overflow-y: scroll; */
+}
 
-    div.dt-buttons {
-        /* position: absolute; */
-        position: relative;
-        float: right;
-    }
+div.dt-buttons {
+    /* position: absolute; */
+    position: relative;
+    float: right;
+}
 
-    #packet_list_length {
-        position: absolute;
+#packet_list_length {
+    position: absolute;
 
-    }
+}
 
-    .buttons-pdf {
-        color: #fff;
-        background-color: #0062cc !important;
-        border-color: #84b8f0 !important;
-        margin-left: 1rem !important;
-        display: inline-block;
-        font-weight: 400;
-        color: #fff;
-        border: 1px solid transparent;
-        padding: 0.375rem 0.75rem;
-        border-radius: 0.25rem;
-        margin-bottom: 8px;
-    }
+.buttons-pdf {
+    color: #fff;
+    background-color: #0062cc !important;
+    border-color: #84b8f0 !important;
+    margin-left: 1rem !important;
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.25rem;
+    margin-bottom: 8px;
+}
 </style>
 <div class="wrapper ScrollStyle">
 
@@ -55,8 +55,10 @@
                             <div class="form-group row ">
                                 <div class=" d-flex">
                                     <input type="text" class="form-control " style="width:80%;" id="inputedCompanyName">
-                                    <input type="text" name="daterange" class="mx-2 form-control " style="width:80%;" id="selectedCompanyDate" />
-                                    <button type="submit" id="filterCompany" class="mx-2 btn btn-primary">Filter</button>
+                                    <input type="text" name="daterange" class="mx-2 form-control " style="width:80%;"
+                                        id="selectedCompanyDate" />
+                                    <button type="submit" id="filterCompany"
+                                        class="mx-2 btn btn-primary">Filter</button>
                                     <button type="submit" id="resetDate" class=" btn btn-primary">Reset</button>
                                 </div>
                             </div>
@@ -89,8 +91,15 @@
                     <table id="packet_list" class="table table-bordered table-striped" style="text-align: center;">
                         <thead>
                             <tr>
-                            <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
-                            <!-- <th></th> -->
+                                <div class="semipolar-spinner" :style="spinnerStyle">
+                                    <div class="ring"></div>
+                                    <div class="ring"></div>
+                                    <div class="ring"></div>
+                                    <div class="ring"></div>
+                                    <div class="ring"></div>
+                                </div>
+                                <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
+                                <!-- <th></th> -->
                                 <th style="width:10px">No.</th>
                                 <th style="width:10px">Packet No.</th>
                                 <th style="width:55px">Date</th>
@@ -105,6 +114,8 @@
                                 <th style="width:30px">Cube Date</th> -->
                                 <th style="width:30px">Final Carat</th>
                                 <!-- <th style="width:30px">Invoice</th> -->
+                                <th style="width:30px">Challan No</th>
+                                <th style="width:30px">Delivery Date</th>
                                 <th style="width:30px">Action</th>
                                 <!-- <th style="width:30px">Total Amount</th> -->
                             </tr>
@@ -123,8 +134,8 @@
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <!-- <th></th>
-                                <th></th> -->
+                                <th></th>
+                                <th></th>
                             </tr>
                         </tfoot>
                     </table>
