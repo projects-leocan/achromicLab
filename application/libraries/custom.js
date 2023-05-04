@@ -1782,9 +1782,66 @@ $(document).on("click", "#download_btn", function (event) {
     {
         updateChallanNo(Number(localStorage.getItem("Invoice_num"))+ 1)
     }
-    
+
+    invoiceEntry();
     // convertHtmlToPdf();
 })
+
+
+function invoiceEntry() {
+    let company_id = localStorage.getItem("FilterSelecteCompanyID");
+    let delivery_date = localStorage.getItem("Invoice_date");
+    let challan_no = (Number(localStorage.getItem("Invoice_num")) + 1);
+
+    let str = JSON.parse(localStorage.getItem('Invoice_data_arr'));
+    let packetNos = [];
+
+    for (let i = 0; i < str.length; i++) {
+        let packetNo = str[i].split(',')[0];
+        packetNos.push(packetNo);
+    }
+
+    // console.log(packetNos);
+
+    let invoice_entry_obj = {
+        data: []
+    };
+
+    for (let i = 0; i < packetNos.length; i++) {
+        let packet_no = packetNos[i];
+
+        let invoice_entry_packet_obj = {
+            company_id: company_id,
+            delivery_date: delivery_date,
+            challan_no: challan_no,
+            packet_no: packet_no
+        };
+
+        invoice_entry_obj.data.push(invoice_entry_packet_obj);
+    }
+
+    let jsonString = JSON.stringify(invoice_entry_obj);
+    // console.log("jsonString :",jsonString);
+
+    let response = new FormData();
+    response.append("data", jsonString);
+
+    $.ajax({
+        url: base_url + 'Dashboard/invoice_entry',
+        type: "POST",
+        data: response,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+        },
+        success: function (response) {
+            console.log("response :",response);
+        }
+    })
+}
 
 function updateChallanNo(challan_no) {
     

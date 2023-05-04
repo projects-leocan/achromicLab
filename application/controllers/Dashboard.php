@@ -194,6 +194,13 @@ class Dashboard extends CI_Controller
         echo json_encode($response);
     }
 
+    public function invoice_entry()
+    {
+        $data = $_REQUEST['data'];
+        $response = $this->dbhandler->invoiceEntry($data);
+        echo json_encode($response);
+    }
+
     public function newCompanies()
     {
         $company_names = $_REQUEST['company_names'];

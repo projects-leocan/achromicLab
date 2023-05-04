@@ -326,6 +326,48 @@ class DbHandler
         return $result;
     }
 
+    public function invoiceEntry($data)
+    {
+        $decodedData = json_decode($data, true);
+        $sql_query = "INSERT INTO invoice_entry (`packet_no`, `company_id`, `delivery_date`, `challan_no`) VALUES ";
+
+        $query_parts = array();
+        foreach($decodedData['data'] as $entry) {
+            $company_id = $entry['company_id'];
+            $delivery_date = date('Y-m-d', strtotime(str_replace('/', '-', $entry['delivery_date'])));
+            $challan_no = $entry['challan_no'];
+            $packet_no = $entry['packet_no'];
+            
+            $query_parts[] = "('" . $packet_no . "', '" . $company_id . "', '" . $delivery_date . "', '" . $challan_no . "')";
+        }
+
+        $query = implode(',', $query_parts);
+        $sql_query .= implode(',', $query_parts);
+
+        try
+        {
+        if (mysqli_query($this->conn, $sql_query)) {
+            $result = array(
+                'success' => true,
+                'query' => $sql_query,
+                'message' => 'Invoice Entry Saved',
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'something went wrong ',
+            );
+        }
+        } catch (Exception $e) {
+            $result = array(
+                'success' => false,
+                'message' => 'something went wrong ',
+            );
+        }
+
+        return $result;
+    }
+
     // public function bulkInsertNewCompany($company_names)
     // {
     //     $decodedData = json_decode($company_names, true);
@@ -599,4 +641,3 @@ class DbHandler
         return $result;
     }
 }
-
