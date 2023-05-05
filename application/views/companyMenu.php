@@ -39,6 +39,7 @@
                     <table id="category_list" class="table table-bordered table-striped" style="text-align: center;">
                         <thead>
                             <tr>
+                            <span class="loader"></span>
                                 <th>No.</th>
                                 <th>Company Id</th>
                                 <th>Company Name</th>

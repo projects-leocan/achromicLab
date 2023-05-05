@@ -399,13 +399,18 @@ const fetchAllComapany = () => {
         method: 'get',
         processData: false,
         contentType: false,
-        beforeSend: function (data) { },
+        beforeSend: function (data) { 
+            showLoader();
+        },
         complete: function (data) {
+            hideLoader();
         },
         error: function (data) {
-            alert('Something went wrong while fatching company ')
+            alert('Something went wrong while fatching company ');
+            hideLoader();
         },
         success: function (data) {
+            hideLoader();
             data = JSON.parse(data)
             let table = $('#category_list').DataTable()
             table.clear().draw()
@@ -469,10 +474,16 @@ function companyDelete(id) {
         processData: false,
         contentType: false,
         beforeSend: function () {
+            showLoader();
         },
         complete: function () {
+            hideLoader();
+        },
+        error:function(){
+            hideLoader();
         },
         success: function (data) {
+            hideLoader();
             data = JSON.parse(data);
             if (data.success == true) {
                 Swal.fire({
@@ -596,12 +607,18 @@ const addCompanyData = (company_name) => {
         processData: false,
         contentType: false,
         dataType: false,
-        beforeSend: function (data) { },
-        complete: function (data) { },
+        beforeSend: function (data) { 
+            showLoader();
+        },
+        complete: function (data) { 
+            hideLoader();
+        },
         error: function (e) {
-            alert('something went wrong .')
+            alert('something went wrong .');
+            hideLoader();
         },
         success: function (data) {
+            hideLoader();
             data = JSON.parse(data);
             if (data.success) {
                 Swal.fire({
@@ -628,12 +645,18 @@ const addCompanyData = (company_name) => {
                     processData: false,
                     contentType: false,
                     dataType: false,
-                    beforeSend: function (data) { },
-                    complete: function (data) { },
+                    beforeSend: function (data) { 
+                        showLoader();
+                    },
+                    complete: function (data) { 
+                        hideLoader();
+                    },
                     error: function (e) {
-                        alert('something went wrong .')
+                        alert('something went wrong .');
+                        hideLoader();
                     },
                     success: function (data) {
+                        hideLoader();
                         data = JSON.parse(data);
 
                         if (data.success) {
@@ -666,15 +689,18 @@ function BindControls() {
         type: 'get',
         contentType: 'application/json',
         beforeSend: function (data) {
+            showLoader();
         },
         complete: function (data) {
-
+            hideLoader();
         },
         error: function (data) {
             alert("Something went wrong ")
+            hideLoader();
         },
 
         success: function (data) {
+            hideLoader();
             data = JSON.parse(data);
             let company_name = [];
             let company_name_for_packet = [];
@@ -741,16 +767,16 @@ const fetchPacketData = () => {
             showLoader();
         },
         complete: function (data) {
-            hideLoader()
+            hideLoader();
         },
         error: function (data) {
             alert('Something went wrong while fatching packet ');
-            hideLoader()
+            hideLoader();
         },
         success: function (data) {
             data = JSON.parse(data);
             dataBind(data);
-            hideLoader()
+            hideLoader();
 
         }
     })
@@ -777,9 +803,9 @@ function dataBind(data) {
         dom: 'lBfrtip',
         pagging: true,
         destroy: true,
-        // "sScrollX": "100%",
-        // "sScrollXInner": "110%",
-        // "bScrollCollapse": true,
+        "sScrollX": "100%",
+        "sScrollXInner": "110%",
+        "bScrollCollapse": true,
         autoWidth: false,
         "columns": [
             { "width": "10px" },
@@ -800,12 +826,11 @@ function dataBind(data) {
             
           ],
         buttons: [
-            {
+            {    
                 extend: 'pdfHtml5', footer: true,
-               
                 exportOptions: {
                     columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13]
-                },
+                },  
                 orientation: 'landscape',
                 customize: function (doc) {
                     doc.defaultStyle.alignment = 'center';
@@ -1012,13 +1037,18 @@ $(document).on("click", "#packet_delete", function (event) {
                 data: data,
                 processData: false,
                 contentType: false,
-                beforeSend: function (data) { },
+                beforeSend: function (data) { 
+                    showLoader();
+                },
                 complete: function (data) {
+                    hideLoader();
                 },
                 error: function (data) {
-                    alert('Something went wrong while fatching packet ')
+                    alert('Something went wrong while fatching packet ');
+                    hideLoader();
                 },
                 success: function (data) {
+                    hideLoader();
                     data = JSON.parse(data)
                     Swal.fire({
                         title: '',
@@ -1055,13 +1085,18 @@ function bindPacketData() {
         data: data,
         processData: false,
         contentType: false,
-        beforeSend: function (data) { },
+        beforeSend: function (data) { 
+            showLoader();
+        },
         complete: function (data) {
+            hideLoader();
         },
         error: function (data) {
             alert('Something went wrong while fatching packet ')
+            hideLoader();
         },
         success: function (data) {
+            hideLoader();
             data = JSON.parse(data);
             data.packet.map((pack) => {
                 localStorage.setItem("selecteCompanyID",pack.company_id);
@@ -1135,15 +1170,20 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
         data: data,
         processData: false,
         contentType: false,
-        beforeSend: function (data) { },
+        beforeSend: function (data) { 
+            showLoader();
+        },
         complete: function (data) {
+            hideLoader();
         },
         error: function (data) {
             alert('Something went wrong while Update packet ')
             localStorage.removeItem("selecteCompanyID");
             localStorage.removeItem("packet_id");
+            hideLoader();
         },
         success: function (data) {
+            hideLoader();
             data = JSON.parse(data);
             localStorage.removeItem("selecteCompanyID");
             localStorage.removeItem("packet_id");
@@ -1183,13 +1223,18 @@ $(document).on("click", "#packet_id", function (event) {
         data: data,
         processData: false,
         contentType: false,
-        beforeSend: function (data) { },
+        beforeSend: function (data) { 
+            showLoader();
+        },
         complete: function (data) {
+            hideLoader();
         },
         error: function (data) {
             alert('Something went wrong while fatching packet ')
+            hideLoader();
         },
         success: function (data) {
+            hideLoader();
             window.location = "invoice"
             data = JSON.parse(data)
         }
@@ -1297,12 +1342,18 @@ const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_ca
         processData: false,
         contentType: false,
         dataType: false,
-        beforeSend: function (data) { },
-        complete: function (data) { },
+        beforeSend: function (data) { 
+            showLoader();
+        },
+        complete: function (data) { 
+            hideLoader();
+        },
         error: function (e) {
             alert('Failed to Data Add.')
+            hideLoader();
         },
         success: function (data) {
+            hideLoader();
             data = JSON.parse(data);
             if (data.success) {
                 Swal.fire({
@@ -1511,13 +1562,18 @@ getSelectedInvoiceData = () => {
         method: 'post',
         processData: false,
         contentType: false,
-        beforeSend: function (data) { },
+        beforeSend: function (data) { 
+            showLoader();
+         },
         complete: function (data) {
+            hideLoader();
         },
         error: function (data) {
-            alert('Something went wrong')
+            alert('Something went wrong');
+            hideLoader();
         },
         success: function (data) {
+            hideLoader();
             data = JSON.parse(data);
             if (data.success) {
                 if (data.packet.length >0)
@@ -1696,7 +1752,7 @@ getSelectedInvoiceData = () => {
 
 
 BindInvoiceData = () => {
-    
+    showLoader();
     $("#invoice_cname").text(localStorage.getItem("invoice_company"));
     $("#invoice_cno").text(Number(localStorage.getItem("Invoice_num"))+ 1) ;
     $("#invoice_date").text(localStorage.getItem("Invoice_date"));
@@ -1753,6 +1809,7 @@ BindInvoiceData = () => {
         $("#total_Weight").text(((total_weight.toFixed(2))-(None_Process_Carat.toFixed(2))).toFixed(2));
 
     }
+    hideLoader();
 }
 
   convertHtmlToPdf = () => {
@@ -1872,7 +1929,7 @@ function invoiceEntry() {
         error: function (response) {
         },
         success: function (response) {
-            console.log("response :",response);
+            // console.log("response :",response);
         }
     })
 }

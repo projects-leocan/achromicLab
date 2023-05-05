@@ -113,8 +113,8 @@
 
     /* loader  */
     .loader {
-        width: 75px;
-        height: 75px;
+        width: 50px;
+        height: 50px;
         border: 5px solid #0062cc;
         border-top-color: transparent;
         border-radius: 50%;
@@ -122,6 +122,7 @@
         box-sizing: border-box;
         animation: rotation 1s linear infinite;
         position: absolute;
+        z-index:1;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);

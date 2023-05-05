@@ -75,6 +75,7 @@
                 </div>
             </div>
 
+            <span class="loader"></span>
             <div class="form-group row">
                 <label for="pending_process" class="col-sm-2 col-form-label">None Process Piece</label>
                 <div class="col-sm-10">

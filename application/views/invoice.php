@@ -81,6 +81,7 @@
                               </div>
                            </ul>
                      </div>
+                     <span class="loader"></span>
                      <div class="col-lg-12">
                         <div class="invoice-details mt25">
                            <div class="well">
