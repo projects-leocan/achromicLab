@@ -97,55 +97,34 @@ class DbHandler
         if($company_id > 0 && isset($start_date) && isset($end_date)){
             // $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0 and date BETWEEN '$start_date' and '$end_date' ";
 
-            $sql_query = "SELECT c.company_name, p.*, ie.delivery_date, ie.challan_no 
-            FROM packet p 
-            LEFT JOIN invoice_entry ie ON ie.packet_no = p.packet_no 
-            JOIN company c ON c.company_id = p.company_id 
-            WHERE p.is_delete = 0 
-              AND p.company_id = '$company_id' 
-              AND p.date BETWEEN '$start_date' AND '$end_date'
-              AND ie.challan_no = (
-                SELECT MAX(challan_no) 
-                FROM invoice_entry 
-                WHERE packet_no = p.packet_no
-              )
+            $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
+            LEFT JOIN invoice_entry ie ON 
+            ie.packet_no = p.packet_no
+            WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
+            GROUP BY ie.delivery_date,p.packet_no
             ORDER BY p.packet_id DESC";
         }
         else if(($company_id > 0)){
             // $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and p.company_id = '$company_id' and is_delete = 0 ";
-            
-            $sql_query = "SELECT c.company_name, p.*, ie.delivery_date, ie.challan_no
-                FROM packet p
-                LEFT JOIN (
-                SELECT packet_no, MAX(challan_no) AS max_challan_no
-                FROM invoice_entry
-                GROUP BY packet_no) 
-                ie_max ON p.packet_no = ie_max.packet_no
-                LEFT JOIN invoice_entry ie ON p.packet_no = ie.packet_no AND ie.challan_no = ie_max.max_challan_no
-                JOIN company c ON c.company_id = p.company_id
-                WHERE p.company_id = '$company_id' AND p.is_delete = 0
-                ORDER BY p.packet_id DESC";
+
+            $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
+                            LEFT JOIN invoice_entry ie ON 
+                            ie.packet_no = p.packet_no
+                            WHERE p.company_id = '$company_id' AND p.is_delete = 0
+                            GROUP BY ie.delivery_date,p.packet_no
+                            ORDER BY p.packet_id DESC";
         }
 
 
         else if(isset($start_date) && isset($end_date)){
             // $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id  and is_delete = 0 and date BETWEEN '$start_date' and '$end_date'";
 
-            $sql_query = "SELECT c.company_name, p.*, ie.delivery_date, ie.challan_no 
-            FROM packet p 
-            LEFT JOIN invoice_entry ie ON ie.packet_no = p.packet_no 
-            JOIN company c ON c.company_id = p.company_id 
-            WHERE p.is_delete = 0 
-              AND p.date BETWEEN '$start_date' AND '$end_date' 
-              AND NOT EXISTS (
-                SELECT 1 
-                FROM invoice_entry ie2 
-                WHERE ie2.packet_no = p.packet_no 
-                  AND ie2.challan_no > ie.challan_no
-              )
-            ORDER BY p.packet_id DESC";
-
-
+            $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
+                            LEFT JOIN invoice_entry ie ON 
+                            ie.packet_no = p.packet_no
+                            WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
+                            GROUP BY ie.delivery_date,p.packet_no
+                            ORDER BY p.packet_id DESC";
         }
         else{
             // $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id  and is_delete = 0";
@@ -185,7 +164,6 @@ class DbHandler
 
         // $sql_query = "SELECT c.company_name, p.*, ie.delivery_date, ie.challan_no FROM packet p LEFT JOIN invoice_entry ie ON ie.packet_no = p.packet_no JOIN company c ON c.company_id = p.company_id WHERE p.is_delete = 0";
         $sql_query = "SELECT c.company_name, p.*, ie.delivery_date, ie.challan_no FROM packet p LEFT JOIN ( SELECT packet_no, MAX(challan_no) AS max_challan_no FROM invoice_entry GROUP BY packet_no ) AS ie_max ON p.packet_no = ie_max.packet_no LEFT JOIN invoice_entry ie ON ie.packet_no = p.packet_no AND ie.challan_no = ie_max.max_challan_no JOIN company c ON c.company_id = p.company_id WHERE p.is_delete = 0 AND p.company_id = c.company_id ORDER BY p.packet_id DESC";
-        // echo $sql_query;
         // $sql_query = "SELECT c.company_name, p.* FROM company as c, packet p WHERE c.company_id = p.company_id and is_delete = 0 order by p.packet_id DESC";
         $stmt = $this->conn->prepare($sql_query);
 
