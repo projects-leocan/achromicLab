@@ -689,18 +689,18 @@ function BindControls() {
         type: 'get',
         contentType: 'application/json',
         beforeSend: function (data) {
-            showLoader();
+            // showLoader();
         },
         complete: function (data) {
-            hideLoader();
+            // hideLoader();
         },
         error: function (data) {
             alert("Something went wrong ")
-            hideLoader();
+            // hideLoader();
         },
 
         success: function (data) {
-            hideLoader();
+            // hideLoader();
             data = JSON.parse(data);
             let company_name = [];
             let company_name_for_packet = [];
@@ -776,8 +776,6 @@ const fetchPacketData = () => {
         success: function (data) {
             data = JSON.parse(data);
             dataBind(data);
-            hideLoader();
-
         }
     })
 

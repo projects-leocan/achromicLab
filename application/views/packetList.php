@@ -40,6 +40,11 @@ div.dt-buttons {
     margin-bottom: 8px;
 }
 
+div.dataTables_scrollFoot>.dataTables_scrollFootInner>table {
+    margin-top: 0 !important;
+    border-top: none;
+    height: 10px;
+}
 
 table.dataTable thead tr>.dtfc-fixed-left, table.dataTable thead tr>.dtfc-fixed-right, table.dataTable tfoot tr>.dtfc-fixed-left, table.dataTable tfoot tr>.dtfc-fixed-right {
     top: 0;
@@ -124,7 +129,7 @@ table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
                         <thead>
                             <tr>
                             
-                                <!-- <span class="loader"></span> -->
+                                <span class="loader"></span>
                                 <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
                                 <!-- <th></th> -->
                                 <th style="width:10px">No.</th>
