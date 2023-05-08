@@ -41,13 +41,6 @@ div.dt-buttons {
 }
 
 
-/* Ensure that the demo table scrolls */
-th, td { white-space: nowrap; }
-    div.dataTables_wrapper {
-        width: 100%;
-        margin: 0 auto;
-    }
-
 table.dataTable thead tr>.dtfc-fixed-left, table.dataTable thead tr>.dtfc-fixed-right, table.dataTable tfoot tr>.dtfc-fixed-left, table.dataTable tfoot tr>.dtfc-fixed-right {
     top: 0;
     bottom: 0;
