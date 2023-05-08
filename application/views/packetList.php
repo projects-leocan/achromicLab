@@ -131,7 +131,7 @@ table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
                         <thead>
                             <tr>
                             
-                                <span class="loader"></span>
+                                <!-- <span class="loader"></span> -->
                                 <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
                                 <!-- <th></th> -->
                                 <th style="width:10px">No.</th>

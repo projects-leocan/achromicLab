@@ -785,15 +785,7 @@ const fetchPacketData = () => {
 
 function dataBind(data) {
 
-    var table = $('#packet_list')
-    .on( 'draw.dt', function () {
-      //Here show the loader.
-      showLoader();
-    } )
-    .on( 'init.dt', function () {
-       //Here hide the loader.
-       hideLoader();
-    } ).DataTable({
+    var table = $('#packet_list').DataTable({
         columnDefs: [{
             'targets': 0,
             'searchable':false,
@@ -811,11 +803,11 @@ function dataBind(data) {
         dom: 'lBfrtip',
         pagging: true,
         destroy: true,
-        // "sScrollX": "100%",
-        // "sScrollXInner": "110%",
-        // "bScrollCollapse": true,
-        // autoWidth: false,
-        "scrollX": true,
+        "sScrollX": "100%",
+        "sScrollXInner": "110%",
+        "bScrollCollapse": true,
+        autoWidth: false,
+        // "scrollX": true,
         fixedColumns:   {
             left: 1,
             right: 1
