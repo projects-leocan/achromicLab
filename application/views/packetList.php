@@ -39,6 +39,44 @@ div.dt-buttons {
     border-radius: 0.25rem;
     margin-bottom: 8px;
 }
+
+
+/* Ensure that the demo table scrolls */
+th, td { white-space: nowrap; }
+    div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+table.dataTable thead tr>.dtfc-fixed-left, table.dataTable thead tr>.dtfc-fixed-right, table.dataTable tfoot tr>.dtfc-fixed-left, table.dataTable tfoot tr>.dtfc-fixed-right {
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    background-color: #F4F6F9 !important;
+}
+
+/* Change the background color of the striped rows */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #E8E9EC;
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+  background-color: #F4F6F9;
+}
+
+/* set the background color for odd rows in the fixed column */
+table.dataTable tbody tr:nth-child(odd)>.dtfc-fixed-left,
+table.dataTable tbody tr:nth-child(odd)>.dtfc-fixed-right {
+  background-color: #E8E9EC;
+}
+
+/* set the background color for even rows in the fixed column */
+table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-left,
+table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
+  background-color: #F4F6F9;
+}
+
+
 </style>
 <div class="wrapper ScrollStyle">
 
@@ -88,7 +126,8 @@ div.dt-buttons {
             <div class="container-fluid">
                 <div class="table-responsive" id="importPDF">
 
-                    <table id="packet_list" class="table table-bordered table-striped" style="text-align: center;">
+                    <table id="packet_list" class="table table-bordered table-striped"
+                        style="width:100%;text-align: center;">
                         <thead>
                             <tr>
                             
