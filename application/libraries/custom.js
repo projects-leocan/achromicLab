@@ -1,12 +1,13 @@
 // live 
-const base_url = 'https://leocan.co/subFolder/achromicLab/';
+// const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-// const base_url = 'http://localhost/achromicLab/';
+const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
 
+    localStorage.removeItem("lastPacketId")
     //fetchAllComapany();
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
@@ -758,9 +759,15 @@ $("#filterCompany").on("click", function () {
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
 
 const fetchPacketData = () => {
+    const rowPerPage = 2;
+    const lastPacketId = localStorage.getItem("lastPacketId")
+    let data = new FormData();
+    data.append('rowPerPage', rowPerPage);
+    data.append('lastPacketId', lastPacketId);
     $.ajax({
         url: base_url + 'Dashboard/fetchAllPackets',
-        method: 'get',
+        data:data,
+        method: 'post',
         processData: false,
         contentType: false,
         beforeSend: function (data) { 
@@ -781,6 +788,25 @@ const fetchPacketData = () => {
 
 }
 
+let prevPacketData = [];
+
+
+$("#next-button").on("click",()=>{
+    console.log("prevPacketData ======", prevPacketData);
+    prevPacketData.map((lastPacketId) =>{
+        localStorage.setItem("lastPacketId", lastPacketId.packet_id)
+
+    })
+    fetchPacketData();
+})
+
+$("#prev-button").on("click",()=>{
+    console.log("prev is clicked =========== ");
+    prevPacketData.map((firstPacketId) =>{
+        console.log("firstPacketId =======", firstPacketId);
+    })
+})
+
 function dataBind(data) {
 
     var table = $('#packet_list').DataTable({
@@ -799,7 +825,7 @@ function dataBind(data) {
          }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
-        pagging: true,
+        bPaginate: false,
         destroy: true,
         "sScrollX": "100%",
         "sScrollXInner": "110%",
@@ -963,6 +989,7 @@ function dataBind(data) {
 
     if (data.success) {
         data.packet.forEach(function (currentPacket, index) {
+            prevPacketData.push(currentPacket);
             let count = index + 1;
             let date = currentPacket.date;
             var mydate = new Date(date);
@@ -1346,17 +1373,17 @@ const addCaratDetails = (selectedDate, company_id, packetNum, quantity, total_ca
         contentType: false,
         dataType: false,
         beforeSend: function (data) { 
-            showLoader();
+            // showLoader();
         },
         complete: function (data) { 
-            hideLoader();
+            // hideLoader();
         },
         error: function (e) {
             alert('Failed to Data Add.')
-            hideLoader();
+            // hideLoader();
         },
         success: function (data) {
-            hideLoader();
+            // hideLoader();
             data = JSON.parse(data);
             if (data.success) {
                 Swal.fire({

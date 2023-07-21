@@ -46,7 +46,10 @@ div.dataTables_scrollFoot>.dataTables_scrollFootInner>table {
     height: 10px;
 }
 
-table.dataTable thead tr>.dtfc-fixed-left, table.dataTable thead tr>.dtfc-fixed-right, table.dataTable tfoot tr>.dtfc-fixed-left, table.dataTable tfoot tr>.dtfc-fixed-right {
+table.dataTable thead tr>.dtfc-fixed-left,
+table.dataTable thead tr>.dtfc-fixed-right,
+table.dataTable tfoot tr>.dtfc-fixed-left,
+table.dataTable tfoot tr>.dtfc-fixed-right {
     top: 0;
     bottom: 0;
     z-index: 3;
@@ -59,22 +62,20 @@ table.dataTable thead tr>.dtfc-fixed-left, table.dataTable thead tr>.dtfc-fixed-
 }
 
 .table-striped tbody tr:nth-of-type(even) {
-  background-color: #F4F6F9;
+    background-color: #F4F6F9;
 }
 
 /* set the background color for odd rows in the fixed column */
 table.dataTable tbody tr:nth-child(odd)>.dtfc-fixed-left,
 table.dataTable tbody tr:nth-child(odd)>.dtfc-fixed-right {
-  background-color: #E8E9EC;
+    background-color: #E8E9EC;
 }
 
 /* set the background color for even rows in the fixed column */
 table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-left,
 table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
-  background-color: #F4F6F9;
+    background-color: #F4F6F9;
 }
-
-
 </style>
 <div class="wrapper ScrollStyle">
 
@@ -128,7 +129,7 @@ table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
                         style="width:100%;text-align: center;">
                         <thead>
                             <tr>
-                            
+
                                 <span class="loader"></span>
                                 <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
                                 <!-- <th></th> -->
@@ -156,7 +157,7 @@ table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
                         </tbody>
                         <tfoot>
                             <tr>
-                            
+
                                 <th colspan="5" style="text-align:right"></th>
                                 <th></th>
                                 <th></th>
@@ -174,6 +175,9 @@ table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
                 </div>
             </div>
         </section>
+        <button id="prev-button"> < </button>
+        <button id="next-button"> > </button>
+
         <!-- /.content -->
     </div>
 
