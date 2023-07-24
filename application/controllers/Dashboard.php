@@ -177,7 +177,9 @@ class Dashboard extends CI_Controller
 
     public function fetchAllPackets()
     {
-        $response = $this->dbhandler->fatchPacketDetails();
+        $rowPerPage = $_REQUEST['rowPerPage'];
+        $lastPacketId = $_REQUEST['lastPacketId'];
+        $response = $this->dbhandler->fatchPacketDetails($rowPerPage,$lastPacketId);
         echo json_encode($response);
     }
 
