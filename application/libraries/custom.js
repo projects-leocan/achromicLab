@@ -758,8 +758,8 @@ $("#filterCompany").on("click", function () {
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
 
+
 const fetchPacketData = () => {
-    const rowPerPage = 2;
     const lastPacketId = localStorage.getItem("lastPacketId")
     let data = new FormData();
     data.append('rowPerPage', rowPerPage);
@@ -781,34 +781,38 @@ const fetchPacketData = () => {
             hideLoader();
         },
         success: function (data) {
-            data = JSON.parse(data);
-            dataBind(data);
+            data = JSON.parse(data);  
+            dataBind(data,"API");
         }
     })
 
 }
-
 let prevPacketData = [];
 
-
+let currentPage = 0;
 $("#next-button").on("click",()=>{
-    console.log("prevPacketData ======", prevPacketData);
+    currentPage = currentPage + 1
     prevPacketData.map((lastPacketId) =>{
         localStorage.setItem("lastPacketId", lastPacketId.packet_id)
 
     })
+    // prevPacketData = []
     fetchPacketData();
 })
 
-$("#prev-button").on("click",()=>{
-    console.log("prev is clicked =========== ");
-    prevPacketData.map((firstPacketId) =>{
-        console.log("firstPacketId =======", firstPacketId);
-    })
-})
+const rowPerPage = 2;
 
-function dataBind(data) {
+$("#prev-button").on("click", () => {
+    currentPage = Math.max(currentPage - 1, 0);
+    const startIndex = currentPage * rowPerPage;
+    console.log("startIndex ====", startIndex);
+    const endIndex = startIndex + rowPerPage;
+    console.log("endIndex ====", endIndex);
+    console.log("prevPacketData ====", prevPacketData.slice(startIndex, endIndex));
+    dataBind(prevPacketData.slice(startIndex, endIndex), "prevPacketData");
+});
 
+function dataBind(data, dataSource) {
     var table = $('#packet_list').DataTable({
         columnDefs: [{
             'targets': 0,
@@ -987,9 +991,16 @@ function dataBind(data) {
     // table.buttons().container().appendTo('#example_wrapper' );
     table.clear().draw()
 
-    if (data.success) {
-        data.packet.forEach(function (currentPacket, index) {
-            prevPacketData.push(currentPacket);
+    let sourceData = (dataSource === "API") ? data.packet : data;
+    // if (data.success) {
+    console.log("sourceData ===", sourceData);
+
+        sourceData.forEach(function (currentPacket, index) {
+            if (dataSource === "API") {
+
+                prevPacketData.push(currentPacket);
+            }
+
             let count = index + 1;
             let date = currentPacket.date;
             var mydate = new Date(date);
@@ -1038,11 +1049,9 @@ function dataBind(data) {
                 <i class="mx-2 fa fa-edit"></i></a>
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
             ])
-        })
+        });
         table.draw()
-    }
-
-
+    // }
 }
 
 
