@@ -789,27 +789,40 @@ const fetchPacketData = () => {
 }
 let prevPacketData = [];
 
-let currentPage = 0;
+let currentPage = 1;
 $("#next-button").on("click",()=>{
     currentPage = currentPage + 1
-    prevPacketData.map((lastPacketId) =>{
-        localStorage.setItem("lastPacketId", lastPacketId.packet_id)
-
-    })
-    // prevPacketData = []
+    console.log(" next currentPage =====", currentPage);
+    console.log("prevPacketData in next =====", prevPacketData);
+    const startIndex = currentPage * rowPerPage;
+    const endIndex = startIndex + rowPerPage;
+    console.log("pack",prevPacketData.slice(startIndex, endIndex));
+        prevPacketData.map((lastPacketId) =>{
+            localStorage.setItem("lastPacketId", lastPacketId.packet_id)
+        })
     fetchPacketData();
 })
 
 const rowPerPage = 2;
 
 $("#prev-button").on("click", () => {
+    localStorage.removeItem("lastPacketId");
     currentPage = Math.max(currentPage - 1, 0);
+    console.log("prev currentPage =====", currentPage);
+    // if(currentPage === 0){
+    //     console.log("set id again ============ ");
+    //     let firstPagePackets =  prevPacketData.slice(0, rowPerPage);
+    //     console.log("firstPagePackets ====", firstPagePackets);
+
+    //     firstPagePackets.map((lastPacketId) =>{
+    //         localStorage.setItem("lastPacketId", lastPacketId.packet_id)
+    //     })
+    // }
     const startIndex = currentPage * rowPerPage;
-    console.log("startIndex ====", startIndex);
     const endIndex = startIndex + rowPerPage;
-    console.log("endIndex ====", endIndex);
-    console.log("prevPacketData ====", prevPacketData.slice(startIndex, endIndex));
     dataBind(prevPacketData.slice(startIndex, endIndex), "prevPacketData");
+    console.log("prevPacketData in prev =======", prevPacketData);
+
 });
 
 function dataBind(data, dataSource) {
@@ -829,7 +842,7 @@ function dataBind(data, dataSource) {
          }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
-        bPaginate: false,
+        bPaginate: false,// remove pagination
         destroy: true,
         "sScrollX": "100%",
         "sScrollXInner": "110%",
@@ -882,6 +895,21 @@ function dataBind(data, dataSource) {
                 //     }
                 // }
             },
+            // {
+                
+            //     text: '<',
+            //     attr: {
+            //         id: 'prev-button',
+            //         class:'btn-primary',
+            //       },
+            // },
+            // {               
+            //     text: '>',
+            //     attr: {
+            //         id: 'next-button',
+            //         class:'btn-primary',
+            //       },
+            // },
             // {
             //     text: 'Invoice',
             //     attr:  {
@@ -992,15 +1020,18 @@ function dataBind(data, dataSource) {
     table.clear().draw()
 
     let sourceData = (dataSource === "API") ? data.packet : data;
-    // if (data.success) {
-    console.log("sourceData ===", sourceData);
 
+    if(sourceData){
         sourceData.forEach(function (currentPacket, index) {
             if (dataSource === "API") {
 
                 prevPacketData.push(currentPacket);
             }
-
+            // console.log("currentPage ===", currentPage);
+            // if(currentPage === 0){
+            //     currentPage = 1;
+            // }
+            // let count = ((currentPage - 1) * rowPerPage) + (index + 1);
             let count = index + 1;
             let date = currentPacket.date;
             var mydate = new Date(date);
@@ -1050,6 +1081,7 @@ function dataBind(data, dataSource) {
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
             ])
         });
+    }
         table.draw()
     // }
 }
@@ -1483,7 +1515,7 @@ const fatchSelectedCompnay = () => {
         },
         success: function (data) {
             data = JSON.parse(data);
-            dataBind(data);
+            dataBind(data,"API");
             hideLoader();
         }
     })

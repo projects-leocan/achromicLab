@@ -76,6 +76,39 @@ table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-left,
 table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
     background-color: #F4F6F9;
 }
+
+div.dataTables_wrapper div.dataTables_info {
+    padding-top: 0.85em;
+    display: inline-block;
+}
+
+.btn-container {
+    display: flex;
+    float: right;
+    padding-right: 10px;
+    margin-top: 10px;
+    position: relative;
+    bottom: 1.4rem;
+}
+
+.btn-container button {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-container button:hover {
+    background-color: #e9e9e9;
+}
+
+
+/* .btn-container{
+    float: right;
+    padding-right: 10px;
+} */
 </style>
 <div class="wrapper ScrollStyle">
 
@@ -175,8 +208,11 @@ table.dataTable tbody tr:nth-child(even)>.dtfc-fixed-right {
                 </div>
             </div>
         </section>
-        <button id="prev-button"> < </button>
-        <button id="next-button"> > </button>
+
+        <div class="btn-container ">
+            <button id="prev-button" class="dataTables_info"> < </button>
+            <button id="next-button" class="mx-1"> > </button>
+        </div>
 
         <!-- /.content -->
     </div>
