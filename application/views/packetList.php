@@ -209,9 +209,14 @@ div.dataTables_wrapper div.dataTables_info {
             </div>
         </section>
 
+        
         <div class="btn-container ">
-            <button id="prev-button" class="dataTables_info"> < </button>
-            <button id="next-button" class="mx-1"> > </button>
+            <form action="" method="post">
+                <button id="prev-button" type="button" class="dataTables_info"> < </button>
+                <button id="next-button" type="button" class="mx-1"> > </button>
+            </form>
+            
+                
         </div>
 
         <!-- /.content -->

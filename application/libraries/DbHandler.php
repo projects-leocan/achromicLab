@@ -86,59 +86,78 @@ class DbHandler
         return $result;
     }
 
-    public function fatchSelectedCompany($company_id, $start_date,$end_date)
+    public function fatchSelectedCompany($company_id, $start_date,$end_date,$lastPacketId,$rowPerPage)
     {
-       
+
         if( $company_id == "null"){
           
             $company_id = -1;
         }
 
+        if($lastPacketId == "null"){
+            $lastPacketId = -1;
+        }
+        
         if($company_id > 0 && isset($start_date) && isset($end_date)){
 
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON 
             ie.packet_no = p.packet_no
-            WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
-            GROUP BY ie.delivery_date,p.packet_no,p.packet_id
-            ORDER BY p.packet_id DESC";
+            WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' 
+            AND p.is_delete = 0 
+            GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
+            ORDER BY p.packet_id DESC
+            limit $rowPerPage ";
 
-            // echo $sql_query;
+
+            if($lastPacketId > 0){
+                $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
+                LEFT JOIN invoice_entry ie ON 
+                ie.packet_no = p.packet_no
+                WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
+                AND p.packet_id < $lastPacketId
+                GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
+                ORDER BY p.packet_id DESC
+                limit $rowPerPage";
+            }
+
         }
         else if(($company_id > 0)){
-
-            // perfect 
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON
             ie.packet_no = p.packet_no
-            WHERE p.company_id = '$company_id' AND p.is_delete = 0
-            GROUP BY ie.delivery_date,p.packet_no,p.packet_id
-            ORDER BY p.packet_id DESC";
+            WHERE p.company_id = '$company_id' AND p.is_delete = 0 
+            GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
+            ORDER BY p.packet_id DESC
+            limit $rowPerPage";
 
-
-
-            // $sql_query = "SELECT c.company_name, p.*, ie.delivery_date, ie.challan_no
-            // FROM packet p
-            // LEFT JOIN (
-            //   SELECT packet_no, MAX(challan_no) AS max_challan_no
-            //   FROM invoice_entry
-            //   GROUP BY packet_no
-            // ) ie_max ON p.packet_no = ie_max.packet_no
-            // LEFT JOIN invoice_entry ie ON p.packet_no = ie.packet_no AND ie.challan_no = ie_max.max_challan_no
-            // JOIN company c ON c.company_id = p.company_id
-            // WHERE p.company_id = '$company_id' AND p.is_delete = 0
-            // ORDER BY p.packet_id DESC";
-            
-            
+            if($lastPacketId > 0){
+                $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
+                LEFT JOIN invoice_entry ie ON
+                ie.packet_no = p.packet_no
+                WHERE p.company_id = '$company_id' AND p.is_delete = 0  AND p.packet_id < $lastPacketId
+                GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
+                ORDER BY p.packet_id DESC
+                limit $rowPerPage";
+            }
         }
-
+        
 
         else if(isset($start_date) && isset($end_date)){
 
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p LEFT JOIN invoice_entry ie ON ie.packet_no = p.packet_no
                             WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
                             GROUP BY ie.delivery_date,p.packet_no,p.packet_id
-                            ORDER BY p.packet_id DESC";
+                            ORDER BY p.packet_id DESC
+                            limit $rowPerPage";
+
+            if($lastPacketId > 0){
+                $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p LEFT JOIN invoice_entry ie ON ie.packet_no = p.packet_no
+                WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 AND p.packet_id < $lastPacketId
+                GROUP BY ie.delivery_date,p.packet_no,p.packet_id
+                ORDER BY p.packet_id DESC
+                limit $rowPerPage";
+            }
         }
         else{
 
@@ -146,11 +165,13 @@ class DbHandler
             LEFT JOIN invoice_entry ie ON
             ie.packet_no = p.packet_no
             WHERE p.is_delete = 0
-            GROUP BY ie.delivery_date,p.packet_no,p.packet_id
-            ORDER BY p.packet_id DESC";
+            GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
+            ORDER BY p.packet_id DESC
+            limit $rowPerPage";
+
+
 
         }
-       
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -179,21 +200,24 @@ class DbHandler
 
     public function fatchPacketDetails($rowPerPage, $lastPacketId)
     {
-
-
         if($lastPacketId == "null"){
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON
             ie.packet_no = p.packet_no 
             WHERE p.is_delete = 0
-            GROUP BY ie.delivery_date,p.packet_no,p.packet_id limit $rowPerPage";
+            GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
+            ORDER BY p.packet_id DESC
+            limit $rowPerPage";
         }else{
           
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON
             ie.packet_no = p.packet_no 
-            WHERE p.is_delete = 0 and p.packet_id > $lastPacketId
-            GROUP BY ie.delivery_date,p.packet_no,p.packet_id limit $rowPerPage";
+            WHERE p.is_delete = 0 and p.packet_id < $lastPacketId
+            GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
+            ORDER BY p.packet_id DESC
+            limit $rowPerPage ";
+
         }
 
         // echo $sql_query;
@@ -322,6 +346,8 @@ class DbHandler
         else{
             $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_qty`,`packet_dimond_caret`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`cube_qty`,`cube_time`,`price_per_carat`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,'$cube_time',$price_per_carat)";
         }
+
+        // echo  $sql_query;
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
         $stmt->close();

@@ -752,7 +752,9 @@ function BindControls() {
 }
 
 
+let isSearch = false;
 $("#filterCompany").on("click", function () {
+    isSearch = true;
     fatchSelectedCompnay();
 })
 
@@ -790,38 +792,45 @@ const fetchPacketData = () => {
 let prevPacketData = [];
 
 let currentPage = 1;
-$("#next-button").on("click",()=>{
+$("#next-button").on("click",(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
     currentPage = currentPage + 1
-    console.log(" next currentPage =====", currentPage);
-    console.log("prevPacketData in next =====", prevPacketData);
     const startIndex = currentPage * rowPerPage;
     const endIndex = startIndex + rowPerPage;
-    console.log("pack",prevPacketData.slice(startIndex, endIndex));
-        prevPacketData.map((lastPacketId) =>{
-            localStorage.setItem("lastPacketId", lastPacketId.packet_id)
+    let pack = prevPacketData.slice(startIndex, endIndex);
+
+    if(currentPage == 1){
+        pack.map((packet)=>{
+            localStorage.setItem("lastPacketId", packet.packet_id)
         })
-    fetchPacketData();
+
+    }else{
+        prevPacketData.map((lastPacketId) =>{
+                localStorage.setItem("lastPacketId", lastPacketId.packet_id)
+            })
+    }
+
+    if(isSearch == true){
+        fatchSelectedCompnay();
+    }
+    else{
+        fetchPacketData();
+    }
+
+  
+    return false;
 })
 
-const rowPerPage = 2;
+const rowPerPage = 10;
 
 $("#prev-button").on("click", () => {
-    localStorage.removeItem("lastPacketId");
     currentPage = Math.max(currentPage - 1, 0);
-    console.log("prev currentPage =====", currentPage);
-    // if(currentPage === 0){
-    //     console.log("set id again ============ ");
-    //     let firstPagePackets =  prevPacketData.slice(0, rowPerPage);
-    //     console.log("firstPagePackets ====", firstPagePackets);
+    localStorage.removeItem("lastPacketId");
 
-    //     firstPagePackets.map((lastPacketId) =>{
-    //         localStorage.setItem("lastPacketId", lastPacketId.packet_id)
-    //     })
-    // }
     const startIndex = currentPage * rowPerPage;
     const endIndex = startIndex + rowPerPage;
     dataBind(prevPacketData.slice(startIndex, endIndex), "prevPacketData");
-    console.log("prevPacketData in prev =======", prevPacketData);
 
 });
 
@@ -895,29 +904,6 @@ function dataBind(data, dataSource) {
                 //     }
                 // }
             },
-            // {
-                
-            //     text: '<',
-            //     attr: {
-            //         id: 'prev-button',
-            //         class:'btn-primary',
-            //       },
-            // },
-            // {               
-            //     text: '>',
-            //     attr: {
-            //         id: 'next-button',
-            //         class:'btn-primary',
-            //       },
-            // },
-            // {
-            //     text: 'Invoice',
-            //     attr:  {
-            //         id: 'InvoiceBtn',
-            //         class:'buttons-pdf',
-            //         enabled: false,
-            //     }
-            // },
             {
                 text: 'Invoice',
                 attr: {
@@ -1023,16 +1009,13 @@ function dataBind(data, dataSource) {
 
     if(sourceData){
         sourceData.forEach(function (currentPacket, index) {
-            if (dataSource === "API") {
-
+            if (!prevPacketData.includes(currentPacket)) {
                 prevPacketData.push(currentPacket);
             }
-            // console.log("currentPage ===", currentPage);
-            // if(currentPage === 0){
-            //     currentPage = 1;
-            // }
-            // let count = ((currentPage - 1) * rowPerPage) + (index + 1);
-            let count = index + 1;
+            if(currentPage == 0){
+                currentPage = 1;
+            }
+            let count = ((currentPage -1) * rowPerPage) + (index + 1)
             let date = currentPacket.date;
             var mydate = new Date(date);
             year = mydate.getFullYear();
@@ -1468,7 +1451,9 @@ const resetForm = () => {
 const fatchSelectedCompnay = () => {
 
     let data = new FormData()
+    const lastPacketId = localStorage.getItem("lastPacketId")
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+
     if(selected_value != "-1")
     {
         localStorage.setItem("invoice_company", localStorage.getItem("FilterSelecteCompanyName"))
@@ -1496,6 +1481,8 @@ const fatchSelectedCompnay = () => {
         data.append("endDate", endDate)
     }
     data.append("company_id", selected_value)
+    data.append('lastPacketId', lastPacketId);
+    data.append('rowPerPage', rowPerPage);
 
     $.ajax({
         url: base_url + 'Dashboard/fatchSelectedCompanyData',
@@ -1646,6 +1633,7 @@ getSelectedInvoiceData = () => {
         success: function (data) {
             hideLoader();
             data = JSON.parse(data);
+            console.log("data ======", data);
             if (data.success) {
                 if (data.packet.length >0)
                 {
