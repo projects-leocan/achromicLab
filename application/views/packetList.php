@@ -1,8 +1,11 @@
 <style>
+
+html {
+  scroll-behavior: auto;
+}
 .select2-container .select2-selection--single {
     height: 35px !important;
 }
-
 /* table {
     table-layout: fixed;   
     width: 100% !important;
@@ -83,7 +86,6 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 .btn-container {
-    display: flex;
     float: right;
     padding-right: 10px;
     margin-top: 10px;
@@ -98,17 +100,13 @@ div.dataTables_wrapper div.dataTables_info {
     padding: 6px 12px;
     font-size: 14px;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 
 .btn-container button:hover {
     background-color: #e9e9e9;
 }
 
-
-/* .btn-container{
-    float: right;
-    padding-right: 10px;
-} */
 </style>
 <div class="wrapper ScrollStyle">
 
@@ -210,11 +208,9 @@ div.dataTables_wrapper div.dataTables_info {
         </section>
 
         
-        <div class="btn-container ">
-            <form action="" method="post">
+        <div class="btn-container">
                 <button id="prev-button" type="button" class="dataTables_info"> < </button>
                 <button id="next-button" type="button" class="mx-1"> > </button>
-            </form>
             
                 
         </div>

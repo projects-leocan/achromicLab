@@ -8,6 +8,7 @@ const base_url = 'http://localhost/achromicLab/';
 $(() => {
 
     localStorage.removeItem("lastPacketId")
+    localStorage.removeItem("currentPage")
     //fetchAllComapany();
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
@@ -85,6 +86,8 @@ $('#resetDate').click((e) => {
     localStorage.removeItem("FilterSelecteCompanyID");
     localStorage.removeItem("FilterSelecteCompanyName");
     localStorage.removeItem("invoice_company");
+    localStorage.removeItem("lastPacketId");
+    localStorage.removeItem("currentPage");
     
     $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
     $('#inputedCompanyName').val("All Company");
@@ -756,6 +759,7 @@ let isSearch = false;
 $("#filterCompany").on("click", function () {
     isSearch = true;
     fatchSelectedCompnay();
+
 })
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
@@ -792,20 +796,23 @@ const fetchPacketData = () => {
 let prevPacketData = [];
 
 let currentPage = 1;
-$("#next-button").on("click",(e)=>{
-    e.preventDefault();
-    e.stopPropagation();
+$("#next-button").on("click", function(e){
     currentPage = currentPage + 1
+
     const startIndex = currentPage * rowPerPage;
     const endIndex = startIndex + rowPerPage;
     let pack = prevPacketData.slice(startIndex, endIndex);
 
-    if(currentPage == 1){
+    console.log("currentPage next====", currentPage);
+    let p = localStorage.getItem("currentPage");
+    if(Number(p) == 1){
+        console.log("here ====");
         pack.map((packet)=>{
             localStorage.setItem("lastPacketId", packet.packet_id)
         })
 
     }else{
+        console.log("else ======");
         prevPacketData.map((lastPacketId) =>{
                 localStorage.setItem("lastPacketId", lastPacketId.packet_id)
             })
@@ -817,16 +824,16 @@ $("#next-button").on("click",(e)=>{
     else{
         fetchPacketData();
     }
-
-  
-    return false;
 })
 
 const rowPerPage = 10;
 
-$("#prev-button").on("click", () => {
+$("#prev-button").on("click", (e) => {
     currentPage = Math.max(currentPage - 1, 0);
+    localStorage.setItem("currentPage",currentPage)
     localStorage.removeItem("lastPacketId");
+
+    console.log("currentPage prev ====", currentPage);
 
     const startIndex = currentPage * rowPerPage;
     const endIndex = startIndex + rowPerPage;
@@ -835,7 +842,8 @@ $("#prev-button").on("click", () => {
 });
 
 function dataBind(data, dataSource) {
-    var table = $('#packet_list').DataTable({
+
+    var table = $('#packet_list').DataTable({ 
         columnDefs: [{
             'targets': 0,
             'searchable':false,
@@ -851,17 +859,18 @@ function dataBind(data, dataSource) {
          }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
+        stateSave:true,
         bPaginate: false,// remove pagination
         destroy: true,
         "sScrollX": "100%",
         "sScrollXInner": "110%",
         "bScrollCollapse": true,
         autoWidth: false,
-        // "scrollX": true,
+         // "scrollX": true,
         fixedColumns:   {
-            left: 1,
-            right: 1
-        },
+           left: 1,
+           right: 1
+       },
         "columns": [
             { "width": "10px" },
             { "width": "10px" },
@@ -917,8 +926,6 @@ function dataBind(data, dataSource) {
             }
         ],
         
-
-
         footerCallback: function (row, data, start, end, display) {
             var api = this.api();
 
@@ -996,6 +1003,7 @@ function dataBind(data, dataSource) {
             // $(api.column(8).footer()).html(total);
         },
     });
+
     // Handle click on "Select all" control
    $('#example-select-all').on('click', function(){
     // Check/uncheck all checkboxes in the table
@@ -1003,12 +1011,15 @@ function dataBind(data, dataSource) {
     $('input[type="checkbox"]', rows).prop('checked', this.checked);
  });
     // table.buttons().container().appendTo('#example_wrapper' );
+    
     table.clear().draw()
-
+    let scrollPos = $(".dataTables_scrollBody").scrollTop(0)[0];  
+    console.log("Current scroll position: ", scrollPos);
+  
     let sourceData = (dataSource === "API") ? data.packet : data;
-
+   
     if(sourceData){
-        sourceData.forEach(function (currentPacket, index) {
+        sourceData.map(function (currentPacket, index) {
             if (!prevPacketData.includes(currentPacket)) {
                 prevPacketData.push(currentPacket);
             }
@@ -1065,8 +1076,8 @@ function dataBind(data, dataSource) {
             ])
         });
     }
-        table.draw()
-    // }
+    table.draw()
+
 }
 
 

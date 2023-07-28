@@ -110,7 +110,10 @@ class Dashboard extends CI_Controller
         // $selected_date = isset($_REQUEST["selected_date"]) ? $_REQUEST["selected_date"] : null;
         $start_date = isset($_REQUEST["startDate"]) ? $_REQUEST["startDate"] : null;
         $end_date = isset($_REQUEST["endDate"]) ? $_REQUEST["endDate"] : null;
-        $response = $this->dbhandler->fatchSelectedCompany($company_id, $start_date,$end_date);
+        $lastPacketId = $_REQUEST["lastPacketId"];
+        $rowPerPage = $_REQUEST["rowPerPage"];
+        
+        $response = $this->dbhandler->fatchSelectedCompany($company_id, $start_date,$end_date,$lastPacketId,$rowPerPage);
         echo json_encode($response);
     }
 

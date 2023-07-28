@@ -19,7 +19,8 @@
                 
                     
               
-                <img src="logo.png" class="img-fluid pb-3" style="max-width: 80%; padding-top: 20px" alt="image desc">
+                <img src="logo.png" class="img-fluid" style="max-width: 80%;border-radius: 50% 50%;margin: auto;display: block;margin-top: 10px;height: 75px;" alt="image desc">
+                <!-- <img src="logo.png" class="img-fluid pb-3" style="max-width: 80%; padding-top: 20px" alt="image desc"> -->
               
                 <hr style="border-top: 1px solid #fff">        
             
