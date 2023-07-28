@@ -844,6 +844,14 @@ $("#prev-button").on("click", (e) => {
 function dataBind(data, dataSource) {
 
     var table = $('#packet_list').DataTable({ 
+
+        initComplete: function(settings, json) { 
+            var api = new $.fn.dataTable.Api( settings ); 
+            console.log("json.recordsFiltered ==", api);
+            // json.recordsFiltered = json.recordsFiltered - 1;
+            // api.scroller.toPosition( json.recordsFiltered ); 
+        },
+
         columnDefs: [{
             'targets': 0,
             'searchable':false,
@@ -1012,10 +1020,9 @@ function dataBind(data, dataSource) {
  });
     // table.buttons().container().appendTo('#example_wrapper' );
     
+    ScrollPosition = $('.dataTables_scrollBody').get(0).scrollHeight;
     table.clear().draw()
-    let scrollPos = $(".dataTables_scrollBody").scrollTop(0)[0];  
-    console.log("Current scroll position: ", scrollPos);
-  
+    console.log('ScrollPosition -------', ScrollPosition);
     let sourceData = (dataSource === "API") ? data.packet : data;
    
     if(sourceData){
@@ -1076,7 +1083,10 @@ function dataBind(data, dataSource) {
             ])
         });
     }
+    console.log('set -------', ScrollPosition);
+    $('.dataTables_scrollBody').scrollTop(ScrollPosition);
     table.draw()
+
 
 }
 
