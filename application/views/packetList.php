@@ -107,6 +107,31 @@ div.dataTables_wrapper div.dataTables_info {
     background-color: #e9e9e9;
 }
 
+.select-container {
+    position: relative;
+    display: inline-block;
+}
+
+.select-container select {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 6px 30px 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.select-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #666;
+    pointer-events: none;
+}
+
+
 </style>
 <div class="wrapper ScrollStyle">
 
@@ -154,7 +179,7 @@ div.dataTables_wrapper div.dataTables_info {
         <!-- Main content -->
         <section class="content ">
             <div class="container-fluid">
-                <div class="table-responsive" id="importPDF">
+                <div class="table-responsive table-container" id="importPDF">
 
                     <table id="packet_list" class="table table-bordered table-striped"
                         style="width:100%;text-align: center;">
@@ -207,13 +232,21 @@ div.dataTables_wrapper div.dataTables_info {
             </div>
         </section>
 
-        
         <div class="btn-container">
-                <button id="prev-button" type="button" class="dataTables_info"> < </button>
-                <button id="next-button" type="button" class="mx-1"> > </button>
-            
-                
+            <button id="prev-button" type="button" class="dataTables_info">&lt;</button>
+            <button id="next-button" type="button" class="mx-1">&gt;</button>
+            <div class="select-container">
+                <select class="form-select form-select-lg" name="" id="rowPerPage">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="75">75</option>
+                    <option value="100">100</option>
+                    <option value="250">250</option>
+                </select>
+                <span class="select-icon">&#9660;</span>
+            </div>
         </div>
+        
 
         <!-- /.content -->
     </div>
