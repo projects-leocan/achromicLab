@@ -1,8 +1,8 @@
 // live 
-// const base_url = 'https://leocan.co/subFolder/achromicLab/';
+const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-const base_url = 'http://localhost/achromicLab/';
+// const base_url = 'http://localhost/achromicLab/';
 
 // ready function 
 $(() => {
@@ -764,10 +764,22 @@ $("#filterCompany").on("click", function () {
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
 
+$("#rowPerPage").change(function() {
+    rowPerPage = $(this).val() || 10;
+    if(isSearch == true){
+        fatchSelectedCompnay();
+    }
+    else{
+        fetchPacketData();
+    }
+});
 
 const fetchPacketData = () => {
     const lastPacketId = localStorage.getItem("lastPacketId")
     let data = new FormData();
+    if(isNaN(rowPerPage)){
+        rowPerPage = 10;
+    }
     data.append('rowPerPage', rowPerPage);
     data.append('lastPacketId', lastPacketId);
     $.ajax({
@@ -793,26 +805,24 @@ const fetchPacketData = () => {
     })
 
 }
-let prevPacketData = [];
 
+let prevPacketData = [];
 let currentPage = 1;
-$("#next-button").on("click", function(e){
+$(".btn-container").on("click", "#next-button", function(e) {
+    e.preventDefault();
     currentPage = currentPage + 1
 
     const startIndex = currentPage * rowPerPage;
     const endIndex = startIndex + rowPerPage;
     let pack = prevPacketData.slice(startIndex, endIndex);
 
-    console.log("currentPage next====", currentPage);
     let p = localStorage.getItem("currentPage");
     if(Number(p) == 1){
-        console.log("here ====");
         pack.map((packet)=>{
             localStorage.setItem("lastPacketId", packet.packet_id)
         })
 
     }else{
-        console.log("else ======");
         prevPacketData.map((lastPacketId) =>{
                 localStorage.setItem("lastPacketId", lastPacketId.packet_id)
             })
@@ -826,14 +836,13 @@ $("#next-button").on("click", function(e){
     }
 })
 
-const rowPerPage = 10;
+
+// const rowPerPage = 10;
 
 $("#prev-button").on("click", (e) => {
     currentPage = Math.max(currentPage - 1, 0);
     localStorage.setItem("currentPage",currentPage)
     localStorage.removeItem("lastPacketId");
-
-    console.log("currentPage prev ====", currentPage);
 
     const startIndex = currentPage * rowPerPage;
     const endIndex = startIndex + rowPerPage;
@@ -844,14 +853,6 @@ $("#prev-button").on("click", (e) => {
 function dataBind(data, dataSource) {
 
     var table = $('#packet_list').DataTable({ 
-
-        initComplete: function(settings, json) { 
-            var api = new $.fn.dataTable.Api( settings ); 
-            console.log("json.recordsFiltered ==", api);
-            // json.recordsFiltered = json.recordsFiltered - 1;
-            // api.scroller.toPosition( json.recordsFiltered ); 
-        },
-
         columnDefs: [{
             'targets': 0,
             'searchable':false,
@@ -867,9 +868,9 @@ function dataBind(data, dataSource) {
          }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
-        stateSave:true,
         bPaginate: false,// remove pagination
         destroy: true,
+        "scrollX": true, 
         "sScrollX": "100%",
         "sScrollXInner": "110%",
         "bScrollCollapse": true,
@@ -1020,9 +1021,7 @@ function dataBind(data, dataSource) {
  });
     // table.buttons().container().appendTo('#example_wrapper' );
     
-    ScrollPosition = $('.dataTables_scrollBody').get(0).scrollHeight;
     table.clear().draw()
-    console.log('ScrollPosition -------', ScrollPosition);
     let sourceData = (dataSource === "API") ? data.packet : data;
    
     if(sourceData){
@@ -1083,11 +1082,7 @@ function dataBind(data, dataSource) {
             ])
         });
     }
-    console.log('set -------', ScrollPosition);
-    $('.dataTables_scrollBody').scrollTop(ScrollPosition);
     table.draw()
-
-
 }
 
 
@@ -1654,7 +1649,6 @@ getSelectedInvoiceData = () => {
         success: function (data) {
             hideLoader();
             data = JSON.parse(data);
-            console.log("data ======", data);
             if (data.success) {
                 if (data.packet.length >0)
                 {
