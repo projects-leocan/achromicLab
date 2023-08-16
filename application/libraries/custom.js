@@ -1,14 +1,17 @@
 // live 
-const base_url = 'https://leocan.co/subFolder/achromicLab/';
+// const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-// const base_url = 'http://localhost/achromicLab/';
-
+const base_url = 'http://localhost/achromicLab/';
+let prevPacketData = [];
+let currentPage = 1;
+let isAPIcalled = true;
 // ready function 
 $(() => {
-
+    
     localStorage.removeItem("lastPacketId")
     localStorage.removeItem("currentPage")
+    localStorage.removeItem("pageLastIndex");
     //fetchAllComapany();
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
@@ -765,7 +768,12 @@ $("#filterCompany").on("click", function () {
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
 
 $("#rowPerPage").change(function() {
-    rowPerPage = $(this).val() || 10;
+    rowPerPage = Number($(this).val());
+    prevPacketData = [];
+    currentPage = 1;
+    localStorage.removeItem("lastPacketId");
+    localStorage.setItem("lastPacketId",0)
+    localStorage.setItem("pageLastIndex",0);
     if(isSearch == true){
         fatchSelectedCompnay();
     }
@@ -806,49 +814,75 @@ const fetchPacketData = () => {
 
 }
 
-let prevPacketData = [];
-let currentPage = 1;
+
 $(".btn-container").on("click", "#next-button", function(e) {
     e.preventDefault();
     currentPage = currentPage + 1
+    
+    let lastIndex = localStorage.getItem("lastPacketId")
+    let pageLastIndex = localStorage.getItem("pageLastIndex");
 
-    const startIndex = currentPage * rowPerPage;
-    const endIndex = startIndex + rowPerPage;
-    let pack = prevPacketData.slice(startIndex, endIndex);
+    if(lastIndex == pageLastIndex){
 
-    let p = localStorage.getItem("currentPage");
-    if(Number(p) == 1){
-        pack.map((packet)=>{
-            localStorage.setItem("lastPacketId", packet.packet_id)
-        })
-
+        // get data from api
+        if(isSearch == true){
+            fatchSelectedCompnay();
+        }
+        else{
+            fetchPacketData();
+        }
     }else{
-        prevPacketData.map((lastPacketId) =>{
-                localStorage.setItem("lastPacketId", lastPacketId.packet_id)
-            })
+        // fetch data from previos array 
+            
+        const startIndex = (currentPage -1) * rowPerPage;
+        const endIndex = parseInt(startIndex) + parseInt(rowPerPage);
+        const prevDataSlice = prevPacketData.slice(startIndex, endIndex);
+        let pageLastIndex = prevDataSlice[prevDataSlice.length - 1]; 
+        localStorage.setItem("pageLastIndex", pageLastIndex.packet_id)
+        dataBind(prevDataSlice,"prevPacketData");
     }
 
-    if(isSearch == true){
-        fatchSelectedCompnay();
-    }
-    else{
-        fetchPacketData();
-    }
+
+    
 })
 
 
-// const rowPerPage = 10;
-
 $("#prev-button").on("click", (e) => {
-    currentPage = Math.max(currentPage - 1, 0);
+
+    currentPage = Math.max(currentPage - 1, 1);
     localStorage.setItem("currentPage",currentPage)
-    localStorage.removeItem("lastPacketId");
 
-    const startIndex = currentPage * rowPerPage;
-    const endIndex = startIndex + rowPerPage;
-    dataBind(prevPacketData.slice(startIndex, endIndex), "prevPacketData");
+    // localStorage.removeItem("lastPacketId");
+    
+    const startIndex = (currentPage -1) * rowPerPage;
+    const endIndex = parseInt(startIndex) + parseInt(rowPerPage);
+    console.log("startIndex ==", startIndex);
+    console.log("endIndex==", endIndex);
 
+
+    // if(isSearch == true){
+    //     startIndex = currentPage * rowPerPage;
+
+    // }else{
+    //     startIndex = (currentPage - 1) * rowPerPage;
+        
+    // }
+    // console.log("currentPage ==", currentPage);
+    // console.log("endIndex ==", endIndex);
+
+
+    const prevDataSlice = prevPacketData.slice(startIndex, endIndex);
+    console.log("prevDataSlice =====", prevDataSlice);
+    let lastPacketOfSelectedPage ;
+    if(prevDataSlice.length > 0){
+        lastPacketOfSelectedPage = prevDataSlice[prevDataSlice.length - 1];
+        localStorage.setItem("pageLastIndex", lastPacketOfSelectedPage.packet_id)
+    }
+
+
+    dataBind(prevDataSlice, "prevPacketData");
 });
+
 
 function dataBind(data, dataSource) {
 
@@ -1022,17 +1056,29 @@ function dataBind(data, dataSource) {
     // table.buttons().container().appendTo('#example_wrapper' );
     
     table.clear().draw()
-    let sourceData = (dataSource === "API") ? data.packet : data;
-   
+    let sourceData;
+    let lastIndex = localStorage.getItem("lastPacketId")
+    let pageLastIndex = localStorage.getItem("pageLastIndex");
+
+
+    if(lastIndex == pageLastIndex){
+        console.log("both id is same call next  ");
+         sourceData = (dataSource === "API") ? data.packet : data;
+
+    }else{
+        console.log("data ======= ", data);
+        sourceData = data;
+    }
+
+    console.log("sourceData ========", sourceData);
+    
     if(sourceData){
         sourceData.map(function (currentPacket, index) {
             if (!prevPacketData.includes(currentPacket)) {
                 prevPacketData.push(currentPacket);
             }
-            if(currentPage == 0){
-                currentPage = 1;
-            }
-            let count = ((currentPage -1) * rowPerPage) + (index + 1)
+
+            let count = ((currentPage - 1 ) * rowPerPage) + (index + 1)
             let date = currentPacket.date;
             var mydate = new Date(date);
             year = mydate.getFullYear();
@@ -1081,6 +1127,15 @@ function dataBind(data, dataSource) {
                 <a id="packet_delete" packet_id="${currentPacket.packet_id}">  <i class="fa fa-trash"></i> </a>`
             ])
         });
+
+        if(dataSource === "API"){
+            let lastPacketID = prevPacketData[prevPacketData.length - 1]; 
+            let pageLastIndex = prevPacketData[prevPacketData.length - 1]; 
+    
+            localStorage.setItem("lastPacketId", lastPacketID.packet_id)
+            localStorage.setItem("pageLastIndex", pageLastIndex.packet_id)
+        } 
+       
     }
     table.draw()
 }

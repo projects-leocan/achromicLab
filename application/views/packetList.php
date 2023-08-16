@@ -3,6 +3,7 @@
 html {
   scroll-behavior: auto;
 }
+
 .select2-container .select2-selection--single {
     height: 35px !important;
 }
@@ -187,7 +188,7 @@ div.dataTables_wrapper div.dataTables_info {
                             <tr>
 
                                 <span class="loader"></span>
-                                <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
+                                <th style="width:10px"><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
                                 <!-- <th></th> -->
                                 <th style="width:10px">No.</th>
                                 <th style="width:10px">Packet No.</th>

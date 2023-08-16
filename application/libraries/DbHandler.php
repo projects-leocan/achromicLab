@@ -200,7 +200,7 @@ class DbHandler
 
     public function fatchPacketDetails($rowPerPage, $lastPacketId)
     {
-        if($lastPacketId == "null"){
+        if($lastPacketId == "null" || $lastPacketId == 0){
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON
             ie.packet_no = p.packet_no 
