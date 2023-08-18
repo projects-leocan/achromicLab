@@ -113,9 +113,9 @@
 
     /* loader  */
     .loader {
-        width: 50px;
-        height: 50px;
-        border: 5px solid #0062cc;
+        width: 30px;
+        height: 30px;
+        border: 3px solid #0062cc;
         border-top-color: transparent;
         border-radius: 50%;
         display: inline-block;
