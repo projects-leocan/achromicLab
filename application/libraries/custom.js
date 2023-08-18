@@ -5,7 +5,6 @@ const base_url = 'https://leocan.co/subFolder/achromicLab/';
 // const base_url = 'http://localhost/achromicLab/';
 let prevPacketData = [];
 let currentPage = 1;
-let isAPIcalled = true;
 // ready function 
 $(() => {
     
@@ -22,6 +21,7 @@ $(() => {
         $('#inputedCompanyName').val("All Company");
         BindControls();
         fetchPacketData();
+        getCount();
         
         
         $('input[name="daterange"]').daterangepicker({
@@ -50,6 +50,7 @@ $(() => {
     }
 
     if (window.location.href == base_url + 'packet_form') {
+        fetchPacketData();
         if (localStorage.getItem("packet_id") != "" && localStorage.getItem("packet_id") != null) {
             bindPacketData();
            
@@ -68,6 +69,7 @@ $(() => {
 
     }
 })
+
 
 function showLoader(){
     $(".loader").show();
@@ -720,7 +722,6 @@ function BindControls() {
 
             })
             
-           
            company_name.sort(function(a, b) {
                 return a.name.localeCompare(b.name);
               });
@@ -768,10 +769,66 @@ $("#filterCompany").on("click", function () {
     localStorage.removeItem("lastPacketId")
     localStorage.removeItem("pageLastIndex");
     fatchSelectedCompnay();
+    getPacketCountForFilter();
 
 })
 
+
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
+function getCount(){
+    $.ajax({
+        url: base_url + 'Dashboard/getCount',
+        type: "POST",
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            $("#total_count").html((data.packet_count))
+        }
+    })
+}
+
+
+function getPacketCountForFilter(){
+
+    let data = new FormData()
+    
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+
+    if (startDate && endDate) {
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
+    }
+
+    data.append("company_id", selected_value)
+
+    $.ajax({
+        url: base_url + 'Dashboard/getCountForFilter',
+        type: "POST",
+        data:data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            $("#total_count").html((data.packet_count))
+        }
+    })
+}
+
 
 let rowPerPage;
 $("#rowPerPage").change(function() {
@@ -815,8 +872,12 @@ const fetchPacketData = () => {
             hideLoader();
         },
         success: function (data) {
-            data = JSON.parse(data);  
-            dataBind(data,"API");
+            data = JSON.parse(data); 
+            if(data.packet.length > 0){
+                dataBind(data,"API");
+            } else{
+                alert("no more data available")
+            }
         }
     })
 
@@ -1106,7 +1167,7 @@ function dataBind(data, dataSource) {
         });
 
 
-        $("#total_count").html((data.packet_count))
+        // $("#total_count").html((data.packet_count))
         $("#endTo").html((currentPage - 1) * rowPerPage +  (sourceData.length))      
         $("#startTO").html(((currentPage - 1) * rowPerPage) + 1)        
 
@@ -1525,7 +1586,6 @@ const fatchSelectedCompnay = () => {
     else
     {
         localStorage.removeItem("invoice_company");
-
     }
     // let selected_date = $("#selectedCompanyDate").val();
     let startDate = localStorage.getItem("startDate");
@@ -1543,6 +1603,7 @@ const fatchSelectedCompnay = () => {
         data.append("startDate", startDate)
         data.append("endDate", endDate)
     }
+
     data.append("company_id", selected_value)
     data.append('lastPacketId', lastPacketId);
     data.append('rowPerPage', rowPerPage);
@@ -1565,7 +1626,11 @@ const fatchSelectedCompnay = () => {
         },
         success: function (data) {
             data = JSON.parse(data);
-            dataBind(data,"API");
+            if(data.success){
+                dataBind(data,"API");
+            } else{
+                alert("No more data available")
+            }
             hideLoader();
         }
     })

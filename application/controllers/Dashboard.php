@@ -191,6 +191,22 @@ class Dashboard extends CI_Controller
         $response = $this->dbhandler->autoPacketNum();
         echo json_encode($response);
     }
+
+
+    public function getCount()
+    {
+        $response = $this->dbhandler->fetchCount();
+        echo json_encode($response);
+    }
+
+    public function getCountForFilter()
+    {
+        $start_date = isset($_REQUEST["startDate"]) ? $_REQUEST["startDate"] : null;
+        $end_date = isset($_REQUEST["endDate"]) ? $_REQUEST["endDate"] : null;
+        $company_id = $_REQUEST["company_id"];
+        $response = $this->dbhandler->getCountForFilter($start_date,$end_date,$company_id);
+        echo json_encode($response);
+    }
     
     public function importCSV()
     {
