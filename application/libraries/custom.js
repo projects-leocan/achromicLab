@@ -5,7 +5,6 @@
 const base_url = 'http://localhost/achromicLab/';
 let prevPacketData = [];
 let currentPage = 1;
-let isAPIcalled = true;
 // ready function 
 $(() => {
     
@@ -50,6 +49,7 @@ $(() => {
     }
 
     if (window.location.href == base_url + 'packet_form') {
+        fetchPacketData();
         if (localStorage.getItem("packet_id") != "" && localStorage.getItem("packet_id") != null) {
             bindPacketData();
            
@@ -1313,8 +1313,31 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
                     if (result.isConfirmed) {
                         localStorage.removeItem("selecteCompanyID");
                         localStorage.removeItem("packet_id");
-                        fetchPacketData();
+                        // fetchPacketData();
                         window.location = "packet";
+                        let UpdatedPacket = {
+                            "packet_id": id,
+                            "company_id": company_id,
+                            "date": selectedDate,
+                            "packet_no": packetNum,
+                            "packet_dimond_caret": total_carat,
+                            "packet_dimond_qty": quantity,
+                            "pending_process_diamond_qty": pending_process_qty_diamond,
+                            "pending_process_diamond_carat": pending_process_qty_carat,
+                            "broken_diamond_qty": broken_qty_diamond,
+                            "broken_diamond_carat": broken_qty_carat,
+                            "cube_qty": cube_qty,
+                            "cube_time": cube_time,
+                            "price_per_carat": price_per_carat,
+                            "is_delete": 0,
+                            "delivery_date": null,
+                            "challan_no": null,
+                            "company_name": company_name
+                        }
+                        //Find index of specific object using findIndex method.
+                        let findPacket = prevPacketData.findIndex(packet => packet.packet_id == Number(id));
+                        prevPacketData[findPacket] = UpdatedPacket;
+                        dataBind(prevPacketData, "prevPacketData");
                     }
                 })
             }
