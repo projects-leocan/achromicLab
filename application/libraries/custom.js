@@ -95,6 +95,7 @@ $('#resetDate').click((e) => {
     $('#inputedCompanyName').val("All Company");
     fetchPacketData();
 
+    currentPage = 1;
     localStorage.setItem("lastPacketId",0)
     localStorage.setItem("pageLastIndex",0);
 
@@ -762,9 +763,10 @@ function BindControls() {
 let isSearch = false;
 $("#filterCompany").on("click", function () {
     isSearch = true;
+    prevPacketData = [];
+    currentPage = 1;
     localStorage.removeItem("lastPacketId")
     localStorage.removeItem("pageLastIndex");
-    // localStorage.removeItem("lastPacketId");
     fatchSelectedCompnay();
 
 })
