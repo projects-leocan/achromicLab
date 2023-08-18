@@ -87,6 +87,7 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 .btn-container {
+    padding-top: 1.85em;
     float: right;
     padding-right: 10px;
     margin-top: 10px;
@@ -132,6 +133,10 @@ div.dataTables_wrapper div.dataTables_info {
     pointer-events: none;
 }
 
+.dataTables_info {
+    padding-top: 0.85em;
+    padding-left: 0.85rem;
+}
 
 </style>
 <div class="wrapper ScrollStyle">
@@ -247,9 +252,12 @@ div.dataTables_wrapper div.dataTables_info {
                 <span class="select-icon">&#9660;</span>
             </div>
         </div>
+
+
+        <div class="dataTables_info" id="packet_list_info" role="status" aria-live="polite">
+            Showing <span id="startTO">1</span> to <span id="endTo">00</span> of <span id="total_count">00</span> entries</div>
         
 
-        <!-- /.content -->
     </div>
 
 </div>

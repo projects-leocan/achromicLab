@@ -10,7 +10,6 @@ let isAPIcalled = true;
 $(() => {
     
     localStorage.removeItem("lastPacketId")
-    localStorage.removeItem("currentPage")
     localStorage.removeItem("pageLastIndex");
     //fetchAllComapany();
     if (window.location.href == base_url + 'company') {
@@ -95,6 +94,9 @@ $('#resetDate').click((e) => {
     $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
     $('#inputedCompanyName').val("All Company");
     fetchPacketData();
+
+    localStorage.setItem("lastPacketId",0)
+    localStorage.setItem("pageLastIndex",0);
 
 })
 
@@ -309,7 +311,6 @@ const validUserSignIn = () => {
     else {
         singIn(email, password);
     }
-
 }
 
 function singIn(email, password) {
@@ -761,12 +762,16 @@ function BindControls() {
 let isSearch = false;
 $("#filterCompany").on("click", function () {
     isSearch = true;
+    localStorage.removeItem("lastPacketId")
+    localStorage.removeItem("pageLastIndex");
+    // localStorage.removeItem("lastPacketId");
     fatchSelectedCompnay();
 
 })
 
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
 
+let rowPerPage;
 $("#rowPerPage").change(function() {
     rowPerPage = Number($(this).val());
     prevPacketData = [];
@@ -790,6 +795,7 @@ const fetchPacketData = () => {
     }
     data.append('rowPerPage', rowPerPage);
     data.append('lastPacketId', lastPacketId);
+
     $.ajax({
         url: base_url + 'Dashboard/fetchAllPackets',
         data:data,
@@ -816,9 +822,7 @@ const fetchPacketData = () => {
 
 
 $(".btn-container").on("click", "#next-button", function(e) {
-    e.preventDefault();
     currentPage = currentPage + 1
-    
     let lastIndex = localStorage.getItem("lastPacketId")
     let pageLastIndex = localStorage.getItem("pageLastIndex");
 
@@ -833,7 +837,6 @@ $(".btn-container").on("click", "#next-button", function(e) {
         }
     }else{
         // fetch data from previos array 
-            
         const startIndex = (currentPage -1) * rowPerPage;
         const endIndex = parseInt(startIndex) + parseInt(rowPerPage);
         const prevDataSlice = prevPacketData.slice(startIndex, endIndex);
@@ -841,45 +844,21 @@ $(".btn-container").on("click", "#next-button", function(e) {
         localStorage.setItem("pageLastIndex", pageLastIndex.packet_id)
         dataBind(prevDataSlice,"prevPacketData");
     }
-
-
-    
 })
 
 
 $("#prev-button").on("click", (e) => {
 
     currentPage = Math.max(currentPage - 1, 1);
-    localStorage.setItem("currentPage",currentPage)
-
-    // localStorage.removeItem("lastPacketId");
-    
     const startIndex = (currentPage -1) * rowPerPage;
     const endIndex = parseInt(startIndex) + parseInt(rowPerPage);
-    console.log("startIndex ==", startIndex);
-    console.log("endIndex==", endIndex);
-
-
-    // if(isSearch == true){
-    //     startIndex = currentPage * rowPerPage;
-
-    // }else{
-    //     startIndex = (currentPage - 1) * rowPerPage;
-        
-    // }
-    // console.log("currentPage ==", currentPage);
-    // console.log("endIndex ==", endIndex);
-
-
     const prevDataSlice = prevPacketData.slice(startIndex, endIndex);
-    console.log("prevDataSlice =====", prevDataSlice);
+
     let lastPacketOfSelectedPage ;
     if(prevDataSlice.length > 0){
         lastPacketOfSelectedPage = prevDataSlice[prevDataSlice.length - 1];
         localStorage.setItem("pageLastIndex", lastPacketOfSelectedPage.packet_id)
     }
-
-
     dataBind(prevDataSlice, "prevPacketData");
 });
 
@@ -902,6 +881,8 @@ function dataBind(data, dataSource) {
          }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
+        // searching: false,
+        info: false,
         bPaginate: false,// remove pagination
         destroy: true,
         "scrollX": true, 
@@ -1059,19 +1040,13 @@ function dataBind(data, dataSource) {
     let sourceData;
     let lastIndex = localStorage.getItem("lastPacketId")
     let pageLastIndex = localStorage.getItem("pageLastIndex");
-
-
+    
     if(lastIndex == pageLastIndex){
-        console.log("both id is same call next  ");
          sourceData = (dataSource === "API") ? data.packet : data;
-
     }else{
-        console.log("data ======= ", data);
         sourceData = data;
     }
 
-    console.log("sourceData ========", sourceData);
-    
     if(sourceData){
         sourceData.map(function (currentPacket, index) {
             if (!prevPacketData.includes(currentPacket)) {
@@ -1128,6 +1103,11 @@ function dataBind(data, dataSource) {
             ])
         });
 
+
+        $("#total_count").html((data.packet_count))
+        $("#endTo").html((currentPage - 1) * rowPerPage +  (sourceData.length))      
+        $("#startTO").html(((currentPage - 1) * rowPerPage) + 1)        
+
         if(dataSource === "API"){
             let lastPacketID = prevPacketData[prevPacketData.length - 1]; 
             let pageLastIndex = prevPacketData[prevPacketData.length - 1]; 
@@ -1175,13 +1155,24 @@ $(document).on("click", "#packet_delete", function (event) {
                 success: function (data) {
                     hideLoader();
                     data = JSON.parse(data)
+        
+                    if(data.success){
+
+                        prevPacketData = prevPacketData.filter(packet => packet.packet_id !== Number(id))
+                        dataBind(prevPacketData, "prevPacketData");
+                        $("#endTo").html(prevPacketData.length);   
+
+                    }
                     Swal.fire({
                         title: '',
                         text: `${data.message}`,
                         confirmButtonText: 'Ok',
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            fetchPacketData();
+
+                            localStorage.removeItem("lastPacketId");
+                            localStorage.removeItem("pageLastIndex");
+                            // fetchPacketData();
                         }
                     })
                 }
@@ -1324,7 +1315,6 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
                         localStorage.removeItem("packet_id");
                         fetchPacketData();
                         window.location = "packet";
-
                     }
                 })
             }

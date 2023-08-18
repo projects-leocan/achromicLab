@@ -10,7 +10,6 @@ class DbHandler
         // opening db connection
         $db = new DbConnect();
         $this->conn = $db->connect();
-
     }
 
     function getBasePath()
@@ -86,19 +85,19 @@ class DbHandler
         return $result;
     }
 
-    public function fatchSelectedCompany($company_id, $start_date,$end_date,$lastPacketId,$rowPerPage)
+    public function fatchSelectedCompany($company_id, $start_date, $end_date, $lastPacketId, $rowPerPage)
     {
 
-        if( $company_id == "null"){
-          
+        if ($company_id == "null") {
+
             $company_id = -1;
         }
 
-        if($lastPacketId == "null"){
+        if ($lastPacketId == "null") {
             $lastPacketId = -1;
         }
-        
-        if($company_id > 0 && isset($start_date) && isset($end_date)){
+
+        if ($company_id > 0 && isset($start_date) && isset($end_date)) {
 
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON 
@@ -107,10 +106,15 @@ class DbHandler
             AND p.is_delete = 0 
             GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
             ORDER BY p.packet_id DESC
-            limit $rowPerPage ";
+            limit $rowPerPage";
+
+            $count_query = "SELECT COUNT(*) as total_count 
+            FROM packet p
+            WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date'
+            AND p.is_delete = 0";
 
 
-            if($lastPacketId > 0){
+            if ($lastPacketId > 0) {
                 $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
                 LEFT JOIN invoice_entry ie ON 
                 ie.packet_no = p.packet_no
@@ -121,8 +125,7 @@ class DbHandler
                 limit $rowPerPage";
             }
 
-        }
-        else if(($company_id > 0)){
+        } else if (($company_id > 0) || $lastPacketId == "null" ) {
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON
             ie.packet_no = p.packet_no
@@ -131,7 +134,7 @@ class DbHandler
             ORDER BY p.packet_id DESC
             limit $rowPerPage";
 
-            if($lastPacketId > 0){
+            if ($lastPacketId > 0) {
                 $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
                 LEFT JOIN invoice_entry ie ON
                 ie.packet_no = p.packet_no
@@ -140,10 +143,12 @@ class DbHandler
                 ORDER BY p.packet_id DESC
                 limit $rowPerPage";
             }
-        }
-        
 
-        else if(isset($start_date) && isset($end_date)){
+            $count_query = "SELECT COUNT(*) as total_count 
+            FROM packet p
+            WHERE p.company_id = '$company_id' AND p.is_delete = 0";
+
+        } else if (isset($start_date) && isset($end_date)) {
 
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p LEFT JOIN invoice_entry ie ON ie.packet_no = p.packet_no
                             WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
@@ -151,15 +156,20 @@ class DbHandler
                             ORDER BY p.packet_id DESC
                             limit $rowPerPage";
 
-            if($lastPacketId > 0){
+            if ($lastPacketId > 0) {
                 $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p LEFT JOIN invoice_entry ie ON ie.packet_no = p.packet_no
                 WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 AND p.packet_id < $lastPacketId
                 GROUP BY ie.delivery_date,p.packet_no,p.packet_id
                 ORDER BY p.packet_id DESC
                 limit $rowPerPage";
             }
-        }
-        else{
+
+            $count_query = "SELECT COUNT(*) as total_count 
+            FROM packet p
+            WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0"; 
+            
+
+        } else {
 
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON
@@ -169,11 +179,11 @@ class DbHandler
             ORDER BY p.packet_id DESC
             limit $rowPerPage";
 
-
-
+            $count_query = "SELECT COUNT(*) as total_count FROM packet p
+            WHERE p.is_delete = 0";
         }
-        $stmt = $this->conn->prepare($sql_query);
 
+        $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
 
         $result = $stmt->get_result();
@@ -183,12 +193,18 @@ class DbHandler
             $nameArr[] = $obj;
         }
 
+        $count_result = $this->conn->query($count_query);
+        $total_count = intval($count_result->fetch_assoc()['total_count']);
+        // $total_count = 0;
+
+
         $stmt->close();
 
         if (count($nameArr) > 0) {
             $result = array(
                 'success' => true,
                 'packet' => $nameArr,
+                'packet_count' => $total_count,
             );
         } else {
             $result = array(
@@ -200,7 +216,7 @@ class DbHandler
 
     public function fatchPacketDetails($rowPerPage, $lastPacketId)
     {
-        if($lastPacketId == "null" || $lastPacketId == 0){
+        if ($lastPacketId == "null" || $lastPacketId == 0) {
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON
             ie.packet_no = p.packet_no 
@@ -208,8 +224,8 @@ class DbHandler
             GROUP BY ie.delivery_date,p.packet_no,p.packet_id 
             ORDER BY p.packet_id DESC
             limit $rowPerPage";
-        }else{
-          
+        } else {
+
             $sql_query = "SELECT p.*, ie.delivery_date, MAX(ie.challan_no) as challan_no, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p
             LEFT JOIN invoice_entry ie ON
             ie.packet_no = p.packet_no 
@@ -221,8 +237,6 @@ class DbHandler
         }
 
         // echo $sql_query;
-
-
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -236,10 +250,17 @@ class DbHandler
 
         $stmt->close();
 
+        // Calculate the total count without LIMIT
+        $count_query = "SELECT COUNT(*) as total_count FROM packet p WHERE p.is_delete = 0";
+
+        $count_result = $this->conn->query($count_query);
+        $total_count = intval($count_result->fetch_assoc()['total_count']);
+
         if (count($packet) > 0) {
             $result = array(
                 'success' => true,
                 'packet' => $packet,
+                'packet_count' => $total_count,
             );
         } else {
             $result = array(
@@ -248,7 +269,7 @@ class DbHandler
         }
         return $result;
     }
-    
+
     public function fatchPacketByID($packet_id)
     {
         $sql_query = "select p.*, c.company_name from packet p , company c where p.company_id = c.company_id and p.packet_id ='$packet_id' and p.is_delete = 0";
@@ -310,7 +331,7 @@ class DbHandler
     public function print_invoice()
     {
 
-        $sql_query = "SELECT * FROM `invoice`" ;
+        $sql_query = "SELECT * FROM `invoice`";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
@@ -337,13 +358,12 @@ class DbHandler
         return $result;
     }
 
-    public function addPacketDetails($company_id,$selectedDate,$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,$cube_time,$price_per_carat)
+    public function addPacketDetails($company_id, $selectedDate, $packetNum, $quantity, $total_carat, $pending_process_qty_diamond, $pending_process_qty_carat, $broken_qty_diamond, $broken_qty_carat, $cube_qty, $cube_time, $price_per_carat)
     {
         $sql_query;
-        if(($cube_time == null) || ($cube_time) == ""){
+        if (($cube_time == null) || ($cube_time) == "") {
             $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_qty`,`packet_dimond_caret`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`cube_qty`,`price_per_carat`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,$price_per_carat)";
-        }
-        else{
+        } else {
             $sql_query = "insert into `packet` (`company_id`,`date`,`packet_no`,`packet_dimond_qty`,`packet_dimond_caret`,`pending_process_diamond_qty`,`pending_process_diamond_carat`,`broken_diamond_qty`,`broken_diamond_carat`,`cube_qty`,`cube_time`,`price_per_carat`) VALUES ($company_id,'$selectedDate',$packetNum,$quantity,$total_carat,$pending_process_qty_diamond,$pending_process_qty_carat,$broken_qty_diamond,$broken_qty_carat,$cube_qty,'$cube_time',$price_per_carat)";
         }
 
@@ -381,35 +401,34 @@ class DbHandler
             $packetDimondQty = $value['Total Carat'];
             $finalCaret = $value['Total Carat'];
 
-            $query_parts[] = "('" . $companyId . "', '" . $date . "', '" . $packetNo . "', '" . $packetDimondQty . "', '" .$packetDimondCaret . "', '" .$finalCaret . "')";
+            $query_parts[] = "('" . $companyId . "', '" . $date . "', '" . $packetNo . "', '" . $packetDimondQty . "', '" . $packetDimondCaret . "', '" . $finalCaret . "')";
         }
         $query = implode(',', $query_parts);
         $sql_query .= implode(',', $query_parts);
-        
+
         // $stmt = $this->conn->prepare($sql_query);
         // $stmt->execute();
         // $stmt->close();
 
-        try
-        {
-        if (mysqli_query($this->conn, $sql_query)) {
-            $result = array(
-                'success' => true,
-                'query' => $sql_query,
-                'message' => 'File imported successfully',
-            );
-        } else {
+        try {
+            if (mysqli_query($this->conn, $sql_query)) {
+                $result = array(
+                    'success' => true,
+                    'query' => $sql_query,
+                    'message' => 'File imported successfully',
+                );
+            } else {
+                $result = array(
+                    'success' => false,
+                    'message' => 'Please add valid company Id in excel sheet which is available in company list',
+                );
+            }
+        } catch (Exception $e) {
             $result = array(
                 'success' => false,
-                'message' => 'Please add valid company Id in excel sheet which is available in company list',
+                'message' => 'Please add valid company Id in excel sheet which is available in company list.',
             );
         }
-    } catch (Exception $e) {
-        $result = array(
-            'success' => false,
-            'message' => 'Please add valid company Id in excel sheet which is available in company list.',
-        );
-    }
 
         return $result;
     }
@@ -420,32 +439,31 @@ class DbHandler
         $sql_query = "INSERT INTO invoice_entry (`packet_no`, `company_id`, `delivery_date`, `challan_no`) VALUES ";
 
         $query_parts = array();
-        foreach($decodedData['data'] as $entry) {
+        foreach ($decodedData['data'] as $entry) {
             $company_id = $entry['company_id'];
             $delivery_date = date('Y-m-d', strtotime(str_replace('/', '-', $entry['delivery_date'])));
             $challan_no = $entry['challan_no'];
             $packet_no = $entry['packet_no'];
-            
+
             $query_parts[] = "('" . $packet_no . "', '" . $company_id . "', '" . $delivery_date . "', '" . $challan_no . "')";
         }
 
         $query = implode(',', $query_parts);
         $sql_query .= implode(',', $query_parts);
 
-        try
-        {
-        if (mysqli_query($this->conn, $sql_query)) {
-            $result = array(
-                'success' => true,
-                'query' => $sql_query,
-                'message' => 'Invoice Entry Saved',
-            );
-        } else {
-            $result = array(
-                'success' => false,
-                'message' => 'something went wrong ',
-            );
-        }
+        try {
+            if (mysqli_query($this->conn, $sql_query)) {
+                $result = array(
+                    'success' => true,
+                    'query' => $sql_query,
+                    'message' => 'Invoice Entry Saved',
+                );
+            } else {
+                $result = array(
+                    'success' => false,
+                    'message' => 'something went wrong ',
+                );
+            }
         } catch (Exception $e) {
             $result = array(
                 'success' => false,
@@ -495,16 +513,16 @@ class DbHandler
         $stmt->execute();
         $stmt->close();
 
-        if($sql_query){
+        if ($sql_query) {
             $result = array(
                 'success' => true,
                 'message' => 'packet deleted successfully',
             );
-        }else{
+        } else {
             $result = array(
                 'success' => false,
                 'message' => 'can not delete this packet.',
-                
+
             );
         }
         return $result;
@@ -545,27 +563,29 @@ class DbHandler
     }
 
 
-    public function deleteCompany($id){
+
+    public function deleteCompany($id)
+    {
         $sql_query = "delete from `company` where `company_id` ='$id' ";
         // $stmt = $this->conn->prepare($sql_query);
         // $stmt->execute();
         // $stmt->close();
 
-        if(mysqli_query($this->conn, $sql_query)){
+        if (mysqli_query($this->conn, $sql_query)) {
             $result = array(
                 'success' => true,
                 'message' => 'Company deleted successfully'
             );
-        }else{
+        } else {
             $result = array(
                 'success' => false,
                 'message' => 'Cannot delete this company because packet is already exist with this company.'
-                
+
             );
         }
 
-        
-       
+
+
         // if ($sql_query) {
         //     $result = array(
         //         'success' => true,
@@ -582,7 +602,8 @@ class DbHandler
         return $result;
     }
 
-    public function updateCompany($id,$company_name){
+    public function updateCompany($id, $company_name)
+    {
         $sql_query = "update `company` set 	`company_name`='$company_name'  where `company_id` ='$id' ";
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
@@ -601,7 +622,8 @@ class DbHandler
         return $result;
     }
 
-    public function updateChallan($updateChallanNo){
+    public function updateChallan($updateChallanNo)
+    {
         $sql_query = "update `invoice` set 	`challan_no`='$updateChallanNo'";
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
@@ -640,7 +662,6 @@ class DbHandler
             );
         }
         return $result;
-
     }
 
     public function uniqueCompanyName($company_name)
@@ -659,24 +680,23 @@ class DbHandler
 
         $stmt->close();
 
-        if($response[0]['COUNT(*)'] > 0){ // Access the count value from the response array
+        if ($response[0]['COUNT(*)'] > 0) { // Access the count value from the response array
             $result = array(
                 'success' => true,
                 'response' => $response,
                 'message' => 'Company name already exists'
             );
-        }else {
+        } else {
             $result = array(
                 'status' => true,
                 'message' => 'company added successfully',
                 'response' => $response,
             );
         }
-    return $result;
+        return $result;
+    }
 
-}
 
-    
 
     public function fetchAllCategories()
     {
@@ -706,7 +726,7 @@ class DbHandler
 
     public function show_invoice()
     {
-        $sql_query = "SELECT * FROM `invoice`" ;
+        $sql_query = "SELECT * FROM `invoice`";
         $stmt = $this->conn->prepare($sql_query);
 
         $stmt->execute();
