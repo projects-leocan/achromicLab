@@ -1,15 +1,20 @@
 // live 
-const base_url = 'https://leocan.co/subFolder/achromicLab/';
+// const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-// const base_url = 'http://localhost/achromicLab/';
+const base_url = 'http://localhost/achromicLab/';
 let prevPacketData = [];
 let currentPage = 1;
+let isSearch = false;
 // ready function 
 $(() => {
-    
     localStorage.removeItem("lastPacketId")
     localStorage.removeItem("pageLastIndex");
+    localStorage.removeItem("startDate");
+    localStorage.removeItem("endDate");
+    // localStorage.removeItem("FilterSelecteCompanyName");
+    // localStorage.removeItem("FilterSelecteCompanyID");
+    // localStorage.removeItem("invoice_company");
     //fetchAllComapany();
     if (window.location.href == base_url + 'company') {
         fetchAllComapany();
@@ -96,8 +101,8 @@ $('#resetDate').click((e) => {
     $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
     $('#inputedCompanyName').val("All Company");
     fetchPacketData();
-
     currentPage = 1;
+    isSearch = false;
     localStorage.setItem("lastPacketId",0)
     localStorage.setItem("pageLastIndex",0);
 
@@ -115,7 +120,6 @@ function finalPrice() {
     let totalCarat = $("#total_number_of_carat").val();
     let broken_qty_carat = $("#pending_process_carat").val();
     let fixedNum = (totalCarat - broken_qty_carat).toFixed(2);
-    // console.log("formated number===", fixedNum);
 
     $("#price_per_carat").val(fixedNum);
 }
@@ -135,10 +139,8 @@ var ExcelToJSON = function () {
                 type: 'binary'
             });
             workbook.SheetNames.forEach(function (sheetName,index) {
-                // console.log("workbook",index);
                 if(index == 0)
                 {
-                // Here is your object
                 var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
                 var json_object = JSON.stringify(XL_row_object);
                 let json_data = JSON.parse(json_object);
@@ -761,7 +763,7 @@ function BindControls() {
 }
 
 
-let isSearch = false;
+
 $("#filterCompany").on("click", function () {
     isSearch = true;
     prevPacketData = [];
@@ -873,10 +875,10 @@ const fetchPacketData = () => {
         },
         success: function (data) {
             data = JSON.parse(data); 
-            if(data.packet.length > 0){
+            if(data.success){
                 dataBind(data,"API");
             } else{
-                alert("no more data available")
+                Swal.fire("No more data available")
             }
         }
     })
@@ -909,12 +911,13 @@ $(".btn-container").on("click", "#next-button", function(e) {
     }
 })
 
-
 $("#prev-button").on("click", (e) => {
 
     currentPage = Math.max(currentPage - 1, 1);
-    const startIndex = (currentPage -1) * rowPerPage;
-    const endIndex = parseInt(startIndex) + parseInt(rowPerPage);
+    let startIndex,endIndex;
+        startIndex = (currentPage -1) * rowPerPage;
+        endIndex = parseInt(startIndex) + parseInt(rowPerPage);
+
     const prevDataSlice = prevPacketData.slice(startIndex, endIndex);
 
     let lastPacketOfSelectedPage ;
@@ -1128,10 +1131,10 @@ function dataBind(data, dataSource) {
             company_name = company_name.toUpperCase();
             let packet_no = currentPacket.packet_no;
             let qty = currentPacket.packet_dimond_qty;
-            let carat = currentPacket.packet_dimond_caret.toFixed(2);
-            let pending_process = currentPacket.pending_process_diamond_carat.toFixed(2);
+            let carat = parseFloat(currentPacket.packet_dimond_caret).toFixed(2);
+            let pending_process = parseFloat(currentPacket.pending_process_diamond_carat).toFixed(2);
             let pending_process_qty = currentPacket.pending_process_diamond_qty;
-            let broken_carat = currentPacket.broken_diamond_carat.toFixed(2);
+            let broken_carat = parseFloat(currentPacket.broken_diamond_carat).toFixed(2);
             let broken_qty = currentPacket.broken_diamond_qty;
             let challan_no = currentPacket.challan_no;
             let dDate = currentPacket.delivery_date;
@@ -1154,8 +1157,7 @@ function dataBind(data, dataSource) {
             // if (cube_time == "" || cube_time == null) {
             //     cube_time = "-";
             // }
-            let price = currentPacket.price_per_carat.toFixed(2);
-            let invoice = `<a id="packet_id" packet_id=${currentPacket.packet_id} class="invoice-btn" >Invoice</a>`;
+            let price = parseFloat(currentPacket.price_per_carat).toFixed(2);
             var invoice_data = packet_no+ ',' + company_name + ',' + qty+ ',' +carat+ ',' +pending_process_qty+ ',' +pending_process;
 
             table.row.add([
@@ -1167,7 +1169,6 @@ function dataBind(data, dataSource) {
         });
 
 
-        // $("#total_count").html((data.packet_count))
         $("#endTo").html((currentPage - 1) * rowPerPage +  (sourceData.length))      
         $("#startTO").html(((currentPage - 1) * rowPerPage) + 1)        
 
@@ -1220,10 +1221,28 @@ $(document).on("click", "#packet_delete", function (event) {
                     data = JSON.parse(data)
         
                     if(data.success){
+                        
+                        const startIndex = (currentPage -1) * rowPerPage ;
+                        const endIndex = parseInt(startIndex) + parseInt(rowPerPage);
+                        let prevDataSlice = prevPacketData.slice(startIndex, endIndex);
+                        prevDataSlice = prevDataSlice.filter(packet => packet.packet_id !== Number(id))
 
                         prevPacketData = prevPacketData.filter(packet => packet.packet_id !== Number(id))
-                        dataBind(prevPacketData, "prevPacketData");
-                        $("#endTo").html(prevPacketData.length);   
+
+                        let lastPacketOfSelectedPage ;
+                        if(prevDataSlice.length > 0){
+                            lastPacketOfSelectedPage = prevDataSlice[prevDataSlice.length - 1];
+                            localStorage.setItem("pageLastIndex", lastPacketOfSelectedPage.packet_id)
+                            localStorage.setItem("lastPacketId", lastPacketOfSelectedPage.packet_id)
+                        }
+
+                        dataBind(prevDataSlice, "prevPacketData");
+                        if(isSearch == true){
+                            getPacketCountForFilter();
+                        }else{
+                            getCount();
+                        }
+                        $("#endTo").html((currentPage - 1) * rowPerPage +  (prevDataSlice.length))      
 
                     }
                     Swal.fire({
@@ -1233,8 +1252,8 @@ $(document).on("click", "#packet_delete", function (event) {
                     }).then((result) => {
                         if (result.isConfirmed) {
 
-                            localStorage.removeItem("lastPacketId");
-                            localStorage.removeItem("pageLastIndex");
+                            // localStorage.removeItem("lastPacketId");
+                            // localStorage.removeItem("pageLastIndex");
                             // fetchPacketData();
                         }
                     })
@@ -1305,7 +1324,7 @@ function bindPacketData() {
 }
 
 
-function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat) {
+function updatePacket(id, selectedDate,company_name, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat) {
 
     if (pending_process_qty_diamond == undefined || pending_process_qty_diamond == "" || pending_process_qty_diamond == null) {
         pending_process_qty_diamond = 0;
@@ -1376,7 +1395,28 @@ function updatePacket(id, selectedDate, company_id, packetNum, quantity, total_c
                     if (result.isConfirmed) {
                         localStorage.removeItem("selecteCompanyID");
                         localStorage.removeItem("packet_id");
-                        fetchPacketData();
+                        // fetchPacketData();
+                        let UpdatedPacket = {
+                            "packet_id": id,
+                            "company_id": company_id,
+                            "date": selectedDate,
+                            "packet_no": packetNum,
+                            "packet_dimond_caret": total_carat,
+                            "packet_dimond_qty": quantity,
+                            "pending_process_diamond_qty": pending_process_qty_diamond,
+                            "pending_process_diamond_carat": pending_process_qty_carat,
+                            "broken_diamond_qty": broken_qty_diamond,
+                            "broken_diamond_carat": broken_qty_carat,
+                            "cube_qty": cube_qty,
+                            "cube_time": cube_time,
+                            "price_per_carat": price_per_carat,
+                            "is_delete": 0,
+                            "company_name": company_name
+                        }
+                        //Find index of specific object using findIndex method.
+                        let findPacket = prevPacketData.findIndex(packet => packet.packet_id == Number(id));
+                        prevPacketData[findPacket] = UpdatedPacket;
+                        dataBind(prevPacketData, "prevPacketData");
                         window.location = "packet";
                     }
                 })
@@ -1451,7 +1491,7 @@ $('#packet_details_submit').click((e) => {
 
 
     if (id != '' && id != undefined) {
-        updatePacket(id, selectedDate, company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat);
+        updatePacket(id, selectedDate, company_name,company_id, packetNum, quantity, total_carat, pending_process_qty_diamond, pending_process_qty_carat, broken_qty_diamond, broken_qty_carat, cube_qty, cube_time, price_per_carat);
     }
     else {
         if (selectedDate == "" || selectedDate == null) {
@@ -1569,6 +1609,9 @@ const resetForm = () => {
     $("#broken_qty").val('0');
     $("#broken_carat").val('0');
     $("#price_per_carat").val('0');
+    isSearch = false;
+    currentPage = 1;
+
 }
 
 
@@ -1629,7 +1672,7 @@ const fatchSelectedCompnay = () => {
             if(data.success){
                 dataBind(data,"API");
             } else{
-                alert("No more data available")
+                Swal.fire("No more data available");
             }
             hideLoader();
         }
