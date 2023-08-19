@@ -171,6 +171,13 @@ class Dashboard extends CI_Controller
         echo json_encode($response);
     }
 
+    public function searchPacket()
+    {
+        $search_text = $_REQUEST["searchText"];
+        $response = $this->dbhandler->searchPackets($search_text);
+        echo json_encode($response);
+    }
+
 
     public function fetchAllCategories()
     {

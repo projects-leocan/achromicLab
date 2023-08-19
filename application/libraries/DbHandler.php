@@ -207,6 +207,54 @@ class DbHandler
         return $result;
     }
 
+    public function searchPackets($search_text)
+    {
+
+        $sql_query = "SELECT tempTb.*, MAX(ie.challan_no) AS challan_no, ie.delivery_date
+        FROM( SELECT p.*, ( SELECT company_name FROM company c WHERE company_id = p.company_id AND c.company_name LIKE LOWER(CONCAT('%', '". $search_text ."', '%')) OR c.company_name LIKE UPPER(CONCAT('%', '". $search_text ."', '%'))) AS company_name FROM packet p
+        WHERE p.is_delete = 0 AND p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
+        ORDER BY p.packet_id DESC LIMIT 10) AS tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no
+        GROUP BY ie.delivery_date, tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+
+        // if ($lastPacketId == "null" || $lastPacketId == 0) {
+
+        //     $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.is_delete = 0 ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+
+
+        // } else {
+
+        //     $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.is_delete = 0 and p.packet_id < $lastPacketId ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+        // }
+
+        // echo $sql_query;
+
+        $stmt = $this->conn->prepare($sql_query);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $packet = array();
+
+        while ($obj = $result->fetch_assoc()) {
+            $packet[] = $obj;
+        }
+
+        $stmt->close();
+
+
+        if (count($packet) > 0) {
+            $result = array(
+                'success' => true,
+                'packet' => $packet,
+            );
+        } else {
+            $result = array(
+                'success' => false,
+            );
+        }
+        return $result;
+    }
+
     public function fetchCount()
     {
         $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE p.is_delete = 0";

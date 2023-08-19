@@ -1,8 +1,8 @@
 // live 
-const base_url = 'https://leocan.co/subFolder/achromicLab/';
+// const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-// const base_url = 'http://localhost/achromicLab/';
+const base_url = 'http://localhost/achromicLab/';
 let prevPacketData = [];
 let currentPage = 1;
 let isSearch = false;
@@ -947,7 +947,7 @@ function dataBind(data, dataSource) {
          }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
-        // searching: false,
+        searching: false,
         info: false,
         bPaginate: false,// remove pagination
         destroy: true,
@@ -1013,7 +1013,17 @@ function dataBind(data, dataSource) {
                     getSelectedInvoiceData();
             }          
                 
-            }
+            },
+            // {   attr: {
+            //     id: 'search-box',
+            //     class:'col-md-6',
+            //   },
+            //     'render': function (data, type, full, meta){
+            //         return `<input type="text" class="col-md-6 form-control form-control-sm" name="" id="" placeholder="">`;
+            //     }    
+            // }          
+                
+            
         ],
         
         footerCallback: function (row, data, start, end, display) {
@@ -1103,6 +1113,7 @@ function dataBind(data, dataSource) {
     // table.buttons().container().appendTo('#example_wrapper' );
     
     table.clear().draw()
+    $(".set-corner").show();
     let sourceData;
     let lastIndex = localStorage.getItem("lastPacketId")
     let pageLastIndex = localStorage.getItem("pageLastIndex");
@@ -1183,6 +1194,36 @@ function dataBind(data, dataSource) {
     }
     table.draw()
 }
+
+$("#searchText").keypress(function(){
+    let searchText = $(this).val();
+    let data = new FormData()
+    data.append("searchText",searchText);
+    console.log("searchText ======", searchText);
+
+    $.ajax({
+        url: base_url + 'Dashboard/searchPacket',
+        method: 'post',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) { 
+            showLoader();
+        },
+        complete: function (data) {
+            hideLoader();
+        },
+        error: function (data) {
+            hideLoader();
+        },
+        success: function (data) {
+            hideLoader();
+            data = JSON.parse(data)
+            console.log("data =========", data);
+           
+        }
+    })
+  });
 
 
 $(document).on("click", "#packet_delete", function (event) {
