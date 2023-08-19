@@ -250,6 +250,9 @@ class DbHandler
             FROM packet p
             WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0";
         }
+        else{
+            $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE p.is_delete = 0";
+        }
 
       
         $count_result = $this->conn->query($sql_query);

@@ -249,7 +249,6 @@ div.dataTables_wrapper div.dataTables_info {
                     <option value="100">100</option>
                     <option value="250">250</option>
                 </select>
-                <span class="select-icon">&#9660;</span>
             </div>
         </div>
 
