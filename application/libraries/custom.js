@@ -1,10 +1,11 @@
 // live 
-// const base_url = 'https://leocan.co/subFolder/achromicLab/';
+const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
-const base_url = 'http://localhost/achromicLab/';
+// const base_url = 'http://localhost/achromicLab/';
 let prevPacketData = [];
 let currentPage = 1;
+let isFilter = false;
 let isSearch = false;
 // ready function 
 $(() => {
@@ -12,6 +13,7 @@ $(() => {
     localStorage.removeItem("pageLastIndex");
     localStorage.removeItem("startDate");
     localStorage.removeItem("endDate");
+    localStorage.removeItem("searchText");
     // localStorage.removeItem("FilterSelecteCompanyName");
     // localStorage.removeItem("FilterSelecteCompanyID");
     // localStorage.removeItem("invoice_company");
@@ -88,24 +90,6 @@ $('#upload').change((e) => {
     
     handleFileSelect(e);
     //document.getElementById('upload').addEventListener('change', handleFileSelect, false);
-})
-$('#resetDate').click((e) => {
-    localStorage.removeItem("startDate");
-    localStorage.removeItem("endDate");
-    localStorage.removeItem("FilterSelecteCompanyID");
-    localStorage.removeItem("FilterSelecteCompanyName");
-    localStorage.removeItem("invoice_company");
-    localStorage.removeItem("lastPacketId");
-    localStorage.removeItem("currentPage");
-    
-    $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
-    $('#inputedCompanyName').val("All Company");
-    fetchPacketData();
-    currentPage = 1;
-    isSearch = false;
-    localStorage.setItem("lastPacketId",0)
-    localStorage.setItem("pageLastIndex",0);
-
 })
 
 $("#total_number_of_carat").on("input", () => {
@@ -765,7 +749,7 @@ function BindControls() {
 
 
 $("#filterCompany").on("click", function () {
-    isSearch = true;
+    isFilter = true;
     prevPacketData = [];
     currentPage = 1;
     localStorage.removeItem("lastPacketId")
@@ -796,7 +780,6 @@ function getCount(){
     })
 }
 
-
 function getPacketCountForFilter(){
 
     let data = new FormData()
@@ -804,11 +787,17 @@ function getPacketCountForFilter(){
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
     let startDate = localStorage.getItem("startDate");
     let endDate = localStorage.getItem("endDate");
+    let searchText = localStorage.getItem("searchText");
 
     if (startDate && endDate) {
         data.append("startDate", startDate)
         data.append("endDate", endDate)
     }
+    
+    if(searchText){
+        data.append("searchText",searchText)
+    }
+
 
     data.append("company_id", selected_value)
 
@@ -831,6 +820,27 @@ function getPacketCountForFilter(){
     })
 }
 
+$('#resetDate').click((e) => {
+    localStorage.removeItem("startDate");
+    localStorage.removeItem("endDate");
+    localStorage.removeItem("FilterSelecteCompanyID");
+    localStorage.removeItem("FilterSelecteCompanyName");
+    localStorage.removeItem("invoice_company");
+    localStorage.removeItem("lastPacketId");
+    localStorage.removeItem("searchText");
+    
+    $("#searchText").val("");
+    $("#selectedCompanyDate").val("DD/MM/YYYY - DD/MM/YYYY");
+    $('#inputedCompanyName').val("All Company");
+    fetchPacketData();
+    getCount();
+    currentPage = 1;
+    isFilter = false;
+    isSearch = false;
+    localStorage.setItem("lastPacketId",0)
+    localStorage.setItem("pageLastIndex",0);
+
+})
 
 let rowPerPage;
 $("#rowPerPage").change(function() {
@@ -840,8 +850,11 @@ $("#rowPerPage").change(function() {
     localStorage.removeItem("lastPacketId");
     localStorage.setItem("lastPacketId",0)
     localStorage.setItem("pageLastIndex",0);
-    if(isSearch == true){
+    if(isFilter == true){
         fatchSelectedCompnay();
+    }
+    else if(isSearch == true){
+        searchPacket();
     }
     else{
         fetchPacketData();
@@ -885,6 +898,73 @@ const fetchPacketData = () => {
 
 }
 
+const fatchSelectedCompnay = () => {
+
+    let data = new FormData()
+    const lastPacketId = localStorage.getItem("lastPacketId")
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let searchText = localStorage.getItem("searchText");
+    if(searchText){
+        data.append("searchText", searchText)
+    }
+
+    if(selected_value != "-1")
+    {
+        localStorage.setItem("invoice_company", localStorage.getItem("FilterSelecteCompanyName"))
+
+    }
+    else
+    {
+        localStorage.removeItem("invoice_company");
+    }
+    // let selected_date = $("#selectedCompanyDate").val();
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+
+    if (startDate && endDate) {
+        // selected_date = selected_date.replaceAll('-', '/');
+        // Split the string into year, month, and day
+        // const dateParts = selected_date.split('/');
+        // const year = dateParts[0];
+        // const month = dateParts[1];
+        // const day = dateParts[2];
+        // Rearrange the parts in the desired format
+        // const formatted_date = day + "/" + month + "/" + year;
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
+    }
+
+    data.append("company_id", selected_value)
+    data.append('lastPacketId', lastPacketId);
+    data.append('rowPerPage', rowPerPage);
+
+    $.ajax({
+        url: base_url + 'Dashboard/fatchSelectedCompanyData',
+        method: 'post',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (data) {
+            showLoader();
+         },
+        complete: function (data) {
+            hideLoader();
+        },
+        error: function (data) {
+            alert('Something went wrong while fatching packet ');
+            hideLoader();
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if(data.success){
+                dataBind(data,"API");
+            } else{
+                Swal.fire("No more data available");
+            }
+            hideLoader();
+        }
+    })
+}
 
 $(".btn-container").on("click", "#next-button", function(e) {
     currentPage = currentPage + 1
@@ -892,10 +972,15 @@ $(".btn-container").on("click", "#next-button", function(e) {
     let pageLastIndex = localStorage.getItem("pageLastIndex");
 
     if(lastIndex == pageLastIndex){
-
         // get data from api
-        if(isSearch == true){
+        if(isFilter == true && isSearch == true){
             fatchSelectedCompnay();
+        }
+        else if(isFilter == true ){
+            fatchSelectedCompnay();
+        }
+        else if(isSearch == true){
+            searchPacket();
         }
         else{
             fetchPacketData();
@@ -1120,15 +1205,26 @@ function dataBind(data, dataSource) {
     
     if(lastIndex == pageLastIndex){
          sourceData = (dataSource === "API") ? data.packet : data;
-    }else{
-        sourceData = data;
+    }
+    else{
+        sourceData = (dataSource === "API") ? data.packet : data;
     }
 
     if(sourceData){
+        
         sourceData.map(function (currentPacket, index) {
-            if (!prevPacketData.includes(currentPacket)) {
+
+            var isDuplicate = prevPacketData.some(function(prevPacket) {
+                return JSON.stringify(prevPacket) === JSON.stringify(currentPacket);
+            });
+        
+            if (!isDuplicate) {
                 prevPacketData.push(currentPacket);
             }
+
+            // if (!prevPacketData.includes(currentPacket)) {
+            //     prevPacketData.push(currentPacket);
+            // }
 
             let count = ((currentPage - 1 ) * rowPerPage) + (index + 1)
             let date = currentPacket.date;
@@ -1195,11 +1291,40 @@ function dataBind(data, dataSource) {
     table.draw()
 }
 
-$("#searchText").keypress(function(){
-    let searchText = $(this).val();
+$("#searchText").on("input", function (e) {
+    prevPacketData = [];
+    localStorage.setItem("lastPacketId", 0);
+    let searchText = $(this).val().replace(/\s+/g, ''); // Remove all spaces
+    localStorage.setItem("searchText", searchText);
+    isSearch = true;
+
+    if(isFilter == true && isSearch == true){
+        fatchSelectedCompnay();
+        getPacketCountForFilter();
+    }else{
+        searchPacket();
+    }
+
+    if(!searchText){
+        localStorage.removeItem("searchText");
+    }
+});
+
+const searchPacket = () =>{
+
+    isSearch = true;
     let data = new FormData()
+
+    lastPacketId = localStorage.getItem("lastPacketId")
+    searchText = localStorage.getItem("searchText")
+
+    if(isNaN(rowPerPage)){
+        rowPerPage = 10;
+    }
+
     data.append("searchText",searchText);
-    console.log("searchText ======", searchText);
+    data.append('rowPerPage', rowPerPage);
+    data.append('lastPacketId', lastPacketId);
 
     $.ajax({
         url: base_url + 'Dashboard/searchPacket',
@@ -1217,13 +1342,18 @@ $("#searchText").keypress(function(){
             hideLoader();
         },
         success: function (data) {
+            data = JSON.parse(data); 
+            if(data.success){
+                dataBind(data,"API");
+                getPacketCountForFilter();
+            } else{
+                // Swal.fire("No data available")
+            }
             hideLoader();
-            data = JSON.parse(data)
-            console.log("data =========", data);
-           
         }
     })
-  });
+
+}
 
 
 $(document).on("click", "#packet_delete", function (event) {
@@ -1278,9 +1408,13 @@ $(document).on("click", "#packet_delete", function (event) {
                         }
 
                         dataBind(prevDataSlice, "prevPacketData");
-                        if(isSearch == true){
+                        if(isFilter == true){
                             getPacketCountForFilter();
-                        }else{
+                        }
+                        else if(isSearch == true){
+                            getPacketCountForFilter();
+                        }
+                        else{
                             getCount();
                         }
                         $("#endTo").html((currentPage - 1) * rowPerPage +  (prevDataSlice.length))      
@@ -1650,74 +1784,9 @@ const resetForm = () => {
     $("#broken_qty").val('0');
     $("#broken_carat").val('0');
     $("#price_per_carat").val('0');
-    isSearch = false;
+    isFilter = false;
     currentPage = 1;
 
-}
-
-
-const fatchSelectedCompnay = () => {
-
-    let data = new FormData()
-    const lastPacketId = localStorage.getItem("lastPacketId")
-    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
-
-    if(selected_value != "-1")
-    {
-        localStorage.setItem("invoice_company", localStorage.getItem("FilterSelecteCompanyName"))
-
-    }
-    else
-    {
-        localStorage.removeItem("invoice_company");
-    }
-    // let selected_date = $("#selectedCompanyDate").val();
-    let startDate = localStorage.getItem("startDate");
-    let endDate = localStorage.getItem("endDate");
-
-    if (startDate && endDate) {
-        // selected_date = selected_date.replaceAll('-', '/');
-        // Split the string into year, month, and day
-        // const dateParts = selected_date.split('/');
-        // const year = dateParts[0];
-        // const month = dateParts[1];
-        // const day = dateParts[2];
-        // Rearrange the parts in the desired format
-        // const formatted_date = day + "/" + month + "/" + year;
-        data.append("startDate", startDate)
-        data.append("endDate", endDate)
-    }
-
-    data.append("company_id", selected_value)
-    data.append('lastPacketId', lastPacketId);
-    data.append('rowPerPage', rowPerPage);
-
-    $.ajax({
-        url: base_url + 'Dashboard/fatchSelectedCompanyData',
-        method: 'post',
-        data: data,
-        processData: false,
-        contentType: false,
-        beforeSend: function (data) {
-            showLoader();
-         },
-        complete: function (data) {
-            hideLoader();
-        },
-        error: function (data) {
-            alert('Something went wrong while fatching packet ');
-            hideLoader();
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if(data.success){
-                dataBind(data,"API");
-            } else{
-                Swal.fire("No more data available");
-            }
-            hideLoader();
-        }
-    })
 }
 
 const autoIncPacketNum = () => {

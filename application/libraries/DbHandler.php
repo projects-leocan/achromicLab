@@ -85,7 +85,7 @@ class DbHandler
         return $result;
     }
 
-    public function fatchSelectedCompany($company_id, $start_date, $end_date, $lastPacketId, $rowPerPage)
+    public function fatchSelectedCompany($company_id, $start_date, $end_date, $lastPacketId, $rowPerPage,$search_text)
     {
 
         if ($company_id == "null") {
@@ -101,10 +101,44 @@ class DbHandler
 
             if ($lastPacketId > 0) {
 
-                $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 and p.packet_id < $lastPacketId
-                ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+                if($search_text)
+                {
+                    $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) AS challan_no,ie.delivery_date
+                    FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
+                    WHERE
+                    p.company_id = '$company_id'  AND date BETWEEN '$start_date' and '$end_date' AND
+                        p.is_delete = 0 AND p.packet_id < $lastPacketId AND(
+                            p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                        )ORDER BY p.packet_id DESC
+                    ) AS tempTb
+                    LEFT JOIN invoice_entry ie ON
+                        ie.packet_no = tempTb.packet_no
+                    GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
+                    ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
 
-            }else{
+                }else{
+                    $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 and p.packet_id < $lastPacketId
+                    ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+                }
+
+
+            }
+            
+            else if($search_text){
+                $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) AS challan_no,ie.delivery_date
+                                FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
+                                    WHERE
+                                    p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND
+                                        p.is_delete = 0 AND(
+                                            p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                                        )ORDER BY p.packet_id DESC
+                                    ) AS tempTb
+                                    LEFT JOIN invoice_entry ie ON
+                                        ie.packet_no = tempTb.packet_no
+                                    GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
+                                ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
+            }
+            else{
                 $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
                 ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
 
@@ -115,20 +149,86 @@ class DbHandler
 
             if ($lastPacketId > 0) {
 
-                $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = '$company_id' AND p.is_delete = 0  AND p.packet_id < $lastPacketId
-                ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
-            }else{
+                if($search_text){
+                    $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) AS challan_no,ie.delivery_date
+                    FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
+                    WHERE
+                    p.company_id = '$company_id' AND
+                        p.is_delete = 0 AND p.packet_id < $lastPacketId AND(
+                            p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                        )ORDER BY p.packet_id DESC
+                    ) AS tempTb
+                    LEFT JOIN invoice_entry ie ON
+                        ie.packet_no = tempTb.packet_no
+                    GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
+                    ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
+                }else{
+
+                    $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = '$company_id' AND p.is_delete = 0  AND p.packet_id < $lastPacketId
+                    ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+                }
+
+            }
+            else if($search_text){
+                $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) AS challan_no,ie.delivery_date
+                    FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
+                    WHERE
+                    p.company_id = '$company_id' AND
+                        p.is_delete = 0 AND(
+                            p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                        )ORDER BY p.packet_id DESC
+                    ) AS tempTb
+                    LEFT JOIN invoice_entry ie ON
+                        ie.packet_no = tempTb.packet_no
+                    GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
+                    ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
+            }
+            else{
                 $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = '$company_id' AND p.is_delete = 0 
                 ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+
             }
 
-        } else if (isset($start_date) && isset($end_date)) {
-
+        } 
+        else if (isset($start_date) && isset($end_date)) {
 
             if ($lastPacketId > 0) {
 
-                $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 AND p.packet_id < $lastPacketId
-            ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+                if($search_text)
+                {
+                    $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) AS challan_no,ie.delivery_date
+                    FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
+                    WHERE
+                    p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND
+                        p.is_delete = 0 AND p.packet_id < $lastPacketId AND(
+                            p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                        )ORDER BY p.packet_id DESC
+                    ) AS tempTb
+                    LEFT JOIN invoice_entry ie ON
+                        ie.packet_no = tempTb.packet_no
+                    GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
+                    ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
+
+                }else{
+                    $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 AND p.packet_id < $lastPacketId ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+                }
+
+            }
+
+            else if($search_text){
+                $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) AS challan_no,ie.delivery_date
+                    FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
+                    WHERE
+                    p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND
+                        p.is_delete = 0 AND(
+                            p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                        )ORDER BY p.packet_id DESC
+                    ) AS tempTb
+                    LEFT JOIN invoice_entry ie ON
+                        ie.packet_no = tempTb.packet_no
+                    GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
+                    ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
+
             }
             else{
                 $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
@@ -140,6 +240,8 @@ class DbHandler
             $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.is_delete = 0 ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
 
         }
+
+        // echo $sql_query;
 
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
@@ -207,24 +309,41 @@ class DbHandler
         return $result;
     }
 
-    public function searchPackets($search_text)
+    public function searchPackets($search_text,$lastPacketId,$rowPerPage)
     {
 
-        $sql_query = "SELECT tempTb.*, MAX(ie.challan_no) AS challan_no, ie.delivery_date
-        FROM( SELECT p.*, ( SELECT company_name FROM company c WHERE company_id = p.company_id AND c.company_name LIKE LOWER(CONCAT('%', '". $search_text ."', '%')) OR c.company_name LIKE UPPER(CONCAT('%', '". $search_text ."', '%'))) AS company_name FROM packet p
-        WHERE p.is_delete = 0 AND p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
-        ORDER BY p.packet_id DESC LIMIT 10) AS tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no
-        GROUP BY ie.delivery_date, tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+        if($lastPacketId == 0){
+            $lastPacketId = "null";
+        }
+        
+        if ($lastPacketId == "null" ) {
+            $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) AS challan_no,ie.delivery_date
+            FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
+            WHERE
+                p.is_delete = 0 AND(
+                    p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                )ORDER BY p.packet_id DESC
+            ) AS tempTb
+            LEFT JOIN invoice_entry ie ON
+                ie.packet_no = tempTb.packet_no
+            GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
+            ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
 
-        // if ($lastPacketId == "null" || $lastPacketId == 0) {
+        } else {
 
-        //     $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.is_delete = 0 ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+            $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) AS challan_no,ie.delivery_date
+            FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
+            WHERE
+                p.is_delete = 0 AND p.packet_id < $lastPacketId AND(
+                    p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                )ORDER BY p.packet_id DESC
+            ) AS tempTb
+            LEFT JOIN invoice_entry ie ON
+                ie.packet_no = tempTb.packet_no
+            GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
+            ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
 
-
-        // } else {
-
-        //     $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.is_delete = 0 and p.packet_id < $lastPacketId ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
-        // }
+        }
 
         // echo $sql_query;
 
@@ -274,35 +393,121 @@ class DbHandler
         return $result;
     }
 
-    public function getCountForFilter($start_date,$end_date,$company_id)
-    {
 
+    public function getCountForFilter($start_date,$end_date,$company_id,$search_text)
+    {
 
         if ($company_id == "null") {
             $company_id = -1;
         }
 
         if ($company_id > 0 && isset($start_date) && isset($end_date)) {
-            $sql_query = "SELECT COUNT(*) as total_count FROM packet p
-             WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0";
+
+            if($search_text){
+
+                $sql_query = "SELECT COUNT(*) AS total_count
+                FROM packet p
+                JOIN company c ON p.company_id = c.company_id
+                WHERE
+                    p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
+                    AND (
+                        p.packet_no LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                    )";
+
+            }else{
+                $sql_query = "SELECT COUNT(*) as total_count FROM packet p
+                    WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0";
+            }
+
         }
         else if($company_id > 0)
         {
+            if($search_text){
 
-            $sql_query = "SELECT COUNT(*) as total_count 
-            FROM packet p
-            WHERE p.company_id = '$company_id' AND p.is_delete = 0";
+                $sql_query = "SELECT COUNT(*) AS total_count
+                FROM packet p
+                JOIN company c ON p.company_id = c.company_id
+                WHERE
+                    p.company_id = '$company_id' AND p.is_delete = 0 
+                    AND (
+                        p.packet_no LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                    )";
+
+
+            }else{
+                $sql_query = "SELECT COUNT(*) as total_count 
+                FROM packet p
+                WHERE p.company_id = '$company_id' AND p.is_delete = 0";
+            }
+
         }
         elseif (isset($start_date) && isset($end_date)) {
+            
+            if($search_text){
+                $sql_query = "SELECT COUNT(*) AS total_count
+                FROM packet p
+                JOIN company c ON p.company_id = c.company_id
+                WHERE
+                    p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
+                    AND (
+                        p.packet_no LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                        OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                    )";
+            }else{
             $sql_query = "SELECT COUNT(*) as total_count 
             FROM packet p
             WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0";
+            }
         }
         else{
-            $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE p.is_delete = 0";
+
+            if($search_text){
+                $sql_query = "SELECT COUNT(*) AS total_count
+                    FROM packet p
+                    JOIN company c ON p.company_id = c.company_id
+                    WHERE
+                        p.is_delete = 0 
+                        AND (
+                            p.packet_no LIKE CONCAT('%', '". $search_text ."', '%')
+                            OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%')
+                            OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                            OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                            OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                            OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
+                            OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                            OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
+                            OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
+                        )";
+            }else{
+                $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE p.is_delete = 0";
+            }
+
         }
 
-      
+        // echo $sql_query;
         $count_result = $this->conn->query($sql_query);
         $total_count = intval($count_result->fetch_assoc()['total_count']);
 

@@ -112,8 +112,9 @@ class Dashboard extends CI_Controller
         $end_date = isset($_REQUEST["endDate"]) ? $_REQUEST["endDate"] : null;
         $lastPacketId = $_REQUEST["lastPacketId"];
         $rowPerPage = $_REQUEST["rowPerPage"];
+        $search_text = isset($_REQUEST["searchText"]) ? $_REQUEST["searchText"] : null;
         
-        $response = $this->dbhandler->fatchSelectedCompany($company_id, $start_date,$end_date,$lastPacketId,$rowPerPage);
+        $response = $this->dbhandler->fatchSelectedCompany($company_id, $start_date,$end_date,$lastPacketId,$rowPerPage,$search_text);
         echo json_encode($response);
     }
 
@@ -174,7 +175,9 @@ class Dashboard extends CI_Controller
     public function searchPacket()
     {
         $search_text = $_REQUEST["searchText"];
-        $response = $this->dbhandler->searchPackets($search_text);
+        $lastPacketId = $_REQUEST["lastPacketId"];
+        $rowPerPage = $_REQUEST["rowPerPage"];
+        $response = $this->dbhandler->searchPackets($search_text,$lastPacketId,$rowPerPage);
         echo json_encode($response);
     }
 
@@ -211,7 +214,8 @@ class Dashboard extends CI_Controller
         $start_date = isset($_REQUEST["startDate"]) ? $_REQUEST["startDate"] : null;
         $end_date = isset($_REQUEST["endDate"]) ? $_REQUEST["endDate"] : null;
         $company_id = $_REQUEST["company_id"];
-        $response = $this->dbhandler->getCountForFilter($start_date,$end_date,$company_id);
+        $search_text = isset($_REQUEST["searchText"]) ? $_REQUEST["searchText"] : null;
+        $response = $this->dbhandler->getCountForFilter($start_date,$end_date,$company_id,$search_text);
         echo json_encode($response);
     }
     
