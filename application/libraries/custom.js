@@ -1299,6 +1299,7 @@ $("#searchText").on("input", function (e) {
     isSearch = true;
 
     if(isFilter == true && isSearch == true){
+        currentPage = 1;
         fatchSelectedCompnay();
         getPacketCountForFilter();
     }else{
