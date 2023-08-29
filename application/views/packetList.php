@@ -181,11 +181,11 @@
         <!-- Main content -->
         <section class="content ">
             <div class="container-fluid">
-                <div class="set-corner">
+                <!-- <div class="set-corner">
                     <label for="" class="d-inline-block ">Search: </label>
                     <input type="text" style="display: initial; " class="col-sm-9 form-control form-control-sm" name=""
                         id="searchText" placeholder="">
-                </div>
+                </div> -->
                 <div class="table-responsive table-container" id="importPDF">
                     <table id="packet_list" class="table table-bordered table-striped"
                         style="width:100%;text-align: center;">

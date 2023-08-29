@@ -9,6 +9,7 @@ let isFilter = false;
 let isSearch = false;
 // ready function 
 $(() => {
+   
     localStorage.removeItem("lastPacketId")
     localStorage.removeItem("pageLastIndex");
     localStorage.removeItem("startDate");
@@ -28,7 +29,7 @@ $(() => {
         $('#inputedCompanyName').val("All Company");
         BindControls();
         fetchPacketData();
-        getCount();                   
+        getCount();  
         // getPacketSumWithFilter();
         $('input[name="daterange"]').daterangepicker({
             opens: 'left',
@@ -747,162 +748,7 @@ function BindControls() {
 
 
 
-$("#filterCompany").on("click", function () {
-    isFilter = true;
-    prevPacketData = [];
-    currentPage = 1;
-    localStorage.removeItem("lastPacketId")
-    localStorage.removeItem("pageLastIndex");
-    fatchSelectedCompnay();
-
-
-})
-
-
 // +++++++++++++++++++++++++ packet +++++++++++++++++++++++++++++++++
-function getCount(){
-    $.ajax({
-        url: base_url + 'Dashboard/getCount',
-        type: "POST",
-        processData: false,
-        contentType: false,
-        beforeSend: function (response) { },
-        complete: function (response) {
-        },
-        error: function (response) {
-            // alert('Something went wrong while fatching packet ')
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if(data.success){
-                $("#total_count").html((data.packet_count))
-            }
-        }
-    })
-}
-
-function getPacketCountForFilter(){
-
-    let data = new FormData()
-    
-    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
-    let startDate = localStorage.getItem("startDate");
-    let endDate = localStorage.getItem("endDate");
-
-    if (startDate && endDate) {
-        data.append("startDate", startDate)
-        data.append("endDate", endDate)
-    }
-    
-
-    data.append("company_id", selected_value)
-
-    $.ajax({
-        url: base_url + 'Dashboard/getCountForFilter',
-        type: "POST",
-        data:data,
-        processData: false,
-        contentType: false,
-        beforeSend: function (response) { },
-        complete: function (response) {
-        },
-        error: function (response) {
-            // alert('Something went wrong while fatching packet ')
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if(data.success){
-                $("#total_count").html((data.packet_count))
-            }
-        }
-    })
-}
-
-function getPacketCountForFilterWithSearch(){
-
-    let data = new FormData()
-    
-    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
-    let startDate = localStorage.getItem("startDate");
-    let endDate = localStorage.getItem("endDate");
-    let searchText = localStorage.getItem("searchText");
-
-    if (startDate && endDate) {
-        data.append("startDate", startDate)
-        data.append("endDate", endDate)
-    }
-    
-    if(searchText){
-        data.append("searchText",searchText)
-    }
-
-
-    data.append("company_id", selected_value)
-
-    $.ajax({
-        url: base_url + 'Dashboard/getCountForFilterWithSearch',
-        type: "POST",
-        data:data,
-        processData: false,
-        contentType: false,
-        beforeSend: function (response) { },
-        complete: function (response) {
-        },
-        error: function (response) {
-            // alert('Something went wrong while fatching packet ')
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if(data.success){
-                $("#total_count").html((data.packet_count))
-            }
-        }
-    })
-}
-
-
-function getPacketSumWithFilter(){
-
-    let data = new FormData()
-    
-    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
-    let startDate = localStorage.getItem("startDate");
-    let endDate = localStorage.getItem("endDate");
-    let searchText = localStorage.getItem("searchText");
-
-    if (startDate && endDate) {
-        data.append("startDate", startDate)
-        data.append("endDate", endDate)
-    }
-    
-    if(searchText){
-        data.append("searchText",searchText)
-    }
-
-
-    data.append("company_id", selected_value)
-
-    $.ajax({
-        url: base_url + 'Dashboard/getPacketSumWithFilter',
-        type: "POST",
-        data:data,
-        processData: false,
-        contentType: false,
-        beforeSend: function (response) { },
-        complete: function (response) {
-        },
-        error: function (response) {
-            // alert('Something went wrong while fatching packet ')
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if(data.success){
-                localStorage.setItem("packetSum",JSON.stringify(data));
-                footerBind();
-            }
-        }
-    })
-}
 
 
 $('#resetDate').click((e) => {
@@ -939,13 +785,27 @@ $("#rowPerPage").change(function() {
     if(isFilter == true){
         fatchSelectedCompnay();
     }
-    else if(isSearch == true){
-        searchPacket();
-    }
+    // else if(isSearch == true){
+    //     searchPacket();
+    // }
     else{
         fetchPacketData();
     }
 });
+
+
+$("#filterCompany").on("click", function () {
+    isFilter = true;
+    prevPacketData = [];
+    currentPage = 1;
+    localStorage.removeItem("lastPacketId")
+    localStorage.removeItem("pageLastIndex");
+    fatchSelectedCompnay();
+
+
+})
+
+
 
 const fetchPacketData = () => {
     const lastPacketId = localStorage.getItem("lastPacketId")
@@ -1046,8 +906,9 @@ const fatchSelectedCompnay = () => {
             data = JSON.parse(data);
             if(data.success){
                 dataBind(data,"API");
-                getPacketCountForFilter();
-                getPacketSumWithFilter();
+                getPacketCountForFilter(); // bottom count
+                getPacketSumWithFilter(); //
+
             } else{
                 Swal.fire("No more data available");
             }
@@ -1071,9 +932,9 @@ $(".btn-container").on("click", "#next-button", function(e) {
         else if(isFilter == true ){
             fatchSelectedCompnay();
         }
-        else if(isSearch == true){
-            searchPacket();
-        }
+        // else if(isSearch == true){
+        //     searchPacket();
+        // }
         else{
             fetchPacketData();
         }
@@ -1132,7 +993,7 @@ let show_final_carat =  sumObj.final_carat;
         }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
-        searching: false,
+        searching: true,
         info: false,
         bPaginate: false,// remove pagination
         destroy: true,
@@ -1232,7 +1093,7 @@ function dataBind(data, dataSource) {
          }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
-        searching: false,
+        searching: true,
         info: false,
         bPaginate: false,// remove pagination
         destroy: true,
@@ -1488,6 +1349,152 @@ function dataBind(data, dataSource) {
     table.draw()
 }
 
+function getCount(){
+    $.ajax({
+        url: base_url + 'Dashboard/getCount',
+        type: "POST",
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if(data.success){
+                $("#total_count").html((data.packet_count))
+            }
+        }
+    })
+}
+
+function getPacketCountForFilter(){
+
+    let data = new FormData()
+    
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+
+    if (startDate && endDate) {
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
+    }
+    
+
+    data.append("company_id", selected_value)
+
+    $.ajax({
+        url: base_url + 'Dashboard/getCountForFilter',
+        type: "POST",
+        data:data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if(data.success){
+                $("#total_count").html((data.packet_count))
+            }
+        }
+    })
+}
+
+function getPacketCountForFilterWithSearch(){
+
+    let data = new FormData()
+    
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+    let searchText = localStorage.getItem("searchText");
+
+    if (startDate && endDate) {
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
+    }
+    
+    if(searchText){
+        data.append("searchText",searchText)
+    }
+
+
+    data.append("company_id", selected_value)
+
+    $.ajax({
+        url: base_url + 'Dashboard/getCountForFilterWithSearch',
+        type: "POST",
+        data:data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            console.log("getCountForFilterWithSearch ====", data);
+            if(data.success){
+                $("#total_count").html((data.packet_count))
+            }
+        }
+    })
+}
+
+function getPacketSumWithFilter(){
+
+    let data = new FormData()
+    
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+    let searchText = localStorage.getItem("searchText");
+
+    if (startDate && endDate) {
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
+    }
+    
+    if(searchText){
+        data.append("searchText",searchText)
+    }
+
+
+    data.append("company_id", selected_value)
+
+    $.ajax({
+        url: base_url + 'Dashboard/getPacketSumWithFilter',
+        type: "POST",
+        data:data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if(data.success){
+                localStorage.setItem("packetSum",JSON.stringify(data));
+                footerBind();
+            }
+        }
+    })
+}
+
+
+
 $("#searchText").on("input", function (e) {
     prevPacketData = [];
     localStorage.setItem("lastPacketId", 0);
@@ -1495,7 +1502,7 @@ $("#searchText").on("input", function (e) {
     localStorage.setItem("searchText", searchText);
     isSearch = true;
 
-    searchPacket();
+    // searchPacket();
     // if(isFilter == true && isSearch == true){
     //     currentPage = 1;
     //     fatchSelectedCompnay();
@@ -1557,7 +1564,10 @@ const searchPacket = () =>{
             data = JSON.parse(data); 
             if(data.success){
                 dataBind(data,"API");
-                getPacketCountForFilter();
+                getPacketCountForFilterWithSearch();
+                // getPacketCountForFilter();
+                // if(isSearch == true){
+                // }
             } else{
                 // Swal.fire("No data available")
             }
