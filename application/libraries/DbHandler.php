@@ -549,7 +549,8 @@ class DbHandler
 
         
 
-        $sql_query = "SELECT count(*) as total_count from (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_param ORDER BY p.packet_id DESC) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) as total_count";
+        $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE ".$query_param;
+        // $sql_query = "SELECT count(*) as total_count from (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_param ORDER BY p.packet_id DESC) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) as total_count";
         
 
         // echo $sql_query;
