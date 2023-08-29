@@ -175,7 +175,7 @@ class DbHandler
         $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_params $query_lastPacketId ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
         
 
-        // echo $sql_query;
+        echo $sql_query;
 
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
@@ -230,8 +230,6 @@ class DbHandler
             $query_param_CO_SD_ED = "p.is_delete = 0";
         }
         
-
-        // $sql_query = "SELECT SUM( packet_dimond_qty) as total_piece, SUM(packet_dimond_caret) as total_carat, SUM(pending_process_diamond_qty) as none_process_piece, SUM(pending_process_diamond_carat) as none_process_carat, SUM(broken_diamond_qty) as broken_piece, SUM(broken_diamond_carat) as broken_carat, SUM(price_per_carat) as final_carat FROM packet p WHERE ". $query_param_CO_SD_ED; 
 
         $sql_query = "SELECT SUM( packet_dimond_qty) as total_piece, SUM(packet_dimond_caret) as total_carat, SUM(pending_process_diamond_qty) as none_process_piece, SUM(pending_process_diamond_carat) as none_process_carat, SUM(broken_diamond_qty) as broken_piece, SUM(broken_diamond_carat) as broken_carat, SUM(price_per_carat) as final_carat from (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_param_CO_SD_ED ORDER BY p.packet_id DESC) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) as all_packet";
         // echo $sql_query;
