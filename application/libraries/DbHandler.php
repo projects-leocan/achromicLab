@@ -498,7 +498,9 @@ class DbHandler
     // fetch total packets count for all packet
     public function fetchCount()
     {
-        $sql_query = "SELECT COUNT(*) as total_count FROM (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE is_delete = 0 ORDER BY p.packet_id DESC ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) AS totalCount";
+
+        $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE p.is_delete = 0";
+        // $sql_query = "SELECT COUNT(*) as total_count FROM (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE is_delete = 0 ORDER BY p.packet_id DESC ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) AS totalCount";
         
 
         // echo $sql_query;
