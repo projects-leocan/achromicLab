@@ -92,7 +92,7 @@ class DbHandler
             $company_id = -1;
         }
 
-        if ($lastPacketId == "null") {
+        if ($lastPacketId == "null" || $lastPacketId != null) {
             $lastPacketId = -1;
         }
 
