@@ -28,9 +28,8 @@ $(() => {
         $('#inputedCompanyName').val("All Company");
         BindControls();
         fetchPacketData();
-        getCount();
-        
-        
+        getCount();                   
+        // getPacketSumWithFilter();
         $('input[name="daterange"]').daterangepicker({
             opens: 'left',
             // dateFormat: 'dd/mm/yyyy',
@@ -755,7 +754,7 @@ $("#filterCompany").on("click", function () {
     localStorage.removeItem("lastPacketId")
     localStorage.removeItem("pageLastIndex");
     fatchSelectedCompnay();
-    getPacketCountForFilter();
+
 
 })
 
@@ -775,12 +774,51 @@ function getCount(){
         },
         success: function (data) {
             data = JSON.parse(data);
-            $("#total_count").html((data.packet_count))
+            if(data.success){
+                $("#total_count").html((data.packet_count))
+            }
         }
     })
 }
 
 function getPacketCountForFilter(){
+
+    let data = new FormData()
+    
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+
+    if (startDate && endDate) {
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
+    }
+    
+
+    data.append("company_id", selected_value)
+
+    $.ajax({
+        url: base_url + 'Dashboard/getCountForFilter',
+        type: "POST",
+        data:data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if(data.success){
+                $("#total_count").html((data.packet_count))
+            }
+        }
+    })
+}
+
+function getPacketCountForFilterWithSearch(){
 
     let data = new FormData()
     
@@ -802,7 +840,7 @@ function getPacketCountForFilter(){
     data.append("company_id", selected_value)
 
     $.ajax({
-        url: base_url + 'Dashboard/getCountForFilter',
+        url: base_url + 'Dashboard/getCountForFilterWithSearch',
         type: "POST",
         data:data,
         processData: false,
@@ -815,10 +853,57 @@ function getPacketCountForFilter(){
         },
         success: function (data) {
             data = JSON.parse(data);
-            $("#total_count").html((data.packet_count))
+            if(data.success){
+                $("#total_count").html((data.packet_count))
+            }
         }
     })
 }
+
+
+function getPacketSumWithFilter(){
+
+    let data = new FormData()
+    
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+    let searchText = localStorage.getItem("searchText");
+
+    if (startDate && endDate) {
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
+    }
+    
+    if(searchText){
+        data.append("searchText",searchText)
+    }
+
+
+    data.append("company_id", selected_value)
+
+    $.ajax({
+        url: base_url + 'Dashboard/getPacketSumWithFilter',
+        type: "POST",
+        data:data,
+        processData: false,
+        contentType: false,
+        beforeSend: function (response) { },
+        complete: function (response) {
+        },
+        error: function (response) {
+            // alert('Something went wrong while fatching packet ')
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if(data.success){
+                localStorage.setItem("packetSum",JSON.stringify(data));
+                footerBind();
+            }
+        }
+    })
+}
+
 
 $('#resetDate').click((e) => {
     localStorage.removeItem("startDate");
@@ -834,6 +919,7 @@ $('#resetDate').click((e) => {
     $('#inputedCompanyName').val("All Company");
     fetchPacketData();
     getCount();
+    getPacketSumWithFilter();
     currentPage = 1;
     isFilter = false;
     isSearch = false;
@@ -864,8 +950,9 @@ $("#rowPerPage").change(function() {
 const fetchPacketData = () => {
     const lastPacketId = localStorage.getItem("lastPacketId")
     let data = new FormData();
+
     if(isNaN(rowPerPage)){
-        rowPerPage = 10;
+        rowPerPage = 50;
     }
     data.append('rowPerPage', rowPerPage);
     data.append('lastPacketId', lastPacketId);
@@ -889,6 +976,7 @@ const fetchPacketData = () => {
         success: function (data) {
             data = JSON.parse(data); 
             if(data.success){
+                getPacketSumWithFilter();
                 dataBind(data,"API");
             } else{
                 Swal.fire("No more data available")
@@ -958,6 +1046,8 @@ const fatchSelectedCompnay = () => {
             data = JSON.parse(data);
             if(data.success){
                 dataBind(data,"API");
+                getPacketCountForFilter();
+                getPacketSumWithFilter();
             } else{
                 Swal.fire("No more data available");
             }
@@ -965,6 +1055,8 @@ const fatchSelectedCompnay = () => {
         }
     })
 }
+
+
 
 $(".btn-container").on("click", "#next-button", function(e) {
     currentPage = currentPage + 1
@@ -1012,6 +1104,114 @@ $("#prev-button").on("click", (e) => {
     }
     dataBind(prevDataSlice, "prevPacketData");
 });
+
+
+function footerBind(){
+let sumObj = JSON.parse(localStorage.getItem("packetSum"));
+let show_total_piece =  sumObj.total_piece;
+let show_total_carat =  sumObj.total_carat;
+let show_none_process_piece =  sumObj.none_process_piece;
+let show_none_process_carat =  sumObj.none_process_carat;
+let show_broken_piece =  sumObj.broken_piece;
+let show_broken_carat =  sumObj.broken_carat;
+let show_final_carat =  sumObj.final_carat;
+
+    var table = $('#packet_list').DataTable({ 
+        columnDefs: [{
+            'targets': 0,
+            'searchable':false,
+            'checkboxes': {
+                'selectRow': true
+            },
+            'orderable':false,
+            'className': 'dt-body-center',
+            'render': function (data, type, full, meta){
+                return '<input type="checkbox" id="cb1" name="cb[]" value="' 
+                + $('<div/>').text(data).html() + '">';
+            }
+        }],
+        order: [[ 1, 'asc' ]],
+        dom: 'lBfrtip',
+        searching: false,
+        info: false,
+        bPaginate: false,// remove pagination
+        destroy: true,
+        "scrollX": true, 
+        "sScrollX": "100%",
+        "sScrollXInner": "110%",
+        "bScrollCollapse": true,
+        autoWidth: false,
+        // "scrollX": true,
+        fixedColumns:   {
+        left: 1,
+        right: 1
+    },
+        "columns": [
+            { "width": "10px" },
+            { "width": "10px" },
+            { "width": "10px" },
+            { "width": "55px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "30px" },
+            { "width": "10px" },
+            { "width": "30px" },
+            
+        ],
+        buttons: [
+            {    
+                extend: 'pdfHtml5', footer: true,
+                exportOptions: {
+                    columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13]
+                },  
+                orientation: 'landscape',
+                customize: function (doc) {
+                    doc.defaultStyle.alignment = 'center';
+                    doc.styles.tableHeader.alignment = 'center';
+                
+                },
+                text: 'Download',
+            
+            },
+            {
+                text: 'Invoice',
+                attr: {
+                id: 'btn-send',
+                class:'buttons-pdf',
+                },
+                action: function(e, dt, node, config) { 
+                    getSelectedInvoiceData();
+            }          
+                
+            },
+            
+        ],
+        
+        footerCallback: function (row, data, start, end, display) {
+            var api = this.api();
+
+            // $(api.column(4).footer()).html(totalCarat);
+            $(api.column(5).footer()).html(show_total_piece);
+            $(api.column(6).footer()).html(show_total_carat.toFixed(2));
+            $(api.column(7).footer()).html(show_none_process_piece);
+            $(api.column(8).footer()).html(show_none_process_carat.toFixed(2));
+            $(api.column(9).footer()).html(show_broken_piece);
+            $(api.column(10).footer()).html(show_broken_carat.toFixed(2));
+            $(api.column(11).footer()).html(show_final_carat.toFixed(2));
+            // $(api.column(9).footer()).html(broken_qty);
+            // $(api.column(8).footer()).html(total);
+        },
+    });
+
+    table.draw();
+   
+}
 
 
 function dataBind(data, dataSource) {
@@ -1111,82 +1311,82 @@ function dataBind(data, dataSource) {
             
         ],
         
-        footerCallback: function (row, data, start, end, display) {
-            var api = this.api();
+        // footerCallback: function (row, data, start, end, display) {
+        //     var api = this.api();
 
-            // Remove the formatting to get integer data for summation
-            var intVal = function (i) {
-                return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-            };
+        //     // Remove the formatting to get integer data for summation
+        //     var intVal = function (i) {
+        //         return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+        //     };
 
-            // Total over all pages
+        //     // Total over all pages
 
-            total_piece = api
-                .column(5)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-
-            total_carat = api
-                .column(6)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
+        //     // total_piece = api
+        //     //     .column(5)
+        //     //     .data()
+        //     //     .reduce(function (a, b) {
+        //     //         return intVal(a) + intVal(b);
+        //     //     }, 0);
 
 
-            noneProcessPiece = api
-                .column(7)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            none_process_carat = api
-                .column(8)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
+        //     // total_carat = api
+        //     //     .column(6)
+        //     //     .data()
+        //     //     .reduce(function (a, b) {
+        //     //         return intVal(a) + intVal(b);
+        //     //     }, 0);
 
 
-            broken_piece = api
-                .column(9)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
+        //     // noneProcessPiece = api
+        //     //     .column(7)
+        //     //     .data()
+        //     //     .reduce(function (a, b) {
+        //     //         return intVal(a) + intVal(b);
+        //     //     }, 0);
 
-            broken_carat = api
-                .column(10)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            finalCarat = api
-                .column(11)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
+        //     // none_process_carat = api
+        //     //     .column(8)
+        //     //     .data()
+        //     //     .reduce(function (a, b) {
+        //     //         return intVal(a) + intVal(b);
+        //     //     }, 0);
 
 
-            // // Update footer
+        //     // broken_piece = api
+        //     //     .column(9)
+        //     //     .data()
+        //     //     .reduce(function (a, b) {
+        //     //         return intVal(a) + intVal(b);
+        //     //     }, 0);
 
-            // $(api.column(4).footer()).html(totalCarat);
-            $(api.column(5).footer()).html(total_piece);
-            $(api.column(6).footer()).html(total_carat.toFixed(2));
-            $(api.column(7).footer()).html(noneProcessPiece);
-            $(api.column(8).footer()).html(none_process_carat.toFixed(2));
-            $(api.column(9).footer()).html(broken_piece);
-            $(api.column(10).footer()).html(broken_carat.toFixed(2));
-            $(api.column(11).footer()).html(finalCarat.toFixed(2));
-            // $(api.column(9).footer()).html(broken_qty);
-            // $(api.column(8).footer()).html(total);
-        },
+        //     // broken_carat = api
+        //     //     .column(10)
+        //     //     .data()
+        //     //     .reduce(function (a, b) {
+        //     //         return intVal(a) + intVal(b);
+        //     //     }, 0);
+
+        //     // finalCarat = api
+        //     //     .column(11)
+        //     //     .data()
+        //     //     .reduce(function (a, b) {
+        //     //         return intVal(a) + intVal(b);
+        //     //     }, 0);
+
+
+        //     // // Update footer
+
+        //     // $(api.column(4).footer()).html(totalCarat);
+        //     // $(api.column(5).footer()).html(show_total_piece);
+        //     // $(api.column(6).footer()).html(show_total_carat.toFixed(2));
+        //     // $(api.column(7).footer()).html(show_none_process_piece);
+        //     // $(api.column(8).footer()).html(show_none_process_carat.toFixed(2));
+        //     // $(api.column(9).footer()).html(show_broken_piece);
+        //     // $(api.column(10).footer()).html(show_broken_carat.toFixed(2));
+        //     // $(api.column(11).footer()).html(show_final_carat.toFixed(2));
+        //     // $(api.column(9).footer()).html(broken_qty);
+        //     // $(api.column(8).footer()).html(total);
+        // },
     });
 
     // Handle click on "Select all" control
@@ -1222,9 +1422,6 @@ function dataBind(data, dataSource) {
                 prevPacketData.push(currentPacket);
             }
 
-            // if (!prevPacketData.includes(currentPacket)) {
-            //     prevPacketData.push(currentPacket);
-            // }
 
             let count = ((currentPage - 1 ) * rowPerPage) + (index + 1)
             let date = currentPacket.date;
@@ -1298,13 +1495,14 @@ $("#searchText").on("input", function (e) {
     localStorage.setItem("searchText", searchText);
     isSearch = true;
 
-    if(isFilter == true && isSearch == true){
-        currentPage = 1;
-        fatchSelectedCompnay();
-        getPacketCountForFilter();
-    }else{
-        searchPacket();
-    }
+    searchPacket();
+    // if(isFilter == true && isSearch == true){
+    //     currentPage = 1;
+    //     fatchSelectedCompnay();
+    //     getPacketCountForFilter();
+    // }else{
+    //     searchPacket();
+    // }
 
     if(!searchText){
         localStorage.removeItem("searchText");
@@ -1316,14 +1514,27 @@ const searchPacket = () =>{
     isSearch = true;
     let data = new FormData()
 
-    lastPacketId = localStorage.getItem("lastPacketId")
-    searchText = localStorage.getItem("searchText")
-
     if(isNaN(rowPerPage)){
-        rowPerPage = 10;
+        rowPerPage = 100;
     }
 
-    data.append("searchText",searchText);
+    let lastPacketId = localStorage.getItem("lastPacketId");
+    let searchText = localStorage.getItem("searchText");
+    let selected_value = localStorage.getItem("FilterSelecteCompanyID");
+    let startDate = localStorage.getItem("startDate");
+    let endDate = localStorage.getItem("endDate");
+
+    
+    if(searchText){
+        data.append("searchText", searchText)
+    }
+
+    if (startDate && endDate) {
+        data.append("startDate", startDate)
+        data.append("endDate", endDate)
+    }
+    
+    data.append("company_id", selected_value)
     data.append('rowPerPage', rowPerPage);
     data.append('lastPacketId', lastPacketId);
 

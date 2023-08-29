@@ -174,10 +174,14 @@ class Dashboard extends CI_Controller
 
     public function searchPacket()
     {
-        $search_text = $_REQUEST["searchText"];
+        $company_id = $_REQUEST["company_id"];
+        $start_date = isset($_REQUEST["startDate"]) ? $_REQUEST["startDate"] : null;
+        $end_date = isset($_REQUEST["endDate"]) ? $_REQUEST["endDate"] : null;
         $lastPacketId = $_REQUEST["lastPacketId"];
         $rowPerPage = $_REQUEST["rowPerPage"];
-        $response = $this->dbhandler->searchPackets($search_text,$lastPacketId,$rowPerPage);
+        $search_text = isset($_REQUEST["searchText"]) ? $_REQUEST["searchText"] : null;
+        
+        $response = $this->dbhandler->searchPackets($company_id, $start_date,$end_date,$lastPacketId,$rowPerPage,$search_text);
         echo json_encode($response);
     }
 
@@ -216,6 +220,26 @@ class Dashboard extends CI_Controller
         $company_id = $_REQUEST["company_id"];
         $search_text = isset($_REQUEST["searchText"]) ? $_REQUEST["searchText"] : null;
         $response = $this->dbhandler->getCountForFilter($start_date,$end_date,$company_id,$search_text);
+        echo json_encode($response);
+    }
+
+    public function getPacketSumWithFilter()
+    {
+        $start_date = isset($_REQUEST["startDate"]) ? $_REQUEST["startDate"] : null;
+        $end_date = isset($_REQUEST["endDate"]) ? $_REQUEST["endDate"] : null;
+        $company_id = $_REQUEST["company_id"];
+        $search_text = isset($_REQUEST["searchText"]) ? $_REQUEST["searchText"] : null;
+        $response = $this->dbhandler->getAllPacketSum($start_date,$end_date,$company_id,$search_text);
+        echo json_encode($response);
+    }
+
+    public function getCountForFilterWithSearch()
+    {
+        $start_date = isset($_REQUEST["startDate"]) ? $_REQUEST["startDate"] : null;
+        $end_date = isset($_REQUEST["endDate"]) ? $_REQUEST["endDate"] : null;
+        $company_id = $_REQUEST["company_id"];
+        $search_text = isset($_REQUEST["searchText"]) ? $_REQUEST["searchText"] : null;
+        $response = $this->dbhandler->getCountForFilterWithSearch($start_date,$end_date,$company_id,$search_text);
         echo json_encode($response);
     }
     
