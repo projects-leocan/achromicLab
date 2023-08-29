@@ -160,6 +160,9 @@ class DbHandler
     // get all packet data
     public function fatchPacketDetails($rowPerPage, $lastPacketId)
     {
+        if($lastPacketId == "null"){
+            $lastPacketId = 0;
+        }
 
         $query_params = "p.is_delete = 0";
         $query_lastPacketId = "";
