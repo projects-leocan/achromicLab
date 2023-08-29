@@ -228,8 +228,7 @@ class Dashboard extends CI_Controller
         $start_date = isset($_REQUEST["startDate"]) ? $_REQUEST["startDate"] : null;
         $end_date = isset($_REQUEST["endDate"]) ? $_REQUEST["endDate"] : null;
         $company_id = $_REQUEST["company_id"];
-        $search_text = isset($_REQUEST["searchText"]) ? $_REQUEST["searchText"] : null;
-        $response = $this->dbhandler->getAllPacketSum($start_date,$end_date,$company_id,$search_text);
+        $response = $this->dbhandler->getAllPacketSum($start_date,$end_date,$company_id);
         echo json_encode($response);
     }
 

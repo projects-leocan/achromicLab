@@ -93,7 +93,7 @@ class DbHandler
             $company_id = -1;
         }
 
-        if ($lastPacketId == "null" || $lastPacketId != null) {
+        if ($lastPacketId == "null" || $lastPacketId == null) {
             $lastPacketId = -1;
         }
 
@@ -105,7 +105,7 @@ class DbHandler
 
                 $query_params = "p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0";
         } 
-        else if (($company_id > 0) || $lastPacketId == "null" ) 
+        else if ($company_id > 0) 
         {
 
             $query_params = "p.company_id = '$company_id' AND p.is_delete = 0";
@@ -236,9 +236,6 @@ class DbHandler
         
 
         $sql_query = "SELECT SUM( packet_dimond_qty) as total_piece, SUM(packet_dimond_caret) as total_carat, SUM(pending_process_diamond_qty) as none_process_piece, SUM(pending_process_diamond_carat) as none_process_carat, SUM(broken_diamond_qty) as broken_piece, SUM(broken_diamond_carat) as broken_carat, SUM(price_per_carat) as final_carat FROM packet p WHERE ". $query_param_CO_SD_ED; 
-
-        // $sql_query = "SELECT SUM( packet_dimond_qty) as total_piece, SUM(packet_dimond_caret) as total_carat, SUM(pending_process_diamond_qty) as none_process_piece, SUM(pending_process_diamond_carat) as none_process_carat, SUM(broken_diamond_qty) as broken_piece, SUM(broken_diamond_carat) as broken_carat, SUM(price_per_carat) as final_carat from (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_param_CO_SD_ED ORDER BY p.packet_id DESC) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) as all_packet";
-        // echo $sql_query;
 
         $count_result = $this->conn->query($sql_query);
         $count_row = $count_result->fetch_assoc();
@@ -466,135 +463,6 @@ class DbHandler
         return $result;
     }
 
-    public function getCountForFilterOLD($start_date,$end_date,$company_id,$search_text)
-    {
-
-        if ($company_id == "null") {
-            $company_id = -1;
-        }
-
-        if ($company_id > 0 && isset($start_date) && isset($end_date)) {
-
-            if($search_text){
-
-                $sql_query = "SELECT COUNT(*) AS total_count
-                FROM packet p
-                JOIN company c ON p.company_id = c.company_id
-                WHERE
-                    p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
-                    AND (
-                        p.packet_no LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
-                    )";
-
-            }else{
-                $sql_query = "SELECT COUNT(*) as total_count FROM packet p
-                    WHERE p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0";
-            }
-
-        }
-        else if($company_id > 0)
-        {
-            if($search_text){
-
-                $sql_query = "SELECT COUNT(*) AS total_count
-                FROM packet p
-                JOIN company c ON p.company_id = c.company_id
-                WHERE
-                    p.company_id = '$company_id' AND p.is_delete = 0 
-                    AND (
-                        p.packet_no LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
-                    )";
-
-
-            }else{
-                $sql_query = "SELECT COUNT(*) as total_count 
-                FROM packet p
-                WHERE p.company_id = '$company_id' AND p.is_delete = 0";
-            }
-
-        }
-        elseif (isset($start_date) && isset($end_date)) {
-            
-            if($search_text){
-                $sql_query = "SELECT COUNT(*) AS total_count
-                FROM packet p
-                JOIN company c ON p.company_id = c.company_id
-                WHERE
-                    p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0 
-                    AND (
-                        p.packet_no LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                        OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
-                    )";
-            }else{
-            $sql_query = "SELECT COUNT(*) as total_count 
-            FROM packet p
-            WHERE p.company_id = p.company_id AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0";
-            }
-        }
-        else{
-
-            if($search_text){
-                $sql_query = "SELECT COUNT(*) AS total_count
-                    FROM packet p
-                    JOIN company c ON p.company_id = c.company_id
-                    WHERE
-                        p.is_delete = 0 
-                        AND (
-                            p.packet_no LIKE CONCAT('%', '". $search_text ."', '%')
-                            OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%')
-                            OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                            OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                            OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                            OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%')
-                            OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                            OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%')
-                            OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
-                        )";
-            }else{
-                $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE p.is_delete = 0";
-            }
-
-        }
-
-        // echo $sql_query;
-        $count_result = $this->conn->query($sql_query);
-        $total_count = intval($count_result->fetch_assoc()['total_count']);
-
-        if (mysqli_query($this->conn, $sql_query)) {
-            $result = array(
-                'success' => true,
-                'packet_count' => $total_count,
-            );
-        } else {
-            $result = array(
-                'success' => false,
-            );
-        }
-        return $result;
-    }
 
     public function fatchPacketByID($packet_id)
     {

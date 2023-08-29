@@ -1,4 +1,4 @@
-// live 
+// stagging
 const base_url = 'https://leocan.co/subFolder/achromicLab/';
 
 // local 
@@ -16,7 +16,7 @@ $(() => {
     localStorage.removeItem("endDate");
     localStorage.removeItem("searchText");
     // localStorage.removeItem("FilterSelecteCompanyName");
-    // localStorage.removeItem("FilterSelecteCompanyID");
+    localStorage.removeItem("FilterSelecteCompanyID");
     // localStorage.removeItem("invoice_company");
     //fetchAllComapany();
     if (window.location.href == base_url + 'company') {
@@ -1454,15 +1454,10 @@ function getPacketSumWithFilter(){
     let selected_value = localStorage.getItem("FilterSelecteCompanyID");
     let startDate = localStorage.getItem("startDate");
     let endDate = localStorage.getItem("endDate");
-    let searchText = localStorage.getItem("searchText");
 
     if (startDate && endDate) {
         data.append("startDate", startDate)
         data.append("endDate", endDate)
-    }
-    
-    if(searchText){
-        data.append("searchText",searchText)
     }
 
 
