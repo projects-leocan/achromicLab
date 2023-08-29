@@ -164,7 +164,7 @@ class DbHandler
         $query_params = "p.is_delete = 0";
         $query_lastPacketId = "";
 
-        if ($lastPacketId > 0) {
+        if ($lastPacketId > 0 || $lastPacketId != "null") {
 
             $query_lastPacketId = " and p.packet_id < $lastPacketId";
         }
@@ -175,7 +175,7 @@ class DbHandler
         $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_params $query_lastPacketId ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
         
 
-        echo $sql_query;
+        // echo $sql_query;
 
         $stmt = $this->conn->prepare($sql_query);
         $stmt->execute();
