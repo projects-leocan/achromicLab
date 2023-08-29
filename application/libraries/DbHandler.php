@@ -157,17 +157,23 @@ class DbHandler
         return $result;
     }
 
+    // get all packet data
     public function fatchPacketDetails($rowPerPage, $lastPacketId)
     {
-        if ($lastPacketId == "null" || $lastPacketId == 0) {
 
-            $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.is_delete = 0 ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+        $query_params = "p.is_delete = 0";
+        $query_lastPacketId = "";
 
+        if ($lastPacketId > 0) {
 
-        } else {
-
-            $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE p.is_delete = 0 and p.packet_id < $lastPacketId ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+            $query_lastPacketId = " and p.packet_id < $lastPacketId";
         }
+        else{
+            $query_lastPacketId = "";
+        }
+
+        $sql_query = "SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_params $query_lastPacketId ORDER BY p.packet_id DESC limit $rowPerPage ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC";
+        
 
         // echo $sql_query;
 
@@ -197,6 +203,7 @@ class DbHandler
         return $result;
     }
 
+    // get columns sum in footer
     public function getAllPacketSum($start_date,$end_date,$company_id)
     {
 
@@ -224,8 +231,9 @@ class DbHandler
         }
         
 
-        $sql_query = "SELECT SUM( packet_dimond_qty) as total_piece, SUM(packet_dimond_caret) as total_carat, SUM(pending_process_diamond_qty) as none_process_piece, SUM(pending_process_diamond_carat) as none_process_carat, SUM(broken_diamond_qty) as broken_piece, SUM(broken_diamond_carat) as broken_carat, SUM(price_per_carat) as final_carat FROM packet p WHERE ". $query_param_CO_SD_ED; 
-           
+        // $sql_query = "SELECT SUM( packet_dimond_qty) as total_piece, SUM(packet_dimond_caret) as total_carat, SUM(pending_process_diamond_qty) as none_process_piece, SUM(pending_process_diamond_carat) as none_process_carat, SUM(broken_diamond_qty) as broken_piece, SUM(broken_diamond_carat) as broken_carat, SUM(price_per_carat) as final_carat FROM packet p WHERE ". $query_param_CO_SD_ED; 
+
+        $sql_query = "SELECT SUM( packet_dimond_qty) as total_piece, SUM(packet_dimond_caret) as total_carat, SUM(pending_process_diamond_qty) as none_process_piece, SUM(pending_process_diamond_carat) as none_process_carat, SUM(broken_diamond_qty) as broken_piece, SUM(broken_diamond_carat) as broken_carat, SUM(price_per_carat) as final_carat from (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_param_CO_SD_ED ORDER BY p.packet_id DESC) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) as all_packet";
         // echo $sql_query;
 
         $count_result = $this->conn->query($sql_query);
@@ -401,6 +409,7 @@ class DbHandler
         return $result;
     }
 
+    // search with filter 
     public function searchPackets($company_id, $start_date,$end_date,$lastPacketId,$rowPerPage,$search_text)
     {
 
@@ -485,9 +494,14 @@ class DbHandler
         return $result;
     }
 
+    // fetch total packets count for all packet
     public function fetchCount()
     {
-        $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE p.is_delete = 0";
+        $sql_query = "SELECT COUNT(*) as total_count FROM (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE is_delete = 0 ORDER BY p.packet_id DESC ) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) AS totalCount";
+        
+
+        // echo $sql_query;
+
         $count_result = $this->conn->query($sql_query);
         $total_count = intval($count_result->fetch_assoc()['total_count']);
 
@@ -504,7 +518,7 @@ class DbHandler
         return $result;
     }
 
-
+    // fetch count for filter 
     public function getCountForFilter($start_date,$end_date,$company_id)
     {
 
@@ -527,7 +541,11 @@ class DbHandler
         else{
             $query_param = "p.is_delete = 0";
         }
-        $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE ".$query_param;
+
+        
+
+        $sql_query = "SELECT count(*) as total_count from (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_param ORDER BY p.packet_id DESC) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) as total_count";
+        
 
         // echo $sql_query;
         $count_result = $this->conn->query($sql_query);
@@ -546,6 +564,7 @@ class DbHandler
         return $result;
     }
 
+    // fetch count for filter with seach 
     public function getCountForFilterWithSearch($start_date,$end_date,$company_id,$search_text)
     {
 
@@ -558,7 +577,7 @@ class DbHandler
         if ($company_id > 0 && isset($start_date) && isset($end_date)) {
             $query_param = " p.company_id = '$company_id' AND date BETWEEN '$start_date' and '$end_date' AND p.is_delete = 0";
         }
-        else if($company_id > 0)
+        else if($company_id > 0 && isset($search_text))
         {
             $query_param = " p.company_id = '$company_id' AND p.is_delete = 0";
         }
@@ -568,22 +587,11 @@ class DbHandler
         else{
             $query_param = "p.is_delete = 0";
         }
+
         // $sql_query = "SELECT COUNT(*) as total_count FROM packet p WHERE ".$query_param;
+
+        $sql_query = "SELECT count(*) as total_count from (SELECT tempTb.*,MAX(ie.challan_no) as challan_no,ie.delivery_date from (SELECT p.*, (SELECT company_name FROM company WHERE company_id = p.company_id) as company_name from packet p WHERE $query_param ORDER BY p.packet_id DESC) As tempTb LEFT JOIN invoice_entry ie ON ie.packet_no = tempTb.packet_no GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id ORDER BY tempTb.packet_id DESC) as total_count";
         
-        $sql_query = "SELECT COUNT(*) as total_count
-        FROM(SELECT p.*,c.company_name FROM packet p LEFT JOIN company c ON p.company_id = c.company_id
-        WHERE
-            $query_params $query_lastPacketId (
-                p.packet_no LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_caret LIKE CONCAT('%', '". $search_text ."', '%') OR p.packet_dimond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.pending_process_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_qty LIKE CONCAT('%', '". $search_text ."', '%') OR p.broken_diamond_carat LIKE CONCAT('%', '". $search_text ."', '%') OR p.price_per_carat LIKE CONCAT('%', '". $search_text ."', '%') OR c.company_name LIKE CONCAT('%', '". $search_text ."', '%')
-            )ORDER BY p.packet_id DESC
-        ) AS tempTb
-        LEFT JOIN invoice_entry ie ON
-            ie.packet_no = tempTb.packet_no
-        GROUP BY ie.delivery_date,tempTb.packet_no,tempTb.packet_id
-        ORDER BY tempTb.packet_id DESC LIMIT $rowPerPage";
-
-
-
         // echo $sql_query;
         $count_result = $this->conn->query($sql_query);
         $total_count = intval($count_result->fetch_assoc()['total_count']);
