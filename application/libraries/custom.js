@@ -910,7 +910,7 @@ const fatchSelectedCompnay = () => {
                 getPacketSumWithFilter(); //
 
             } else{
-                Swal.fire("No more data available");
+                Swal.fire("No more data available for this filter");
             }
             hideLoader();
         }
@@ -985,11 +985,8 @@ let show_final_carat =  sumObj.final_carat;
                 'selectRow': true
             },
             'orderable':false,
-            'className': 'dt-body-center',
-            'render': function (data, type, full, meta){
-                return '<input type="checkbox" id="cb1" name="cb[]" value="' 
-                + $('<div/>').text(data).html() + '">';
-            }
+            'className': 'dt-body-center'
+            
         }],
         order: [[ 1, 'asc' ]],
         dom: 'lBfrtip',
@@ -1070,7 +1067,7 @@ let show_final_carat =  sumObj.final_carat;
         },
     });
 
-    table.draw();
+    table.draw(false);
    
 }
 
